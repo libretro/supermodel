@@ -1,10 +1,10 @@
 #Set the path to the core's libretro-common directory here
-#LIBRETRO_COMM_DIR := $(CORE_DIR)/drivers/libretro/libretro-common
+LIBRETRO_COMM_DIR := $(CORE_DIR)/Src/OSD/libretro/libretro-common
 
 INCFLAGS       :=
 
 #Uncomment this to include the libretro-common include directory
-#INCFLAGS      += -I$(LIBRETRO_COMM_DIR)/include
+INCFLAGS      += -I$(LIBRETRO_COMM_DIR)/include
 INCFLAGS       += -I$(CORE_DIR)/Src/OSD/libretro \
 						-I$(CORE_DIR)/Src \
 						-I$(CORE_DIR)/Src/CPU/68K/Musashi \
@@ -100,6 +100,7 @@ SOURCES_CXX +=   \
 					  $(CORE_DIR)/Src/Inputs/InputSystem.cpp \
 					  $(CORE_DIR)/Src/Inputs/InputTypes.cpp \
 					  $(CORE_DIR)/Src/Inputs/MultiInputSource.cpp \
+					  $(CORE_DIR)/Src/OSD/libretro/Thread.cpp \
 					  $(CORE_DIR)/Src/OSD/Outputs.cpp
 
 SOURCES_CXX +=   \
@@ -131,13 +132,7 @@ SOURCES_CXX +=   $(CORE_DIR)/Src/Network/NetBoard.cpp \
 					  $(CORE_DIR)/Src/Network/WinSockWrap.cpp
 endif
 
-#SOURCES_C += $(CORE_DIR)/Src/OSD/Libretro/SDL/src/thread/pthread/SDL_syscond.c
-#SOURCES_C += $(CORE_DIR)/Src/OSD/Libretro/SDL/src/thread/pthread/SDL_sysmutex.c
-#SOURCES_C += $(CORE_DIR)/Src/OSD/Libretro/SDL/src/thread/pthread/SDL_syssem.c
-#SOURCES_C += $(CORE_DIR)/Src/OSD/Libretro/SDL/src/thread/pthread/SDL_systhread.c
-#SOURCES_C += $(CORE_DIR)/Src/OSD/Libretro/SDL/src/thread/pthread/SDL_systls.c
-#SOURCES_C += $(CORE_DIR)/Src/OSD/Libretro/SDL/src/thread/SDL_thread.c
-#SOURCES_C += $(CORE_DIR)/Src/OSD/Libretro/SDL/src/timer/libretro/SDL_systimer.c
+SOURCES_C  += $(CORE_DIR)/Src/OSD/Libretro/libretro-common/rthreads/rthreads.c
 
 ifeq ($(STATIC_LINKING),1)
 else
