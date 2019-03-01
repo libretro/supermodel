@@ -26,6 +26,8 @@
  */
  
 #include "Supermodel.h"
+#include "../Thread.h"
+#include <SDL_thread.h>
 
 #define SDL_MUTEX_TIMEDOUT 1
 
@@ -597,7 +599,7 @@ UINT32 CThread::GetTicks()
 
 CThread *CThread::CreateThread(ThreadStart start, void *startParam)
 {
-	SDL_Thread *impl = SDL_CreateThread(start, startParam);
+	SDL_Thread *impl = SDL_CreateThread(start, "x", startParam);
 	if (impl == NULL)
 		return NULL;
 	return new CThread(impl);
