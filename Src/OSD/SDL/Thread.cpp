@@ -6,7 +6,7 @@
  ** This file is part of Supermodel.
  **
  ** Supermodel is free software: you can redistribute it and/or modify it under
- ** the terms of the GNU General Public License as published by the Free 
+ ** the terms of the GNU General Public License as published by the Free
  ** Software Foundation, either version 3 of the License, or (at your option)
  ** any later version.
  **
@@ -18,22 +18,17 @@
  ** You should have received a copy of the GNU General Public License along
  ** with Supermodel.  If not, see <http://www.gnu.org/licenses/>.
  **/
- 
+
 /*
  * Thread.cpp
- * 
+ *
  * SDL-based implementation of threading primitives.
  */
- 
-#include "Supermodel.h"
 
-#ifdef SUPERMODEL_OSX
-#include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
-#else
-#include <SDL.h>
-#include <SDL_thread.h>
-#endif
+#include "Thread.h"
+
+#include "Supermodel.h"
+#include "SDLIncludes.h"
 
 void CThread::Sleep(UINT32 ms)
 {
@@ -45,12 +40,12 @@ UINT32 CThread::GetTicks()
 	return SDL_GetTicks();
 }
 
-CThread *CThread::CreateThread(ThreadStart start, void *startParam)
+CThread *CThread::CreateThread(const std::string &name, ThreadStart start, void *startParam)
 {
-	SDL_Thread *impl = SDL_CreateThread(start, startParam);
+	SDL_Thread *impl = SDL_CreateThread(start, name.c_str(), startParam);
 	if (impl == NULL)
 		return NULL;
-	return new CThread(impl);
+	return new CThread(name, impl);
 }
 
 CSemaphore *CThread::CreateSemaphore(UINT32 initVal)
@@ -82,26 +77,31 @@ const char *CThread::GetLastError()
 	return SDL_GetError();
 }
 
-CThread::CThread(void *impl) : m_impl(impl)
+CThread::CThread(const std::string &name, void *impl)
+  : m_name(name),
+    m_impl(impl)
+
 {
 	//
 }
 
 CThread::~CThread()
 {
-	Kill();
+  // User should have called Wait() before thread object is destroyed
+  if (nullptr != m_impl)
+  {
+    ErrorLog("Runaway thread error. A thread was not properly halted: %s\n", GetName().c_str());
+  }
+}
+
+const std::string &CThread::GetName() const
+{
+  return m_name;
 }
 
 UINT32 CThread::GetId()
 {
 	return SDL_GetThreadID((SDL_Thread*)m_impl);
-}
-
-void CThread::Kill()
-{
-	if (m_impl != NULL)
-		SDL_KillThread((SDL_Thread*)m_impl);
-	m_impl = NULL;
 }
 
 int CThread::Wait()

@@ -1,0 +1,63 @@
+# Supermodel NVRAM sample campaign. Paths support ~ and environment variables.
+
+[retroarch]
+executable = "~/Retro/Apps/RetroArch/Nightly/RetroArch (ARM).app/Contents/MacOS/RetroArch"
+core = "~/Library/Application Support/RetroArch/cores/supermodel_libretro.dylib"
+rom_dir = "${SUPERMODEL_ROM_DIR}"
+system_assets = "../Config"
+base_config = "~/Library/Application Support/RetroArch/config/retroarch.cfg"
+
+[campaign]
+game = "srally2"
+standard_srm = "~/Documents/RetroArch/model3-nvram-analysis/srally2/cabinet-deluxe-base.srm"
+output_dir = "~/Documents/RetroArch/model3-nvram-analysis/srally2/generated"
+
+# Common timings, in real seconds.
+startup_wait = 10.0
+button_hold = 0.06
+button_hold_long = 0.5
+default_wait = 0.18
+settle_before_close = 0.5
+close_gap = 0.7
+shutdown_timeout = 15.0
+window_width = 496
+window_height = 384
+
+# A macro may be a comma-separated string or an array of strings. Macros can
+# reference other macros; *N repeats a button or macro. SHORT(button) uses
+# button_hold explicitly; LONG(button) uses button_hold_long. Repetition may
+# also be written inside them, e.g. LONG(R3*2). CLOSE performs the exact clean
+# shutdown sequence Esc, wait, Esc on this process only. Use + for simultaneous
+# buttons, e.g. LONG(L3)+R3; each button keeps its own hold duration. An empty
+# string is a valid no-op macro, useful when a template needs zero repetitions.
+# HOLD(L3), R3, UP, LEFT, RELEASE(L3) keeps L3 down while the other buttons are
+# pressed sequentially. Every HOLD must have a matching RELEASE before CLOSE.
+# Prefix a button with P2_ to address controller 2, for example P2_START.
+# The prefix also works with SHORT/LONG/HOLD/RELEASE and simultaneous buttons.
+[macros]
+EnterServ = "L3, WAIT(0.7)"
+OpenGameAssignments = "R3*9, L3, WAIT(0.5)"
+SelectCabinetType = "R3*8"
+ExitGameAssignments = "R3, L3, WAIT(0.5)"
+ExitServ = "R3*3, L3, WAIT(5.0)"
+Close = "CLOSE"
+
+# Starting from the immutable DELUXE standard above, one press on Cabinet Type
+# selects TWIN. The script copies the standard again before every other sample.
+[[samples]]
+suffix = "cabinet-twin"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectCabinetType, L3, WAIT(0.5)",
+  "@ExitGameAssignments",
+  "@ExitServ",
+  "@Close",
+]
+
+# Add further samples in the same form. WAIT(seconds) can appear anywhere.
+# If @Close/CLOSE is omitted, the script automatically closes RetroArch cleanly.
+#
+# [[samples]]
+# suffix = "another-setting"
+# sequence = "@EnterServ, R3*4, L3, WAIT(1.0), @Close"

@@ -27,9 +27,7 @@
  
 #ifndef INCLUDED_SUPERMODEL_H
 #define INCLUDED_SUPERMODEL_H
-#ifdef NET_BOARD
-#include "Winsock2.h" // force include winsock2 before windows.h because conflict with winsock1
-#endif
+
 // Used throughout Supermodel
 #include <cstdio>
 #include <cstdlib>
@@ -56,14 +54,14 @@
 // stricmp() is non-standard, apparently...
 #ifdef _MSC_VER	// MS VisualC++
 	#define stricmp	_stricmp
-#else			// assume GCC
+#elif defined(__GNUC__)
 	#define stricmp	strcasecmp
 #endif
 
 // 32-bit rotate left
 #ifdef _MSC_VER // MS VisualC++ - use VS intrinsic function _rotl
 	#define rotl(val, shift) val = _rotl(val, shift)
-#else	        // Otherwise assume GCC which should optimise following to asm
+#elif defined(__GNUC__)	// GCC should optimise following to asm
 	#define rotl(val, shift) val = (val>>shift)|(val<<(32-shift))
 #endif
 
@@ -92,67 +90,37 @@
  */
 #include "Types.h"		// located in OSD/<port>/ directory
 
-/*
- * OSD Header Files
- */
- 
+
 // Error logging interface
 #include "OSD/Logger.h"
 
-// OSD Interfaces
-#include "OSD/Thread.h"
-#include "OSD/Audio.h"
-#include "OSD/Video.h"
-#include "OSD/Outputs.h"
-
-
-/******************************************************************************
- Header Files
- 
- All primary header files for modules used throughout Supermodel are included 
- here, except for external packages and APIs.
-******************************************************************************/
-
-#include "BlockFile.h"
-#include "Graphics/New3D/New3D.h"
-#include "Graphics/Render2D.h"
-#include "Graphics/Legacy3D/TextureRefs.h"
-#include "Graphics/Legacy3D/Legacy3D.h"
-#include "Graphics/Shader.h"
-#ifdef SUPERMODEL_DEBUGGER
-#include "Debugger/SupermodelDebugger.h"
-#include "Debugger/CPU/PPCDebug.h"
-#include "Debugger/CPU/Musashi68KDebug.h"
-#include "Debugger/CPU/Z80Debug.h"
-#endif // SUPERMODEL_DEBUGGER
-#include "CPU/Bus.h"
-#include "CPU/PowerPC/PPCDisasm.h"
-#include "CPU/PowerPC/ppc.h"
-#include "CPU/68K/68K.h"
-#include "CPU/Z80/Z80.h"
-#include "Inputs/Input.h"
-#include "Inputs/Inputs.h"
-#include "Inputs/InputSource.h"
-#include "Inputs/InputSystem.h"
-#include "Inputs/InputTypes.h"
-#include "Inputs/MultiInputSource.h"
-#include "Model3/IRQ.h"
-#include "Model3/PCI.h"
-#include "Model3/53C810.h"
-#include "Model3/MPC10x.h"
-#include "Model3/RTC72421.h"
-#include "Model3/93C46.h"
-#include "Model3/TileGen.h"
-#include "Model3/Real3D.h"
-#include "Sound/SCSP.h"
-#include "Sound/MPEG/MPEG.h"
-#include "Model3/SoundBoard.h"
-#include "Model3/DSB.h"
-#include "Model3/DriveBoard.h"
-#ifdef NET_BOARD
-#include "Network/NetBoard.h"
+// CRT/TV color transformations
+#ifdef __cplusplus
+enum class CRTcolor
+#else
+enum CRTcolor
 #endif
-#include "Model3/Model3.h"
+{
+	None = 0,
+	ARI = 1,
+	PVM = 2,
+	BT601JP = 3,
+	BT601US = 4,
+	BT601EA = 5
+};
+
+// interpolation filter for 2D layers during upscale
+#ifdef __cplusplus
+enum class UpscaleMode
+#else
+enum UpscaleMode
+#endif
+{
+	Nearest = 0,
+	Biquintic = 1,
+	Bilinear = 2,
+	Bicubic = 3
+};
 
 
 /******************************************************************************

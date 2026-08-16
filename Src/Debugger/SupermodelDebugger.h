@@ -6,7 +6,7 @@
  ** This file is part of Supermodel.
  **
  ** Supermodel is free software: you can redistribute it and/or modify it under
- ** the terms of the GNU General Public License as published by the Free 
+ ** the terms of the GNU General Public License as published by the Free
  ** Software Foundation, either version 3 of the License, or (at your option)
  ** any later version.
  **
@@ -28,12 +28,12 @@
 #define INCLUDED_SUPERMODELDEBUGGER_H
 
 #include "ConsoleDebugger.h"
+#include "Model3/Model3.h"
 
 #include <stdarg.h>
 
 #define MODEL3_STATEFILE_VERSION 0
 
-class CModel3;
 class CInputs;
 class CInput;
 
@@ -49,14 +49,14 @@ namespace Debugger
 	private:
 		::CModel3 *m_model3;
 		::CInputs *m_inputs;
-		::CLogger *m_logger;
+		std::shared_ptr<CLogger> m_logger;
 
 		bool m_loadEmuState;
 		bool m_saveEmuState;
 		bool m_resetEmu;
 		char m_stateFile[255];
 
-		bool InputIsValid(CInput *input);
+		bool InputIsValid(std::shared_ptr<CInput> input);
 
 		void ListInputs();
 
@@ -73,20 +73,19 @@ namespace Debugger
 
 	public:
 		static CCPUDebug *CreateMainBoardCPUDebug(::CModel3 *model3);
-		
+
 		static CCPUDebug *CreateSoundBoardCPUDebug(::CModel3 *model3);
 
 		static CCPUDebug *CreateDSBCPUDebug(::CModel3 *model3);
 
 		static CCPUDebug *CreateDriveBoardCPUDebug(::CModel3 *model3);
-#ifdef NET_BOARD
-		static CCPUDebug *CreateNetBoardCPUDebug(::CModel3 *model3);
-#endif
 
-		CSupermodelDebugger(::CModel3 *model3, ::CInputs *inputs, ::CLogger *logger);
+		static CCPUDebug *CreateNetBoardCPUDebug(::CModel3 *model3);
+
+		CSupermodelDebugger(::CModel3 *model3, ::CInputs *inputs, std::shared_ptr<CLogger> logger);
 
 		void Poll();
-		
+
 		bool LoadModel3State(const char *fileName);
 
 		bool SaveModel3State(const char *fileName);
@@ -94,9 +93,9 @@ namespace Debugger
 		void ResetModel3();
 
 		void DebugLog(const char *fmt, va_list vl);
-		
+
 		void InfoLog(const char *fmt, va_list vl);
-		
+
 		void ErrorLog(const char *fmt, va_list vl);
 	};
 }

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <cstdint>
 
 struct Game
 {
@@ -14,13 +15,27 @@ struct Game
   unsigned year = 0;
   std::string stepping;
   std::string mpeg_board;
+  enum AudioTypes
+  {
+      MONO = 0,             // Merge DSB+SCSP1+SCSP2 to 1 channel mono
+      STEREO_LR,            // Merge DSP+SCSP1+SCSP2 to 2 channels stereo Left/Right (most common)
+      STEREO_RL,            // Merge DSP+SCSP1+SCSP2 to 2 channels stereo reversed Right/Left
+      QUAD_1_FLR_2_RLR,     // Split DSB+SCSP1 to FrontLeft/FrontRight and SCSP2 to RearLeft/RearRight (Daytona2)
+      QUAD_1_FRL_2_RRL,     // Split DSB+SCSP1 to FrontRight/FrontLeft and SCSP2 to RearRight/RearLeft
+      QUAD_1_RLR_2_FLR,     // Split DSB+SCSP1 to RearLeft/RearRight and SCSP2 to FrontLeft/FrontRight 
+      QUAD_1_RRL_2_FRL,     // Split DSB+SCSP1 to RearRight/RearLeft and SCSP2 to FrontRight/FrontLeft
+      QUAD_1_LR_2_FR_MIX,   // Specific srally2: Split SCSP2 and mix first channel to DSB+SCP11 Front Left/Right and second to Read Left/Right
+  };
+  AudioTypes audio = STEREO_LR;
   uint32_t encryption_key = 0;
+  bool netboard_present = false;
+
   enum Inputs
   {
     INPUT_UI              = 0,          // special code reserved for Supermodel UI inputs
     INPUT_COMMON          = 0x00000001, // common controls (coins, service, test)
     INPUT_VEHICLE         = 0x00000002, // vehicle controls
-    INPUT_JOYSTICK1       = 0x00000004, // joystick 1 
+    INPUT_JOYSTICK1       = 0x00000004, // joystick 1
     INPUT_JOYSTICK2       = 0x00000008, // joystick 2
     INPUT_FIGHTING        = 0x00000010, // fighting game controls
     INPUT_VR4             = 0x00000020, // four VR view buttons
@@ -43,6 +58,16 @@ struct Game
     INPUT_ALL             = 0x003FFFFF
   };
   uint32_t inputs = 0;
+
+  enum DriveBoardType
+  {
+    DRIVE_BOARD_NONE = 0,
+    DRIVE_BOARD_WHEEL,
+    DRIVE_BOARD_JOYSTICK,
+    DRIVE_BOARD_SKI,
+    DRIVE_BOARD_BILLBOARD
+  };
+  DriveBoardType driveboard_type = DriveBoardType::DRIVE_BOARD_NONE;
 };
 
 #endif  // INCLUDED_GAME_H

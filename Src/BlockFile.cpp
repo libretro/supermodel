@@ -26,6 +26,8 @@
  * class.
  */
 
+#include "BlockFile.h"
+
 #include <cstdio>
 #include <cstring>
 #include <cstdint>
@@ -43,7 +45,7 @@ void CBlockFile::ReadString(std::string *str, uint32_t length)
   str->clear();
   //TODO: use fstream to get rid of this ugly hack
   bool keep_loading = true;
-  for (size_t i = 0; i < length; i++)
+  for (uint32_t i = 0; i < length; i++)
   {
     char c;
     fread(&c, sizeof(char), 1, fp);
@@ -61,7 +63,7 @@ unsigned CBlockFile::ReadBytes(void *data, uint32_t numBytes)
 {
   if (NULL == fp)
     return 0;
-  return fread(data, sizeof(uint8_t), numBytes, fp);
+  return (uint32_t)fread(data, sizeof(uint8_t), numBytes, fp);
 }
 
 unsigned CBlockFile::ReadDWord(uint32_t *data)
@@ -122,8 +124,8 @@ void CBlockFile::WriteBlockHeader(const std::string &name, const std::string &co
   WriteDWord(0);  // will be automatically updated as we write the file
   
   // Write name and comment lengths
-  WriteDWord(name.size() + 1);
-  WriteDWord(comment.size() + 1);
+  WriteDWord((uint32_t)name.size() + 1);
+  WriteDWord((uint32_t)comment.size() + 1);
   Write(name);
   Write(comment);
   
@@ -164,6 +166,11 @@ unsigned CBlockFile::Read(bool *value)
   return numBytes;
 }
 
+unsigned CBlockFile::Read(bool& value)
+{
+    return Read(&value);        // turn reference into pointer for above function
+}
+
 void CBlockFile::Write(const void *data, uint32_t numBytes)
 {
   if (mode == 'w')
@@ -179,7 +186,7 @@ void CBlockFile::Write(bool value)
 void CBlockFile::Write(const std::string &str)
 {
   if (mode == 'w')
-    WriteBytes(str.c_str(), str.length() + 1);
+      WriteBytes(str.c_str(), (uint32_t)str.length() + 1);
 }
 
 void CBlockFile::NewBlock(const std::string &name, const std::string &comment)
@@ -188,10 +195,10 @@ void CBlockFile::NewBlock(const std::string &name, const std::string &comment)
     WriteBlockHeader(name, comment);
 }
 
-bool CBlockFile::FindBlock(const std::string &name)
+Result CBlockFile::FindBlock(const std::string &name)
 {
   if (mode != 'r')
-    return FAIL;
+    return Result::FAIL;
     
   fseek(fp, 0, SEEK_SET);
   
@@ -215,7 +222,7 @@ bool CBlockFile::FindBlock(const std::string &name)
     {
       fseek(fp, blockStartPos + 12 + name_length + comment_length, SEEK_SET); // move to beginning of data
       dataStartPos = ftell(fp);
-      return OKAY;
+      return Result::OKAY;
     }
     
     // Move to next block
@@ -225,24 +232,24 @@ bool CBlockFile::FindBlock(const std::string &name)
       break;
   }
   
-  return FAIL;
+  return Result::FAIL;
 }
 
-bool CBlockFile::Create(const std::string &file, const std::string &headerName, const std::string &comment)
+Result CBlockFile::Create(const std::string &file, const std::string &headerName, const std::string &comment)
 {
   fp = fopen(file.c_str(), "wb");
   if (NULL == fp)
-    return FAIL;
+    return Result::FAIL;
   mode = 'w';
   WriteBlockHeader(headerName, comment);
-  return OKAY;
+  return Result::OKAY;
 }
   
-bool CBlockFile::Load(const std::string &file)
+Result CBlockFile::Load(const std::string &file)
 {
   fp = fopen(file.c_str(), "rb");
   if (NULL == fp)
-    return FAIL;
+    return Result::FAIL;
   mode = 'r';
   
   // TODO: is this a valid block file?
@@ -252,27 +259,30 @@ bool CBlockFile::Load(const std::string &file)
   fileSize = ftell(fp);
   fseek(fp, 0, SEEK_SET);
   
-  return OKAY;
+  return Result::OKAY;
 }
   
 void CBlockFile::Close(void)
 {
-  if (fp != NULL)
+  if (fp != nullptr)
     fclose(fp);
-  fp = NULL;
+  fp = nullptr;
   mode = 0;
 }
 
-CBlockFile::CBlockFile(void)
+CBlockFile::CBlockFile(void) :
+    fp(nullptr),
+    mode(0),
+    fileSize(0),
+    blockStartPos(0),
+    dataStartPos(0)
 {
-  fp = NULL;
-  mode = 0;   // neither reading nor writing (do nothing)
 }
 
 CBlockFile::~CBlockFile(void)
 {
-  if (fp != NULL) // in case user forgot
+  if (fp != nullptr) // in case user forgot
     fclose(fp);
-  fp = NULL;
+  fp = nullptr;
   mode = 0;
 }

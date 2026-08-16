@@ -1,0 +1,36 @@
+# Software Information
+display_name = "Sega - Model 3 (Supermodel)"
+authors = "The Supermodel Team|sgiannop|Libretro contributors"
+corename = "Supermodel"
+supported_extensions = "zip"
+license = "GPLv3+"
+permissions = ""
+categories = "Emulator"
+display_version = "Git"
+
+# Hardware Information
+manufacturer = "Sega"
+systemname = "Model 3"
+systemid = "model3"
+
+# Database Information
+database = "Sega - Model 3"
+
+# Libretro Features
+supports_no_game = "false"
+savestate = "true"
+savestate_features = "serialized"
+cheats = "false"
+input_descriptors = "true"
+memory_descriptors = "false"
+libretro_saves = "true"
+core_options = "true"
+core_options_version = "2.0"
+hw_render = "true"
+required_hw_api = "OpenGL >= 4.1|OpenGL ES >= 3.0"
+needs_fullpath = "true"
+is_experimental = "true"
+
+# Description & Notes
+description = "A port of the Supermodel emulator to the Libretro API, enabling high-fidelity Sega Model 3 arcade emulation."
+notes = "(!) L.A. Machineguns and other gun games require calibration in the Test Menu (Service/Test buttons). | Supports Lightgun and Force Feedback (Rumble)."

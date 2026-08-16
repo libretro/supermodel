@@ -156,23 +156,22 @@
  * - Can some of the floating point flag attribs be replaced with ints?
  */
 
+#include "Legacy3D.h"
+
 #include "Supermodel.h"
-#include "Graphics/Legacy3D/Shaders3D.h"  // fragment and vertex shaders
+#include "Shaders3D.h"  // fragment and vertex shaders
+#include "Graphics/Shader.h"
+#include "Util/BitCast.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
 
-namespace Legacy3D {
-
-// Microsoft doesn't provide isnan() and isinf()
-#ifdef _MSC_VER
-  #include <float.h>
-  #define ISNAN(x)  (_isnan(x))
-  #define ISINF(x)  (!_finite(x))
-#else
-  #define ISNAN(x)  (std::isnan(x))
-  #define ISINF(x)  (std::isinf(x))
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795
 #endif
+
+namespace Legacy3D {
 
 /******************************************************************************
  Definitions and Constants
@@ -442,7 +441,7 @@ const UINT32 *CLegacy3D::TranslateModelAddress(UINT32 modelAddr)
 ******************************************************************************/
 
 // Macro to generate column-major (OpenGL) index from y,x subscripts
-#define CMINDEX(y,x)  (x*4+y)
+#define CMINDEX(y,x)  ((x)*4+(y))
 
 /*
  * MultMatrix():
@@ -528,7 +527,7 @@ void CLegacy3D::InitMatrixStack(UINT32 matrixBaseAddr)
   }
   
   // Set matrix base address and apply matrix #0 (coordinate system matrix)
-  matrixBasePtr = (float *) TranslateCullingAddress(matrixBaseAddr);
+  matrixBasePtr = (const float *) TranslateCullingAddress(matrixBaseAddr);
   MultMatrix(0);
 }
 
@@ -548,7 +547,7 @@ static bool IsDynamicModel(const UINT32 *data)
 {
   if (data == NULL)
     return false;
-  unsigned sharedVerts[16] = { 0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4 };
+  static constexpr unsigned sharedVerts[16] = { 0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4 };
   // VROM models are only dynamic if they reference polygon RAM via color palette indices
   bool done = false;
   do
@@ -562,7 +561,7 @@ static bool IsDynamicModel(const UINT32 *data)
     unsigned numVerts = (data[0]&0x40 ? 4 : 3);
     // Deduct number of reused verts
     numVerts -= sharedVerts[data[0]&0xf];
-	done = (data[1] & 4) > 0;
+    done = (data[1] & 4) > 0;
     // Skip header and vertices to next polygon
     data += 7 + numVerts * 4;
   }
@@ -580,12 +579,12 @@ static bool IsDynamicModel(const UINT32 *data)
  *
  * Models are cached for each unique culling node texture offset state.
  */
-bool CLegacy3D::DrawModel(UINT32 modelAddr)
+Result CLegacy3D::DrawModel(UINT32 modelAddr)
 {  
   //if (modelAddr==0x7FFF00)  // Fighting Vipers (this is not polygon data!)
   //  return;
   if (modelAddr == 0x200000)  // Virtual On 2 (during boot-up, causes slow-down)
-    return OKAY;
+    return Result::OKAY;
   const UINT32 *model = TranslateModelAddress(modelAddr);
   
   // Determine whether model is in polygon RAM or VROM
@@ -679,9 +678,9 @@ void CLegacy3D::DescendCullingNode(UINT32 addr)
   const UINT32 node1Ptr     = node[0x07-offset];
   const UINT32 node2Ptr     = node[0x08-offset];
   const UINT32 matrixOffset = node[0x03-offset]&0xFFF;
-  const float x             = *(float *) &node[0x04-offset];
-  const float y             = *(float *) &node[0x05-offset];
-  const float z             = *(float *) &node[0x06-offset];
+  const float x             = Util::Uint32AsFloat(node[0x04-offset]);
+  const float y             = Util::Uint32AsFloat(node[0x05-offset]);
+  const float z             = Util::Uint32AsFloat(node[0x06-offset]);
   
   // Texture offset?
   TextureOffset oldTextureOffset = m_textureOffset; // save old offsets
@@ -803,7 +802,7 @@ void CLegacy3D::DescendNodePtr(UINT32 nodeAddr)
 // Draws viewports of the given priority
 void CLegacy3D::RenderViewport(UINT32 addr, int pri, bool wideScreen)
 {
-  static const GLfloat color[8][3] = {
+  static constexpr GLfloat color[8][3] = {
     { 0.0, 0.0, 0.0 },    // off
     { 0.0, 0.0, 1.0 },    // blue
     { 0.0, 1.0, 0.0 },    // green
@@ -816,7 +815,7 @@ void CLegacy3D::RenderViewport(UINT32 addr, int pri, bool wideScreen)
 
   // Translate address and obtain pointer
   const UINT32 *vpnode = TranslateCullingAddress(addr);
-  if (NULL == vpnode)
+  if (nullptr == vpnode)
     return;
 
   // Recursively process next viewport
@@ -843,9 +842,9 @@ void CLegacy3D::RenderViewport(UINT32 addr, int pri, bool wideScreen)
   int vpHeight  = (vpnode[0x14]>>18)&0x3FFF;  // height (14.2)
   
   // Field of view and clipping
-  GLfloat vpTopAngle  = (float) asin(*(float *)&vpnode[0x0E]);  // FOV Y upper half-angle (radians)
-  GLfloat vpBotAngle  = (float) asin(*(float *)&vpnode[0x12]);  // FOV Y lower half-angle
-  GLfloat fovYDegrees = (vpTopAngle+vpBotAngle)*(float)(180.0/3.14159265358979323846);
+  GLfloat vpTopAngle  = asinf(Util::Uint32AsFloat(vpnode[0x0E]));  // FOV Y upper half-angle (radians)
+  GLfloat vpBotAngle  = asinf(Util::Uint32AsFloat(vpnode[0x12]));  // FOV Y lower half-angle
+  GLfloat fovYDegrees = (vpTopAngle+vpBotAngle)*(float)(180.0/M_PI);
   // TO-DO: investigate clipping planes
   
   // Set up viewport and projection (TO-DO: near and far clipping)
@@ -867,15 +866,15 @@ void CLegacy3D::RenderViewport(UINT32 addr, int pri, bool wideScreen)
     viewportY      = yOffs + (GLint) ((float)(384-(vpY+vpHeight))*yRatio);
     viewportWidth  = (GLint) ((float)vpWidth*xRatio);
     viewportHeight = (GLint) ((float)vpHeight*yRatio);
-    gluPerspective(fovYDegrees,(GLfloat)vpWidth/(GLfloat)vpHeight,0.1f,1e5);        // use Model 3 viewport ratio
+    gluPerspective(fovYDegrees,(GLdouble)vpWidth/(GLdouble)vpHeight,0.1,1e5);        // use Model 3 viewport ratio
   }
   
   // Lighting (note that sun vector points toward sun -- away from vertex)
-  lightingParams[0] = *(float *) &vpnode[0x05];             // sun X
-  lightingParams[1] = *(float *) &vpnode[0x06];             // sun Y
-  lightingParams[2] = *(float *) &vpnode[0x04];             // sun Z
-  lightingParams[3] = *(float *) &vpnode[0x07];             // sun intensity
-  lightingParams[4] = (float) ((vpnode[0x24]>>8)&0xFF) * (1.0f/255.0f); // ambient intensity
+  lightingParams[0] = Util::Uint32AsFloat(vpnode[0x05]);             // sun X
+  lightingParams[1] = Util::Uint32AsFloat(vpnode[0x06]);             // sun Y
+  lightingParams[2] = Util::Uint32AsFloat(vpnode[0x04]);             // sun Z
+  lightingParams[3] = Util::Uint32AsFloat(vpnode[0x07]);             // sun intensity
+  lightingParams[4] = (float) ((vpnode[0x24]>>8)&0xFF) * (float)(1.0/255.0); // ambient intensity
   lightingParams[5] = 0.0;  // reserved
      
   // Spotlight
@@ -884,8 +883,8 @@ void CLegacy3D::RenderViewport(UINT32 addr, int pri, bool wideScreen)
   spotEllipse[1]    = (float) ((vpnode[0x1D]>>3)&0x1FFF);   // spotlight Y
   spotEllipse[2]    = (float) ((vpnode[0x1E]>>16)&0xFFFF);  // spotlight X size (16-bit? May have fractional component below bit 16)
   spotEllipse[3]    = (float) ((vpnode[0x1D]>>16)&0xFFFF);  // spotlight Y size
-  spotRange[0]      = 1.0f/(*(float *) &vpnode[0x21]);      // spotlight start
-  spotRange[1]      = *(float *) &vpnode[0x1F];             // spotlight extent
+  spotRange[0]      = 1.0f/Util::Uint32AsFloat(vpnode[0x21]); // spotlight start
+  spotRange[1]      = Util::Uint32AsFloat(vpnode[0x1F]);    // spotlight extent
   spotColor[0]      = color[spotColorIdx][0];               // spotlight color
   spotColor[1]      = color[spotColorIdx][1];
   spotColor[2]      = color[spotColorIdx][2];
@@ -904,56 +903,56 @@ void CLegacy3D::RenderViewport(UINT32 addr, int pri, bool wideScreen)
   spotEllipse[3] *= yRatio;
 
   // Fog
-  fogParams[0] = (float) ((vpnode[0x22]>>16)&0xFF) * (1.0f/255.0f); // fog color R
-  fogParams[1] = (float) ((vpnode[0x22]>>8)&0xFF) * (1.0f/255.0f);  // fog color G
-  fogParams[2] = (float) ((vpnode[0x22]>>0)&0xFF) * (1.0f/255.0f);  // fog color B
-  fogParams[3] = *(float *) &vpnode[0x23];                          // fog density
-  fogParams[4] = (float) (INT16) (vpnode[0x25]&0xFFFF)*(1.0f/255.0f); // fog start
-  if (ISINF(fogParams[3]) || ISNAN(fogParams[3]) || ISINF(fogParams[4]) || ISNAN(fogParams[4])) // Star Wars Trilogy
+  fogParams[0] = (float) ((vpnode[0x22]>>16)&0xFF) * (float)(1.0/255.0); // fog color R
+  fogParams[1] = (float) ((vpnode[0x22]>>8)&0xFF) * (float)(1.0/255.0);  // fog color G
+  fogParams[2] = (float) ((vpnode[0x22]>>0)&0xFF) * (float)(1.0/255.0);  // fog color B
+  fogParams[3] = Util::Uint32AsFloat(vpnode[0x23]);                      // fog density
+  fogParams[4] = (float) (INT16) (vpnode[0x25]&0xFFFF) * (float)(1.0/255.0); // fog start
+  if (std::isinf(fogParams[3]) || std::isnan(fogParams[3]) || std::isinf(fogParams[4]) || std::isnan(fogParams[4])) // Star Wars Trilogy
     fogParams[3] = fogParams[4] = 0.0f;
-  
+
   // Unknown light/fog parameters
-  //GLfloat scrollFog = (float) (vpnode[0x20]&0xFF) * (1.0f/255.0f);  // scroll fog
-  //GLfloat scrollAtt = (float) (vpnode[0x24]&0xFF) * (1.0f/255.0f);  // scroll attenuation
+  //GLfloat scrollFog = (float) (vpnode[0x20]&0xFF) * (float)(1.0/255.0);  // scroll fog
+  //GLfloat scrollAtt = (float) (vpnode[0x24]&0xFF) * (float)(1.0/255.0);  // scroll attenuation
   //printf("scrollFog = %g, scrollAtt = %g\n", scrollFog, scrollAtt);
   //printf("Fog: R=%02X G=%02X B=%02X density=%g (%X) %d start=%g\n", ((vpnode[0x22]>>16)&0xFF), ((vpnode[0x22]>>8)&0xFF), ((vpnode[0x22]>>0)&0xFF), fogParams[3], vpnode[0x23], (fogParams[3]==fogParams[3]), fogParams[4]);
-  
+
   // Clear texture offsets before proceeding
   m_textureOffset = TextureOffset();
-  
+
   // Set up coordinate system and base matrix
   UINT32 matrixBase = vpnode[0x16] & 0xFFFFFF;
   glMatrixMode(GL_MODELVIEW);
   InitMatrixStack(matrixBase);
-  
+
   // Safeguard: weird coordinate system matrices usually indicate scenes that will choke the renderer
-  if (NULL != matrixBasePtr)
+  if (nullptr != matrixBasePtr)
   {
     float m21, m32, m13;
-    
+
     // Get the three elements that are usually set and see if their magnitudes are 1
     m21 = matrixBasePtr[6];
     m32 = matrixBasePtr[10];
     m13 = matrixBasePtr[5];
-    
+
     m21 *= m21;
     m32 *= m32;
     m13 *= m13;
 
-    if ((m21>1.05) || (m21<0.95))
+    if ((m21>1.05f) || (m21<0.95f))
       return;
-    if ((m32>1.05) || (m32<0.95))
+    if ((m32>1.05f) || (m32<0.95f))
       return;
-    if ((m13>1.05) || (m13<0.95))
+    if ((m13>1.05f) || (m13<0.95f))
       return;
   }
-  
+
   // Render
   AppendDisplayList(&VROMCache, true, 0); // add a viewport display list node
   AppendDisplayList(&PolyCache, true, 0);
   stackDepth = 0;
   listDepth = 0;
-  
+
   // Descend down the node link: Use recursive traversal
   DescendNodePtr(nodeAddr);
 }
@@ -964,6 +963,23 @@ void CLegacy3D::RenderFrame(void)
 
   // Begin frame
   ClearErrors();  // must be cleared each frame
+
+  if (m_aaTarget) {
+      glBindFramebuffer(GL_FRAMEBUFFER, m_aaTarget);			// if we have an AA target draw to it instead of the default back buffer
+  }
+
+  if (blockCulling && !m_config["NoWhiteFlash"].ValueAs<bool>())    // block culling disables 3D rendering
+  {
+      // clear screen to white
+      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+      glClear(GL_COLOR_BUFFER_BIT);
+
+      if (m_aaTarget) {
+          glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      }
+
+      return;
+  }
   
   // Z buffering (Z buffer is cleared by display list viewport nodes)
   glDepthFunc(GL_LESS);
@@ -1040,6 +1056,10 @@ void CLegacy3D::RenderFrame(void)
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
+
+  if (m_aaTarget) {
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);			// restore target if needed
+  }
 }
 
 void CLegacy3D::EndFrame(void)
@@ -1089,224 +1109,238 @@ void CLegacy3D::SetStepping(int stepping)
   
   DebugLog("Legacy3D set to Step %d.%d\n", (step>>4)&0xF, step&0xF);
 }
-  
-bool CLegacy3D::Init(unsigned xOffset, unsigned yOffset, unsigned xRes, unsigned yRes, unsigned totalXResParam, unsigned totalYResParam)
+
+Result CLegacy3D::SetupGLObjects()
 {
-  // Allocate memory for texture buffer
-  textureBuffer = new(std::nothrow) GLfloat[1024*1024*4];
-  if (NULL == textureBuffer)
-    return ErrorLog("Insufficient memory for texture decode buffer.");
-    
-  glGetError(); // clear error flag
-  
-  // Create model caches and VBOs
-  if (CreateModelCache(&VROMCache, NUM_STATIC_VERTS, NUM_LOCAL_VERTS, NUM_STATIC_MODELS, 0x4000000/4, NUM_DISPLAY_LIST_ITEMS, false))
-    return FAIL;
-  if (CreateModelCache(&PolyCache, NUM_DYNAMIC_VERTS, NUM_LOCAL_VERTS, NUM_DYNAMIC_MODELS, 0x4000000/4, NUM_DISPLAY_LIST_ITEMS, true))
-    return FAIL;
+    // Allocate memory for texture buffer
+    textureBuffer = new(std::nothrow) GLfloat[1024 * 1024 * 4];
+    if (NULL == textureBuffer)
+        return ErrorLog("Insufficient memory for texture decode buffer.");
 
-  // Initialize lighting parameters (updated as viewports are traversed)
-  lightingParams[0] = 0.0;
-  lightingParams[1] = 0.0;
-  lightingParams[2] = 0.0;
-  lightingParams[3] = 0.0;
-  lightingParams[4] = 1.0;  // full ambient intensity in case we want to render a standalone model
-  lightingParams[5] = 0.0;
+    glGetError(); // clear error flag
 
-  // Resolution and offset within physical display area
-  xRatio = (GLfloat) xRes / 496.0f;
-  yRatio = (GLfloat) yRes / 384.0f;
-  xOffs = xOffset;
-  yOffs = yOffset;
-  totalXRes = totalXResParam;
-  totalYRes = totalYResParam;
+    // Create model caches and VBOs
+    if (CreateModelCache(&VROMCache, NUM_STATIC_VERTS, NUM_LOCAL_VERTS, NUM_STATIC_MODELS, 0x4000000 / 4, NUM_DISPLAY_LIST_ITEMS, false) != Result::OKAY)
+        return Result::FAIL;
+    if (CreateModelCache(&PolyCache, NUM_DYNAMIC_VERTS, NUM_LOCAL_VERTS, NUM_DYNAMIC_MODELS, 0x4000000 / 4, NUM_DISPLAY_LIST_ITEMS, true) != Result::OKAY)
+        return Result::FAIL;
 
-  // Get ideal number of texture sheets required by default mapping from Model3 texture format to texture sheet
-  int idealTexSheets = 0;
-  for (size_t fmt = 0; fmt < 8; fmt++)
-  {
-    int sheetNum = defaultFmtToTexSheetNum[fmt];
-    idealTexSheets = std::max<int>(idealTexSheets, sheetNum + 1);
-  } 
+    // Initialize lighting parameters (updated as viewports are traversed)
+    lightingParams[0] = 0.0;
+    lightingParams[1] = 0.0;
+    lightingParams[2] = 0.0;
+    lightingParams[3] = 0.0;
+    lightingParams[4] = 1.0;  // full ambient intensity in case we want to render a standalone model
+    lightingParams[5] = 0.0;
 
-  // Get upper limit for number of texture maps to use from max number of texture units supported by video card
-  GLint glMaxTexUnits;
-  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &glMaxTexUnits);
-  int maxTexMaps = std::max<int>(1, std::min<int>(m_config["MaxTexMaps"].ValueAsDefault<int>(9), glMaxTexUnits));
-  
-  // Get upper limit for extent of texture maps to use from max texture size supported by video card
-  GLint maxTexSize;
-  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-  int mapExtent = std::max<int>(1, std::min<unsigned>(m_config["MaxTexMapExtent"].ValueAsDefault<int>(4), maxTexSize / 2048));
-  int mapSize = 2048 * mapExtent;
-  while (mapExtent > 1)
-  {
-    if ((mapExtent - 1) * (mapExtent - 1) < idealTexSheets)
+    // Get ideal number of texture sheets required by default mapping from Model3 texture format to texture sheet
+    int idealTexSheets = 0;
+    for (size_t fmt = 0; fmt < 8; fmt++)
     {
-      // Use a GL proxy texture to double check max texture size returned above
-      glTexImage2D(GL_PROXY_TEXTURE_2D, 0, GL_RGBA8, mapSize, mapSize, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, NULL);
-      GLint glTexWidth;
-      glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &glTexWidth);
-      if (glTexWidth == mapSize)
-        break;
+        int sheetNum = defaultFmtToTexSheetNum[fmt];
+        idealTexSheets = std::max<int>(idealTexSheets, sheetNum + 1);
     }
-    mapExtent--;
-    mapSize -= 2048;
-  }
 
-  // Load shaders, using multi-sheet shader if requested.
-  const char *fragmentShaderSource = (m_config["MultiTexture"].ValueAs<bool>() ? fragmentShaderMultiSheetSource : fragmentShaderSingleSheetSource); // single texture shader
-  if (OKAY != LoadShaderProgram(&shaderProgram,&vertexShader,&fragmentShader,m_config["VertexShader"].ValueAs<std::string>(),m_config["FragmentShader"].ValueAs<std::string>(),vertexShaderSource,fragmentShaderSource))
-    return FAIL;
-  
-  // Try locating default "textureMap" uniform in shader program
-  glUseProgram(shaderProgram); // bind program
-  textureMapLoc = glGetUniformLocation(shaderProgram, "textureMap");
-  
-  // If exists, bind to first texture unit
-  int mapCount = 0;
-  if (textureMapLoc != -1)
-    glUniform1i(textureMapLoc, mapCount++);
-  
-  // Try locating "textureMap[0-7]" uniforms in shader program
-  for (int mapNum = 0; mapNum < 8 && mapCount < maxTexMaps; mapNum++)
-  {
-    char uniformName[12];
-    sprintf(uniformName, "textureMap%u", mapNum);
-    textureMapLocs[mapNum] = glGetUniformLocation(shaderProgram, uniformName);  
-    // If exist, bind to remaining texture units
-    if (textureMapLocs[mapNum] != -1)
-      glUniform1i(textureMapLocs[mapNum], mapCount++);
-  }
-  
-  // Check sucessully located at least one "textureMap" uniform in shader program
-  if (mapCount == 0)
-    return ErrorLog("Fragment shader must contain at least one 'textureMap' uniform.");
-  InfoLog("Located and bound %u 'textureMap' uniform(s) in fragment shader.", mapCount);
+    // Get upper limit for number of texture maps to use from max number of texture units supported by video card
+    GLint glMaxTexUnits;
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &glMaxTexUnits);
+    int maxTexMaps = std::max<int>(1, std::min<int>(m_config["MaxTexMaps"].ValueAsDefault<int>(9), glMaxTexUnits));
 
-  // Readjust map extent so as to utilise as many texture maps found in shader program as possible
-  while (mapExtent > 1 && mapCount * (mapExtent - 1) * (mapExtent - 1) >= idealTexSheets)
-  {
-    mapExtent--;
-    mapSize -= 2048;
-  }
-  
-  // Create required number of GL textures for texture maps, decreasing map extent if memory is insufficent
-  unsigned sheetsPerMap = mapExtent * mapExtent;
-  while (true)
-  {
-    numTexMaps = std::min<unsigned>(mapCount, 1 + (idealTexSheets - 1) / sheetsPerMap);
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glGenTextures(numTexMaps, texMapIDs);
-    bool okay = true;
-    for (unsigned mapNum = 0; mapNum < numTexMaps; mapNum++)
+    // Get upper limit for extent of texture maps to use from max texture size supported by video card
+    GLint maxTexSize;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+    int mapExtent = std::max<int>(1, std::min<unsigned>(m_config["MaxTexMapExtent"].ValueAsDefault<int>(4), maxTexSize / 2048));
+    int mapSize = 2048 * mapExtent;
+    while (mapExtent > 1)
     {
-      glActiveTexture(GL_TEXTURE0 + mapNum); // activate correct texture unit
-      glBindTexture(GL_TEXTURE_2D, texMapIDs[mapNum]); // bind correct texture sheet
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // fragment shader performs its own interpolation
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mapSize, mapSize, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, 0);
-      if (glGetError() != GL_NO_ERROR)
-      {
-        // Ran out of video memory or texture size is too large
-        numTexMaps = mapNum;
-        okay = false;
-        break;
-      }
+        if ((mapExtent - 1) * (mapExtent - 1) < idealTexSheets)
+        {
+            // Use a GL proxy texture to double check max texture size returned above
+            glTexImage2D(GL_PROXY_TEXTURE_2D, 0, GL_RGBA8, mapSize, mapSize, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, NULL);
+            GLint glTexWidth;
+            glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &glTexWidth);
+            if (glTexWidth == mapSize)
+                break;
+        }
+        mapExtent--;
+        mapSize -= 2048;
     }
-    if (okay || mapExtent == 1)
-      break;
 
-    // Delete textures, decrease extent and try again
-    glDeleteTextures(numTexMaps, texMapIDs);    
-    mapExtent--;
-    mapSize -= 2048;
-    sheetsPerMap = mapExtent * mapExtent;
-  }
+    // Load shaders, using multi-sheet shader if requested.
+    const char* fragmentShaderSource = (m_config["MultiTexture"].ValueAs<bool>() ? fragmentShaderMultiSheetSource : fragmentShaderSingleSheetSource); // single texture shader
+    if (Result::OKAY != LoadShaderProgram(&shaderProgram, &vertexShader, &fragmentShader, m_config["VertexShader"].ValueAs<std::string>(), m_config["FragmentShader"].ValueAs<std::string>(), vertexShaderSource, fragmentShaderSource))
+        return Result::FAIL;
+
+    // Try locating default "textureMap" uniform in shader program
+    glUseProgram(shaderProgram); // bind program
+    textureMapLoc = glGetUniformLocation(shaderProgram, "textureMap");
+
+    // If exists, bind to first texture unit
+    int mapCount = 0;
+    if (textureMapLoc != -1)
+        glUniform1i(textureMapLoc, mapCount++);
+
+    // Try locating "textureMap[0-7]" uniforms in shader program
+    for (int mapNum = 0; mapNum < 8 && mapCount < maxTexMaps; mapNum++)
+    {
+        char uniformName[12];
+        snprintf(uniformName, sizeof(uniformName), "textureMap%u", mapNum);
+        textureMapLocs[mapNum] = glGetUniformLocation(shaderProgram, uniformName);
+        // If exist, bind to remaining texture units
+        if (textureMapLocs[mapNum] != -1)
+            glUniform1i(textureMapLocs[mapNum], mapCount++);
+    }
+
+    // Check sucessully located at least one "textureMap" uniform in shader program
+    if (mapCount == 0)
+        return ErrorLog("Fragment shader must contain at least one 'textureMap' uniform.");
+    InfoLog("Located and bound %u 'textureMap' uniform(s) in fragment shader.", mapCount);
+
+    // Readjust map extent so as to utilise as many texture maps found in shader program as possible
+    while (mapExtent > 1 && mapCount * (mapExtent - 1) * (mapExtent - 1) >= idealTexSheets)
+    {
+        mapExtent--;
+        mapSize -= 2048;
+    }
+
+    // Create required number of GL textures for texture maps, decreasing map extent if memory is insufficent
+    unsigned sheetsPerMap = mapExtent * mapExtent;
+    while (true)
+    {
+        numTexMaps = std::min<unsigned>(mapCount, 1 + (idealTexSheets - 1) / sheetsPerMap);
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glGenTextures(numTexMaps, texMapIDs);
+        bool okay = true;
+        for (unsigned mapNum = 0; mapNum < numTexMaps; mapNum++)
+        {
+            glActiveTexture(GL_TEXTURE0 + mapNum); // activate correct texture unit
+            glBindTexture(GL_TEXTURE_2D, texMapIDs[mapNum]); // bind correct texture sheet
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // fragment shader performs its own interpolation
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mapSize, mapSize, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, 0);
+            if (glGetError() != GL_NO_ERROR)
+            {
+                // Ran out of video memory or texture size is too large
+                numTexMaps = mapNum;
+                okay = false;
+                break;
+            }
+        }
+        if (okay || mapExtent == 1)
+            break;
+
+        // Delete textures, decrease extent and try again
+        glDeleteTextures(numTexMaps, texMapIDs);
+        mapExtent--;
+        mapSize -= 2048;
+        sheetsPerMap = mapExtent * mapExtent;
+    }
+
+    // Check successfully created at least one texture map
+    if (numTexMaps == 0)
+        return ErrorLog("OpenGL was unable to provide any 2048x2048-texel texture maps.");
+    InfoLog("Created %u %ux%u-texel GL texture map(s).", numTexMaps, mapSize, mapSize);
+
+    // Create texture sheet objects and assign them to texture maps
+    numTexSheets = std::min<unsigned>(numTexMaps * sheetsPerMap, idealTexSheets);
+    texSheets = new(std::nothrow) TexSheet[numTexSheets];
+    if (texSheets == NULL)
+        return ErrorLog("Unable to assign memory for %u texture sheet objects.", numTexSheets);
+    for (unsigned sheetNum = 0; sheetNum < numTexSheets; sheetNum++)
+    {
+        unsigned mapNum = sheetNum / sheetsPerMap;
+        unsigned posInMap = sheetNum % sheetsPerMap;
+        texSheets[sheetNum].sheetNum = sheetNum;
+        texSheets[sheetNum].mapNum = mapNum;
+        texSheets[sheetNum].xOffset = 2048 * (posInMap % mapExtent);
+        texSheets[sheetNum].yOffset = 2048 * (posInMap / mapExtent);
+    }
+
+    // Assign Model3 texture formats to texture sheets (cannot just use default mapping as may have ended up with fewer
+    // texture sheets than anticipated)
+    for (unsigned fmt = 0; fmt < 8; fmt++)
+    {
+        int sheetNum = defaultFmtToTexSheetNum[fmt] % numTexSheets;
+        fmtToTexSheet[fmt] = &texSheets[sheetNum];
+    }
+
+    InfoLog("Mapped %u Model3 texture formats to %u texture sheet(s) in %u %ux%u-texel texture map(s).", 8, numTexSheets, numTexMaps, mapSize, mapSize);
+
+    // Get location of the rest of the uniforms
+    modelViewMatrixLoc = glGetUniformLocation(shaderProgram, "modelViewMatrix");
+    projectionMatrixLoc = glGetUniformLocation(shaderProgram, "projectionMatrix");
+    lightingLoc = glGetUniformLocation(shaderProgram, "lighting");
+    mapSizeLoc = glGetUniformLocation(shaderProgram, "mapSize");
+    spotEllipseLoc = glGetUniformLocation(shaderProgram, "spotEllipse");
+    spotRangeLoc = glGetUniformLocation(shaderProgram, "spotRange");
+    spotColorLoc = glGetUniformLocation(shaderProgram, "spotColor");
+
+    // Get locations of custom vertex attributes
+    subTextureLoc = glGetAttribLocation(shaderProgram, "subTexture");
+    texParamsLoc = glGetAttribLocation(shaderProgram, "texParams");
+    texFormatLoc = glGetAttribLocation(shaderProgram, "texFormat");
+    texMapLoc = glGetAttribLocation(shaderProgram, "texMap");
+    transLevelLoc = glGetAttribLocation(shaderProgram, "transLevel");
+    lightEnableLoc = glGetAttribLocation(shaderProgram, "lightEnable");
+    specularLoc = glGetAttribLocation(shaderProgram, "specular");
+    shininessLoc = glGetAttribLocation(shaderProgram, "shininess");
+    fogIntensityLoc = glGetAttribLocation(shaderProgram, "fogIntensity");
+
+    // Set map size
+    if (mapSizeLoc != -1)
+        glUniform1f(mapSizeLoc, (GLfloat)mapSize);
+
+    // Additional OpenGL stuff
+    glFrontFace(GL_CW);   // polygons are uploaded w/ clockwise winding
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glClearDepth(1.0);
+    glEnable(GL_TEXTURE_2D);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // Mark all textures as dirty
+    UploadTextures(0, 0, 0, 2048, 2048);
+
+    DebugLog("Legacy3D initialized\n");
+    return Result::OKAY;
+}
   
-  // Check successfully created at least one texture map
-  if (numTexMaps == 0)
-    return ErrorLog("OpenGL was unable to provide any 2048x2048-texel texture maps.");
-  InfoLog("Created %u %ux%u-texel GL texture map(s).", numTexMaps, mapSize, mapSize);
+Result CLegacy3D::Init(unsigned xOffset, unsigned yOffset, unsigned xRes, unsigned yRes, unsigned totalXResParam, unsigned totalYResParam, unsigned aaTarget)
+{
+    // Resolution and offset within physical display area
+    xRatio = (GLfloat)xRes / 496.0f;
+    yRatio = (GLfloat)yRes / 384.0f;
+    xOffs = xOffset;
+    yOffs = yOffset;
+    totalXRes = totalXResParam;
+    totalYRes = totalYResParam;
 
-  // Create texture sheet objects and assign them to texture maps
-  numTexSheets = std::min<unsigned>(numTexMaps * sheetsPerMap, idealTexSheets);
-  texSheets = new(std::nothrow) TexSheet[numTexSheets];
-  if (texSheets == NULL)
-    return ErrorLog("Unable to assign memory for %u texture sheet objects.", numTexSheets);
-  for (unsigned sheetNum = 0; sheetNum < numTexSheets; sheetNum++)
-  {
-    unsigned mapNum = sheetNum / sheetsPerMap;
-    unsigned posInMap = sheetNum % sheetsPerMap;
-    texSheets[sheetNum].sheetNum = sheetNum;
-    texSheets[sheetNum].mapNum = mapNum;
-    texSheets[sheetNum].xOffset = 2048 * (posInMap % mapExtent);
-    texSheets[sheetNum].yOffset = 2048 * (posInMap / mapExtent);
-  }
+    m_aaTarget = aaTarget;
 
-  // Assign Model3 texture formats to texture sheets (cannot just use default mapping as may have ended up with fewer
-  // texture sheets than anticipated)
-  for (unsigned fmt = 0; fmt < 8; fmt++)
-  {
-    int sheetNum = defaultFmtToTexSheetNum[fmt] % numTexSheets; 
-    fmtToTexSheet[fmt] = &texSheets[sheetNum];
-  }
-
-  InfoLog("Mapped %u Model3 texture formats to %u texture sheet(s) in %u %ux%u-texel texture map(s).", 8, numTexSheets, numTexMaps, mapSize, mapSize);
-
-  // Get location of the rest of the uniforms
-  modelViewMatrixLoc = glGetUniformLocation(shaderProgram,"modelViewMatrix");
-  projectionMatrixLoc = glGetUniformLocation(shaderProgram,"projectionMatrix");
-  lightingLoc = glGetUniformLocation(shaderProgram, "lighting");
-  mapSizeLoc = glGetUniformLocation(shaderProgram, "mapSize");
-  spotEllipseLoc = glGetUniformLocation(shaderProgram, "spotEllipse");
-  spotRangeLoc = glGetUniformLocation(shaderProgram, "spotRange");
-  spotColorLoc = glGetUniformLocation(shaderProgram, "spotColor");
-  
-  // Get locations of custom vertex attributes
-  subTextureLoc = glGetAttribLocation(shaderProgram,"subTexture");
-  texParamsLoc = glGetAttribLocation(shaderProgram,"texParams");
-  texFormatLoc = glGetAttribLocation(shaderProgram,"texFormat");
-  texMapLoc = glGetAttribLocation(shaderProgram,"texMap");
-  transLevelLoc = glGetAttribLocation(shaderProgram,"transLevel");
-  lightEnableLoc = glGetAttribLocation(shaderProgram,"lightEnable");
-  specularLoc = glGetAttribLocation(shaderProgram,"specular");
-  shininessLoc = glGetAttribLocation(shaderProgram,"shininess");
-  fogIntensityLoc = glGetAttribLocation(shaderProgram,"fogIntensity");
-  
-  // Set map size
-  if (mapSizeLoc != -1)
-    glUniform1f(mapSizeLoc, (GLfloat)mapSize);
-
-  // Additional OpenGL stuff
-  glFrontFace(GL_CW);   // polygons are uploaded w/ clockwise winding
-  glCullFace(GL_BACK);
-  glEnable(GL_CULL_FACE);
-  glClearDepth(1.0);
-  glEnable(GL_TEXTURE_2D);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
-  // Mark all textures as dirty
-  UploadTextures(0, 0, 0, 2048, 2048);
-
-  DebugLog("Legacy3D initialized\n");
-  return OKAY;
+    return Result::OKAY;
 }
 
 void CLegacy3D::SetSunClamp(bool enable)
 {
 }
 
-void CLegacy3D::SetSignedShade(bool enable)
+void CLegacy3D::SetBlockCulling(bool enable)
 {
+    blockCulling = enable;
+}
+
+float CLegacy3D::GetLosValue(int layer)
+{
+	return 0.0f;
 }
 
 CLegacy3D::CLegacy3D(const Util::Config::Node &config)
-  : m_config(config)
+  : m_config(config),
+    m_aaTarget(0)
 { 
   cullingRAMLo = NULL;
   cullingRAMHi = NULL;
@@ -1332,6 +1366,8 @@ CLegacy3D::CLegacy3D(const Util::Config::Node &config)
     VROMCache.ListTail[i] = NULL;
     PolyCache.ListTail[i] = NULL;
   }
+
+  SetupGLObjects();
   
   DebugLog("Built Legacy3D\n");
 }
@@ -1342,22 +1378,21 @@ CLegacy3D::~CLegacy3D(void)
   if (glBindBuffer != NULL) // we may have failed earlier due to lack of OpenGL 2.0 functions 
     glBindBuffer(GL_ARRAY_BUFFER, 0); // disable VBOs by binding to 0
   glDeleteTextures(numTexMaps, texMapIDs);
-  
+
   DestroyModelCache(&VROMCache);
   DestroyModelCache(&PolyCache);
-  
+
   cullingRAMLo = NULL;
   cullingRAMHi = NULL;
   polyRAM = NULL;
   vrom = NULL;
   textureRAM = NULL;
-  
-  if (texSheets != NULL)
-    delete [] texSheets;
 
-  if (textureBuffer != NULL)
-    delete [] textureBuffer;
-  textureBuffer = NULL;
+  delete [] texSheets;
+  texSheets = nullptr;
+
+  delete [] textureBuffer;
+  textureBuffer = nullptr;
 
   DebugLog("Destroyed Legacy3D\n");
 }

@@ -1,7 +1,7 @@
 /**
  ** Supermodel
  ** A Sega Model 3 Arcade Emulator.
- ** Copyright 2011 Bart Trzynadlowski, Nik Henson
+ ** Copyright 2003-2026 The Supermodel Team
  **
  ** This file is part of Supermodel.
  **
@@ -300,7 +300,7 @@ Finish:
 
 struct DIEnumDevsContext
 {
-	vector<DIJoyInfo> *infos;
+	std::vector<DIJoyInfo> *infos;
 	bool useXInput;
 };
 
@@ -309,8 +309,7 @@ static BOOL CALLBACK DI8EnumDevicesCallback(LPCDIDEVICEINSTANCE instance, LPVOID
 	DIEnumDevsContext *diDevsContext = (DIEnumDevsContext*)context;
 	
 	// Keep track of all joystick device GUIDs
-	DIJoyInfo info;
-	memset(&info, 0, sizeof(info));
+	DIJoyInfo info{};
 	info.guid = instance->guidInstance;
 	// If XInput is enabled, see if device is an XInput device
 	info.isXInput = diDevsContext->useXInput && IsXInputDevice(instance->guidProduct);
@@ -356,18 +355,16 @@ static BOOL CALLBACK DI8EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE instance, 
 	else if (instance->dwType & DIDFT_AXIS)
 	{
 		// If is an axis but couldn't match GUID above (which, according to MSDN, is an optional attribute), then flag error and try matching via offset
-		int objNum = DIDFT_GETINSTANCE(instance->dwType);
-		DIOBJECTDATAFORMAT fmt = c_dfDIJoystick2.rgodf[objNum];
 		diObjsContext->enumError = true;
 #ifdef _MSC_VER	// MS VisualC++
 		switch (fmt.dwOfs)
 		{
-			case DIJOFS_X:  axisNum = AXIS_X; break;
-			case DIJOFS_Y:  axisNum = AXIS_Y; break;
-			case DIJOFS_Z:  axisNum = AXIS_Z; break;
-			case DIJOFS_RX: axisNum = AXIS_RX; break;
-			case DIJOFS_RY: axisNum = AXIS_RY; break;
-			case DIJOFS_RZ: axisNum = AXIS_RZ; break;
+			case offsetof(DIJOYSTATE, lX):  axisNum = AXIS_X; break;
+			case offsetof(DIJOYSTATE, lY):  axisNum = AXIS_Y; break;
+			case offsetof(DIJOYSTATE, lZ):  axisNum = AXIS_Z; break;
+			case offsetof(DIJOYSTATE, lRx): axisNum = AXIS_RX; break;
+			case offsetof(DIJOYSTATE, lRy): axisNum = AXIS_RY; break;
+			case offsetof(DIJOYSTATE, lRz): axisNum = AXIS_RZ; break;
 			default:        
 				// If still couldn't match then it is not an axis
 				return DIENUM_CONTINUE;  
@@ -403,10 +400,7 @@ static BOOL CALLBACK DI8EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE instance, 
 
 	// Get axis name from DirectInput and store that too
 	char *axisName = joyDetails->axisName[axisNum];
-	strcpy(axisName, CInputSystem::GetDefaultAxisName(axisNum));
-	strcat(axisName, " (");
-	strncat(axisName, instance->tszName, MAX_NAME_LENGTH - strlen(axisName) - 1);
-	strcat(axisName, ")");
+	snprintf(axisName, MAX_NAME_LENGTH + 1, "%s (%s)", CInputSystem::GetDefaultAxisName(axisNum), instance->tszName);
 
 	return DIENUM_CONTINUE;
 }
@@ -428,11 +422,11 @@ const char *CDirectInputSystem::ConstructName(bool useRawInput, bool useXInput)
 		return (useXInput ? "Xinput" : "DirectInput");
 }
 
-CDirectInputSystem::CDirectInputSystem(const Util::Config::Node &config, bool useRawInput, bool useXInput) : 
+CDirectInputSystem::CDirectInputSystem(const Util::Config::Node &config, SDL_Window *window, bool useRawInput, bool useXInput) : 
 	CInputSystem(ConstructName(useRawInput, useXInput)),
 	m_config(config),
 	m_useRawInput(useRawInput), m_useXInput(useXInput), m_enableFFeedback(true),
-	m_initializedCOM(false), m_activated(false), m_hwnd(NULL), m_screenW(0), m_screenH(0), 
+	m_hwnd(NULL), m_screenW(0), m_screenH(0), m_initializedCOM(false), m_activated(false), m_window(window),
 	m_getRIDevListPtr(NULL), m_getRIDevInfoPtr(NULL), m_regRIDevsPtr(NULL), m_getRIDataPtr(NULL),
 	m_xiGetCapabilitiesPtr(NULL), m_xiGetStatePtr(NULL), m_xiSetStatePtr(NULL), m_di8(NULL), m_di8Keyboard(NULL), m_di8Mouse(NULL)
 {
@@ -456,7 +450,7 @@ CDirectInputSystem::~CDirectInputSystem()
 	}
 }
 
-bool CDirectInputSystem::GetRegString(HKEY regKey, const char *regPath, string &str)
+bool CDirectInputSystem::GetRegString(HKEY regKey, const char *regPath, std::string &str)
 {
 	// Query to get the length
 	DWORD dataLen;
@@ -480,14 +474,14 @@ bool CDirectInputSystem::GetRegDeviceName(const char *rawDevName, char *name)
 	// Check raw device string is in form that can be handled and remove initial 4-char sequence
 	// For XP this is: \??\TypeID#HardwareID#InstanceID#{DevicesClasses-id}
 	// For Vista/Win7 64bit this is: \\?\TypeID#HardwareID#InstanceID#{DevicesClasses-id}
-	string devNameStr(rawDevName);
-	if (devNameStr.find("\\??\\") != string::npos || devNameStr.find("\\\\?\\") != string::npos)
+	std::string devNameStr(rawDevName);
+	if (devNameStr.find("\\??\\") != std::string::npos || devNameStr.find("\\\\?\\") != std::string::npos)
 		devNameStr.erase(0, 4);
 	else 
 		return false;
 
 	// Append raw device string to base registry path and convert all #'s to \ in the process
-	string regPath = "SYSTEM\\CurrentControlSet\\Enum\\" + devNameStr;
+	std::string regPath = "SYSTEM\\CurrentControlSet\\Enum\\" + devNameStr;
 	for (size_t i = 0; i < regPath.size(); i++)
 	{
 		if (regPath[i] == '#')
@@ -496,7 +490,7 @@ bool CDirectInputSystem::GetRegDeviceName(const char *rawDevName, char *name)
 
 	// Remove part after last \ in path
 	size_t last = regPath.rfind('\\');
-	if (last != string::npos)
+	if (last != std::string::npos)
 		regPath = regPath.erase(last);
 
 	// Try and open registry key with this path
@@ -505,10 +499,10 @@ bool CDirectInputSystem::GetRegDeviceName(const char *rawDevName, char *name)
 	if (result != ERROR_SUCCESS)
 		return false;
 
-	string parentIdStr;
+	std::string parentIdStr;
 
 	// Fetch device description from registry, if it exists, and use that for name
-	string regStr;
+	std::string regStr;
 	if (GetRegString(regKey, "DeviceDesc", regStr))
 		goto Found;
 
@@ -516,12 +510,12 @@ bool CDirectInputSystem::GetRegDeviceName(const char *rawDevName, char *name)
 	RegCloseKey(regKey);
 
 	// Check it is HID device
-	if (devNameStr.find("HID") == string::npos)
+	if (devNameStr.find("HID") == std::string::npos)
 		return false;
 
 	// Get parent id, from after last \ in name
 	last = regPath.rfind('\\');
-	if (last == regPath.size() - 1 || last == string::npos)
+	if (last == regPath.size() - 1 || last == std::string::npos)
 		return false;
 	parentIdStr = regPath.substr(last + 1);
 
@@ -560,7 +554,7 @@ bool CDirectInputSystem::GetRegDeviceName(const char *rawDevName, char *name)
 						continue;
 
 					// Get parent id prefix and see if it matches
-					string finalParentIdStr;
+					std::string finalParentIdStr;
 					if (GetRegString(finalRegKey, "ParentIdPrefix", finalParentIdStr) && parentIdStr.compare(0, finalParentIdStr.size(), finalParentIdStr) == 0)
 					{
 						// Get device description, if it exists, and use that for name
@@ -588,7 +582,7 @@ bool CDirectInputSystem::GetRegDeviceName(const char *rawDevName, char *name)
 Found:
 	// If found device description, name will be from final colon
 	last = regStr.rfind(';');
-	if (last == regStr.size() - 1 || last == string::npos)
+	if (last == regStr.size() - 1 || last == std::string::npos)
 		last = 0;
 	else 
 		last++;
@@ -607,7 +601,7 @@ void CDirectInputSystem::OpenKeyboardsAndMice()
 		UINT nDevices;
 		if (m_getRIDevListPtr(NULL, &nDevices, sizeof(RAWINPUTDEVICELIST)) == 0 && nDevices > 0)
 		{
-			PRAWINPUTDEVICELIST pDeviceList = new RAWINPUTDEVICELIST[nDevices];
+			PRAWINPUTDEVICELIST pDeviceList = new (std::nothrow) RAWINPUTDEVICELIST[nDevices];
 			if (pDeviceList != NULL && m_getRIDevListPtr(pDeviceList, &nDevices, sizeof(RAWINPUTDEVICELIST)) != (UINT)-1)
 			{
 				// Loop through devices backwards (since new devices are usually added at beginning)
@@ -620,8 +614,8 @@ void CDirectInputSystem::OpenKeyboardsAndMice()
 					if (m_getRIDevInfoPtr(device.hDevice, RIDI_DEVICENAME, NULL, &nLength) != 0)
 						continue;
 					nLength = std::min<int>(MAX_NAME_LENGTH, nLength);
-					char name[MAX_NAME_LENGTH];
-					if (m_getRIDevInfoPtr(device.hDevice, RIDI_DEVICENAME, name, &nLength) == -1)
+					char name[MAX_NAME_LENGTH] = {};
+					if (m_getRIDevInfoPtr(device.hDevice, RIDI_DEVICENAME, name, &nLength) == (UINT)-1)
 						continue;
 
 					// Ignore any RDP devices
@@ -652,16 +646,15 @@ void CDirectInputSystem::OpenKeyboardsAndMice()
 						// TODO mseDetails.isAbsolute = ???
 						m_mseDetails.push_back(mseDetails);
 
-						RawMseState mseState;
-						memset(&mseState, 0, sizeof(mseState));
+						RawMseState mseState{};
 						m_rawMseStates.push_back(mseState);
 					}
 				}
 
 				DebugLog("RawInput - found %d keyboards and %d mice", m_rawKeyboards.size(), m_rawMice.size());
 
-				// Check some devices were actually found
-				m_useRawInput = m_rawKeyboards.size() > 0 && m_rawMice.size() > 0;
+				// Check if some devices were actually found
+				m_useRawInput = !m_rawKeyboards.empty() && !m_rawMice.empty();
 			}
 			else
 			{
@@ -670,8 +663,7 @@ void CDirectInputSystem::OpenKeyboardsAndMice()
 				m_useRawInput = false;
 			}
 
-			if (pDeviceList != NULL)
-				delete[] pDeviceList;
+			delete[] pDeviceList;
 		}
 		else
 		{
@@ -781,7 +773,7 @@ void CDirectInputSystem::PollKeyboardsAndMice()
 	if (m_useRawInput)
 	{
 		// For RawInput, only thing to do is update wheelDir from wheelData for each mouse state.  Everything else is updated via WM events.
-		for (vector<RawMseState>::iterator it = m_rawMseStates.begin(); it != m_rawMseStates.end(); it++)
+		for (std::vector<RawMseState>::iterator it = m_rawMseStates.begin(); it != m_rawMseStates.end(); ++it)
 		{
 			if (it->wheelDelta != 0)
 			{
@@ -875,7 +867,7 @@ void CDirectInputSystem::CloseKeyboardsAndMice()
 		}
 
 		// Delete storage for keyboards
-		for (vector<bool*>::iterator it = m_rawKeyStates.begin(); it != m_rawKeyStates.end(); it++)
+		for (std::vector<bool*>::iterator it = m_rawKeyStates.begin(); it != m_rawKeyStates.end(); ++it)
 			delete[] *it;
 		m_keyDetails.clear();
 		m_rawKeyboards.clear();
@@ -915,7 +907,7 @@ void CDirectInputSystem::ResetMice()
 		m_combRawMseState.x = p.x;
 		m_combRawMseState.y = p.y;
 		m_combRawMseState.z = 0;
-		for (vector<RawMseState>::iterator it = m_rawMseStates.begin(); it != m_rawMseStates.end(); it++)
+		for (std::vector<RawMseState>::iterator it = m_rawMseStates.begin(); it != m_rawMseStates.end(); ++it)
 		{
 			it->x = p.x;
 			it->y = p.y;
@@ -1057,7 +1049,7 @@ void CDirectInputSystem::ProcessRawInput(HRAWINPUT hInput)
 				}
 
 				m_combRawMseState.buttons = 0;
-				for (vector<RawMseState>::iterator it = m_rawMseStates.begin(); it != m_rawMseStates.end(); it++)
+				for (std::vector<RawMseState>::iterator it = m_rawMseStates.begin(); it != m_rawMseStates.end(); ++it)
 					m_combRawMseState.buttons |= it->buttons;
 			}
 		}
@@ -1080,18 +1072,17 @@ void CDirectInputSystem::OpenJoysticks()
 	// Loop through those found
 	int joyNum = 0;
 	int xNum = 0;
-	for (vector<DIJoyInfo>::iterator it = m_diJoyInfos.begin(); it != m_diJoyInfos.end(); it++)
+	for (std::vector<DIJoyInfo>::iterator it = m_diJoyInfos.begin(); it != m_diJoyInfos.end(); ++it)
 	{
 		joyNum++;
 
-		JoyDetails joyDetails;
-		memset(&joyDetails, 0, sizeof(joyDetails));
+		JoyDetails joyDetails{};
 
 		// See if can use XInput for device
 		if (it->isXInput)
 		{
 			// If so, set joystick details (currently XBox controller is only gamepad handled by XInput and so its capabilities are fixed)
-			sprintf(joyDetails.name, "Xbox 360 Controller %d (via XInput)", (xNum + 1));
+			snprintf(joyDetails.name, sizeof(joyDetails.name), "Xbox 360 Controller %d (via XInput)", (xNum + 1));
 			joyDetails.numAxes = 6;  // Left & right triggers are mapped to axes in addition to the two analog sticks, giving a total of 6 axes
 			joyDetails.numPOVs = 1;  // Digital D-pad
 			joyDetails.numButtons = 10;
@@ -1145,7 +1136,7 @@ void CDirectInputSystem::OpenJoysticks()
 			}
 
 			// Gather joystick details (name, num POVs & buttons, which axes are available and whether force feedback is available)
-			DIPROPSTRING didps;
+			DIPROPSTRING didps{};
 			didps.diph.dwSize = sizeof(DIPROPSTRING); 
 			didps.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
 			didps.diph.dwHow = DIPH_DEVICE;
@@ -1165,8 +1156,7 @@ void CDirectInputSystem::OpenJoysticks()
 			joyDetails.numButtons = devCaps.dwButtons;
 			
 			// Enumerate axes
-			DIEnumObjsContext diObjsContext;
-			memset(&diObjsContext, 0, sizeof(diObjsContext));
+			DIEnumObjsContext diObjsContext{};
 			diObjsContext.joyDetails = &joyDetails;
 			if (FAILED(hr = joystick->EnumObjects(DI8EnumObjectsCallback, &diObjsContext, DIDFT_ALL)))
 			{
@@ -1273,14 +1263,13 @@ void CDirectInputSystem::OpenJoysticks()
 			}
 		
 			// Keep track of DirectInput device number
-			it->dInputNum = m_di8Joysticks.size();
+			it->dInputNum = (int)m_di8Joysticks.size();
 
 			m_di8Joysticks.push_back(joystick);
 		}
 
 		// Create initial blank joystick state
-		DIJOYSTATE2 joyState;
-		memset(&joyState, 0, sizeof(joyState));
+		DIJOYSTATE2 joyState{};
 		for (int povNum = 0; povNum < 4; povNum++)
 			joyState.rgdwPOV[povNum] = -1;
 		
@@ -1293,7 +1282,7 @@ void CDirectInputSystem::ActivateJoysticks()
 {
 	// Set DirectInput cooperative level of joysticks
 	unsigned joyNum = 0;
-	for (vector<DIJoyInfo>::iterator it = m_diJoyInfos.begin(); it != m_diJoyInfos.end(); it++)
+	for (std::vector<DIJoyInfo>::iterator it = m_diJoyInfos.begin(); it != m_diJoyInfos.end(); ++it)
 	{
 		if (!it->isXInput)
 		{	
@@ -1313,7 +1302,7 @@ void CDirectInputSystem::PollJoysticks()
 {
 	// Get current joystick states from XInput and DirectInput
 	int i = 0;
-	for (vector<DIJoyInfo>::iterator it = m_diJoyInfos.begin(); it != m_diJoyInfos.end(); it++)
+	for (std::vector<DIJoyInfo>::iterator it = m_diJoyInfos.begin(); it != m_diJoyInfos.end(); ++it)
 	{
 		LPDIJOYSTATE2 pJoyState = &m_diJoyStates[i++];
 
@@ -1321,8 +1310,7 @@ void CDirectInputSystem::PollJoysticks()
 		if (it->isXInput)
 		{
 			// Use XInput to query joystick
-			XINPUT_STATE xState;
-			memset(&xState, 0, sizeof(xState));
+			XINPUT_STATE xState{};
 			if (FAILED(hr = m_xiGetStatePtr(it->xInputNum, &xState)))
 			{
 				memset(pJoyState, 0, sizeof(DIJOYSTATE2));
@@ -1331,7 +1319,7 @@ void CDirectInputSystem::PollJoysticks()
 
 			// Map XInput state onto joystick's DirectInput state object
 			XINPUT_GAMEPAD gamepad = xState.Gamepad;
-			pJoyState->lX = (LONG)gamepad.sThumbLX, 
+			pJoyState->lX = (LONG)gamepad.sThumbLX;
 			pJoyState->lY = (LONG)-gamepad.sThumbLY;
 			pJoyState->lZ = (LONG)CInputSource::Scale(gamepad.bLeftTrigger, 0, 255, 0, 32767);
 			pJoyState->lRx = (LONG)gamepad.sThumbRX;
@@ -1394,7 +1382,7 @@ void CDirectInputSystem::PollJoysticks()
 void CDirectInputSystem::CloseJoysticks()
 {
 	// Release any DirectInput force feedback effects that were created
-	for (vector<DIJoyInfo>::iterator it = m_diJoyInfos.begin(); it != m_diJoyInfos.end(); it++)
+	for (std::vector<DIJoyInfo>::iterator it = m_diJoyInfos.begin(); it != m_diJoyInfos.end(); ++it)
 	{
 		for (unsigned axisNum = 0; axisNum < NUM_JOY_AXES; axisNum++)
 		{
@@ -1410,7 +1398,7 @@ void CDirectInputSystem::CloseJoysticks()
 	}
 
 	// Release each DirectInput joystick
-	for (vector<LPDIRECTINPUTDEVICE8>::iterator it = m_di8Joysticks.begin(); it != m_di8Joysticks.end(); it++)
+	for (std::vector<LPDIRECTINPUTDEVICE8>::iterator it = m_di8Joysticks.begin(); it != m_di8Joysticks.end(); ++it)
 	{
 		(*it)->Unacquire();
 		(*it)->Release();
@@ -1444,12 +1432,11 @@ HRESULT CDirectInputSystem::CreateJoystickEffect(LPDIRECTINPUTDEVICE8 joystick, 
 	DICONSTANTFORCE dicf;
 	DICONDITION dic;
 	DIPERIODIC dip;
-	DIENVELOPE die;
+	//DIENVELOPE die;
 	GUID guid;
 
 	// Set common effects parameters
-	DIEFFECT eff;
-	memset(&eff, 0, sizeof(eff));
+	DIEFFECT eff{};
 	eff.dwSize = sizeof(DIEFFECT);
 	eff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
 	eff.dwTriggerButton = DIEB_NOTRIGGER;
@@ -1576,7 +1563,7 @@ bool CDirectInputSystem::InitializeSystem()
 		if (m_useRawInput)
 		{
 			// Get screen resolution (needed for absolute mouse devices)
-			DEVMODEA settings;
+			DEVMODEA settings{};
 			if (!EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &settings))
 			{
 				ErrorLog("Unable to read current display settings\n");
@@ -1639,22 +1626,22 @@ bool CDirectInputSystem::InitializeSystem()
 
 int CDirectInputSystem::GetKeyIndex(const char *keyName)
 {
-	for (int i = 0; i < NUM_DI_KEYS; i++)
+	for (size_t i = 0; i < NUM_DI_KEYS; i++)
 	{
 		if (stricmp(keyName, s_keyMap[i].keyName) == 0)
-			return i;
+			return (int)i;
 	}
 	return -1;
 }
 
 const char *CDirectInputSystem::GetKeyName(int keyIndex)
 {
-	if (keyIndex < 0 || keyIndex >= NUM_DI_KEYS)
+	if (keyIndex < 0 || keyIndex >= (int)NUM_DI_KEYS)
 		return NULL;
 	return s_keyMap[keyIndex].keyName;
 }
 
-bool CDirectInputSystem::IsKeyPressed(int kbdNum, int keyIndex)
+bool CDirectInputSystem::IsKeyPressed(int kbdNum, int keyIndex) const
 {
 	// Get DI key code (scancode) for given key index
 	int diKey = s_keyMap[keyIndex].diKey;
@@ -1670,14 +1657,14 @@ bool CDirectInputSystem::IsKeyPressed(int kbdNum, int keyIndex)
 	return !!(m_diKeyState[diKey] & 0x80);
 }
 
-int CDirectInputSystem::GetMouseAxisValue(int mseNum, int axisNum)
+int CDirectInputSystem::GetMouseAxisValue(int mseNum, int axisNum) const
 {
 	if (m_useRawInput)
 	{
 		// For RawInput, get combined or individual mouse state and return value for given axis
 		// The cursor is always hidden when using RawInput, so it does not matter if these values don't match with the cursor (with multiple
 		// mice the cursor is irrelevant anyway)
-		RawMseState *pMseState = (mseNum == ANY_MOUSE ? &m_combRawMseState : &m_rawMseStates[mseNum]);
+		const RawMseState *pMseState = (mseNum == ANY_MOUSE ? &m_combRawMseState : &m_rawMseStates[mseNum]);
 		switch (axisNum)
 		{
 			case AXIS_X: return pMseState->x;
@@ -1686,7 +1673,7 @@ int CDirectInputSystem::GetMouseAxisValue(int mseNum, int axisNum)
 			default:     return 0;
 		}
 	}
-	
+
 	// For DirectInput, for X- and Y-axes just use cursor position within window if available (so that mouse movements sync with the cursor)
 	if (axisNum == AXIS_X || axisNum == AXIS_Y)
 	{
@@ -1705,7 +1692,7 @@ int CDirectInputSystem::GetMouseAxisValue(int mseNum, int axisNum)
 	}
 }
 
-int CDirectInputSystem::GetMouseWheelDir(int mseNum)
+int CDirectInputSystem::GetMouseWheelDir(int mseNum) const
 {
 	if (m_useRawInput)
 	{
@@ -1717,7 +1704,7 @@ int CDirectInputSystem::GetMouseWheelDir(int mseNum)
 	return m_diMseState.wheelDir;
 }
 
-bool CDirectInputSystem::IsMouseButPressed(int mseNum, int butNum)
+bool CDirectInputSystem::IsMouseButPressed(int mseNum, int butNum) const
 {
 	if (m_useRawInput)
 	{
@@ -1732,7 +1719,7 @@ bool CDirectInputSystem::IsMouseButPressed(int mseNum, int butNum)
 	return (butNum < 5 ? !!(m_diMseState.buttons[butNum] & 0x80) : false);
 }
 
-int CDirectInputSystem::GetJoyAxisValue(int joyNum, int axisNum)
+int CDirectInputSystem::GetJoyAxisValue(int joyNum, int axisNum) const
 {
 	// Return raw value for given joystick number and axis (values range from -32768 to 32767)
 	switch (axisNum)
@@ -1749,21 +1736,21 @@ int CDirectInputSystem::GetJoyAxisValue(int joyNum, int axisNum)
 	}
 }
 
-bool CDirectInputSystem::IsJoyPOVInDir(int joyNum, int povNum, int povDir)
+bool CDirectInputSystem::IsJoyPOVInDir(int joyNum, int povNum, int povDir) const
 {
 	// Check if POV-hat value for given joystick number and POV is pointing in required direction
 	int povVal = m_diJoyStates[joyNum].rgdwPOV[povNum] / 100;   // DirectInput value is angle of POV-hat in 100ths of a degree
 	switch (povDir)
 	{
-		case POV_UP:    return povVal == 315 || povVal == 0 || povVal == 45;
+		case POV_UP:    return povVal == 315 || povVal == 0   || povVal == 45;
 		case POV_DOWN:  return povVal == 135 || povVal == 180 || povVal == 225;
-		case POV_RIGHT: return povVal == 45 || povVal == 90 || povVal == 135;
+		case POV_RIGHT: return povVal == 45  || povVal == 90  || povVal == 135;
 		case POV_LEFT:  return povVal == 225 || povVal == 270 || povVal == 315;
 		default:        return false;
 	}
 }
 
-bool CDirectInputSystem::IsJoyButPressed(int joyNum, int butNum)
+bool CDirectInputSystem::IsJoyButPressed(int joyNum, int butNum) const
 {
 	// Get joystick state for given joystick and return current button value for given button number
 	return !!m_diJoyStates[joyNum].rgbButtons[butNum];
@@ -1792,7 +1779,8 @@ bool CDirectInputSystem::ProcessForceFeedbackCmd(int joyNum, int axisNum, ForceF
 				break;
 
 			case FFConstantForce:
-		  {
+		  { 
+				bool bothMotorVib = m_config["XInputStereoVibration"].ValueAs<bool>();
 				// Check if constant force effect is disabled
 				unsigned xInputConstForceMax = m_config["XInputConstForceMax"].ValueAs<unsigned>();
 				if (xInputConstForceMax == 0)
@@ -1807,6 +1795,11 @@ bool CDirectInputSystem::ProcessForceFeedbackCmd(int joyNum, int axisNum, ForceF
 					// If so, stop vibration due to force effect
 					pInfo->xiConstForceLeft = 0;
 					pInfo->xiConstForceRight = 0;
+					pInfo->xiVibrateBoth = 0;
+				}
+				else if (bothMotorVib)
+				{
+					pInfo->xiVibrateBoth = (WORD)(absForce * (float)(xInputConstForceMax * XI_VIBRATE_SCALE));
 				}
 				else if (negForce)
 				{
@@ -1859,7 +1852,7 @@ bool CDirectInputSystem::ProcessForceFeedbackCmd(int joyNum, int axisNum, ForceF
 	else
 	{
 		LPDIRECTINPUTDEVICE8 joystick = m_di8Joysticks[pInfo->dInputNum];
-		
+
 		// See if command is to stop all force feedback, if so send appropriate command
 		if (ffCmd.id == FFStop)
 			return SUCCEEDED(hr = joystick->SendForceFeedbackCommand(DISFFC_STOPALL));
@@ -1872,23 +1865,22 @@ bool CDirectInputSystem::ProcessForceFeedbackCmd(int joyNum, int axisNum, ForceF
 			if (FAILED(hr = CreateJoystickEffect(joystick, axisNum, ffCmd, pEffect)))
 				return false;
 		}
-		
+
 		LONG lDirection = 0;
 		DICONSTANTFORCE dicf;
 		DICONDITION dic;
 		DIPERIODIC dip;
-		DIENVELOPE die;
-				
+		//DIENVELOPE die;
+
 		// Set common parameters
-		DIEFFECT eff;
-		memset(&eff, 0, sizeof(eff));
+		DIEFFECT eff{};
 		eff.dwSize = sizeof(DIEFFECT);
 		eff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
 		eff.cAxes = 1;
 		eff.rglDirection = &lDirection;
 		eff.dwStartDelay = 0;
 		eff.lpEnvelope = NULL;
-				
+
 		// Set command specific parameters
 		LONG lFFMag;
 		DWORD dFFMag;
@@ -2008,22 +2000,22 @@ CInputSource *CDirectInputSystem::CreateAnyMouseSource(EMousePart msePart)
 	return CInputSystem::CreateAnyMouseSource(msePart);
 }
 
-int CDirectInputSystem::GetNumKeyboards()
+int CDirectInputSystem::GetNumKeyboards() const
 {
 	// If RawInput enabled, then return number of keyboards found.  Otherwise, return ANY_KEYBOARD as DirectInput cannot handle multiple keyboards
-	return (m_useRawInput ? m_rawKeyboards.size() : ANY_KEYBOARD);
+	return (m_useRawInput ? (int)m_rawKeyboards.size() : ANY_KEYBOARD);
 }
-	
-int CDirectInputSystem::GetNumMice()
+
+int CDirectInputSystem::GetNumMice() const
 {
 	// If RawInput enabled, then return number of mice found.  Otherwise, return ANY_MOUSE as DirectInput cannot handle multiple keyboards
-	return (m_useRawInput ? m_rawMice.size() : ANY_MOUSE);
+	return (m_useRawInput ? (int)m_rawMice.size() : ANY_MOUSE);
 }
-	
-int CDirectInputSystem::GetNumJoysticks()
+
+int CDirectInputSystem::GetNumJoysticks() const
 {
 	// Return number of joysticks found
-	return m_diJoyInfos.size();
+	return (int)m_diJoyInfos.size();
 }
 
 const KeyDetails *CDirectInputSystem::GetKeyDetails(int kbdNum)
@@ -2050,9 +2042,11 @@ bool CDirectInputSystem::Poll()
 	{
 		// If not, then get Window handle of SDL window
 		SDL_SysWMinfo info;
-        SDL_VERSION(&info.version);
-        if (SDL_GetWMInfo(&info)) 
-			m_hwnd = info.window;
+		SDL_VERSION(&info.version);
+		if (SDL_GetWindowWMInfo(m_window, &info))
+		{
+			m_hwnd = info.info.win.window;
+		}
 		
 		// Tell SDL to pass on all Windows events
 		// Removed - see below
@@ -2100,6 +2094,17 @@ bool CDirectInputSystem::Poll()
 			// Propagate all messages to default (SDL) handlers
 			DispatchMessage(&msg);
 		}
+	}
+
+	// SDL2: I'm not sure how the SDL1.x code was detecting quit events but in
+  // SDL2, it seems that we want to explicitly run SDL_PollEvent() after we
+  // have peeked at the message queue ourselves (above).
+	// Wait or poll for event from SDL
+	SDL_Event e;
+	while (SDL_PollEvent(&e))
+	{
+		if (e.type == SDL_QUIT)
+			return false;	
 	}
 
 	// Poll keyboards, mice and joysticks

@@ -35,8 +35,6 @@
 
 #include <vector>
 
-using namespace std;
-
 // Struct that represents a client (eg MAMEHooker) currently registered with the emulator
 struct RegisteredClient
 {
@@ -94,6 +92,7 @@ private:
 	 * Registers the window class and sets up OutputWindowProcCallback to process all messages sent to the emulator window. 
 	 */
 	static bool CreateWindowClass();
+	static bool DeleteWindowClass();
 
 	/*
 	 * OutputWindowProcCallback(hwnd, msg, wParam, lParam):
@@ -112,7 +111,7 @@ private:
 	UINT m_unregClient;
 	UINT m_getIdString;
 
-	vector<RegisteredClient> m_clients;
+	std::vector<RegisteredClient> m_clients;
 
 	/*
 	 * AllocateMessageId(regId, str):

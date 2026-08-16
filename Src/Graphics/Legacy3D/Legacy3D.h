@@ -29,9 +29,11 @@
 #ifndef INCLUDED_LEGACY3D_H
 #define INCLUDED_LEGACY3D_H
 
+#include "TextureRefs.h"
 #include "Graphics/IRender3D.h"
-#include "Pkgs/glew.h"
+#include <GL/glew.h>
 #include "Util/NewConfig.h"
+#include "Types.h"
 
 namespace Legacy3D {
 
@@ -229,7 +231,7 @@ struct TexSheet
  *
  * 3D renderer. Lots of work to do here :)
  */
-class CLegacy3D: public IRender3D
+class CLegacy3D final : public IRender3D
 {
 	friend class CTextureRefs;
 
@@ -326,7 +328,7 @@ public:
 	 *		occurred. Any allocated memory will not be freed until the
 	 *		destructor is called. Prints own error messages.
 	 */
-	bool Init(unsigned xOffset, unsigned yOffset, unsigned xRes, unsigned yRes, unsigned totalXRes, unsigned totalYRes);
+	Result Init(unsigned xOffset, unsigned yOffset, unsigned xRes, unsigned yRes, unsigned totalXRes, unsigned totalYRes, unsigned aaTarget);
 
 	/*
 	* SetSunClamp(bool enable);
@@ -339,14 +341,24 @@ public:
 	void SetSunClamp(bool enable);
 
 	/*
-	* SetSignedShade(bool enable);
+	* SetBlockCulling(bool enable);
+	* 
+	* When enabled, clears screen to white and disables 3D rendering
+	* 
+	* Parameters:
+	*		enable	Set block culling
+	*/
+	void SetBlockCulling(bool enable);
+
+	/*
+	* GetLosValue(int layer);
 	*
-	* Sets the sign-ness of fixed shading value
+	* Gets the line of sight value for the priority layer
 	*
 	* Parameters:
-	*		enable	Fixed shading is expressed as signed value
+	*		layer	Priority layer to read from
 	*/
-	void SetSignedShade(bool enable);
+	float GetLosValue(int layer);
 
 	/*
 	 * CLegacy3D(void):
@@ -371,18 +383,18 @@ private:
 	
 	// Model caching and display list management
 	void 			DrawDisplayList(ModelCache *Cache, POLY_STATE state);
-	bool 			AppendDisplayList(ModelCache *Cache, bool isViewport, const struct VBORef *Model);
+	Result 			AppendDisplayList(ModelCache *Cache, bool isViewport, const struct VBORef *Model);
 	void 			ClearDisplayList(ModelCache *Cache);
-	int       GetTextureBaseX(const Poly *P) const;
-	int       GetTextureBaseY(const Poly *P) const;
-	bool 			InsertPolygon(ModelCache *cache, const Poly *p);
+	int				GetTextureBaseX(const Poly *P) const;
+	int				GetTextureBaseY(const Poly *P) const;
+	Result 			InsertPolygon(ModelCache *cache, const Poly *p);
 	void 			InsertVertex(ModelCache *cache, const Vertex *v, const Poly *p, float normFlip);
 	struct VBORef	*BeginModel(ModelCache *cache);
 	void			EndModel(ModelCache *cache, struct VBORef *Model, int lutIdx, UINT16 textureOffsetState, bool useStencil);
 	struct VBORef	*CacheModel(ModelCache *cache, int lutIdx, UINT16 textureOffsetState, const UINT32 *data);
 	struct VBORef	*LookUpModel(ModelCache *cache, int lutIdx, UINT16 textureOffsetState);
 	void 			ClearModelCache(ModelCache *cache);
-	bool 			CreateModelCache(ModelCache *cache, unsigned vboMaxVerts, unsigned localMaxVerts, unsigned maxNumModels, unsigned numLUTEntries, unsigned displayListSize, bool isDynamic);
+	Result 			CreateModelCache(ModelCache *cache, unsigned vboMaxVerts, unsigned localMaxVerts, unsigned maxNumModels, unsigned numLUTEntries, unsigned displayListSize, bool isDynamic);
 	void 			DestroyModelCache(ModelCache *cache);
 	
 	// Texture management
@@ -393,16 +405,19 @@ private:
 	void 	InitMatrixStack(UINT32 matrixBaseAddr);
 	
 	// Scene database traversal
-	bool DrawModel(UINT32 modelAddr);
+	Result DrawModel(UINT32 modelAddr);
 	void DescendCullingNode(UINT32 addr);
 	void DescendPointerList(UINT32 addr);
 	void DescendNodePtr(UINT32 nodeAddr);
 	void RenderViewport(UINT32 addr, int pri, bool wideScreen);
 	
 	// In-frame error reporting
-	bool ErrorLocalVertexOverflow(void);
-	bool ErrorUnableToCacheModel(UINT32 modelAddr);
+	Result ErrorLocalVertexOverflow(void);
+	Result ErrorUnableToCacheModel(UINT32 modelAddr);
 	void ClearErrors(void);
+
+	// init
+	Result SetupGLObjects();
 	
 	/*
 	 * Data
@@ -445,6 +460,7 @@ private:
 	GLfloat	spotColor[3];
 	GLint	viewportX, viewportY;
 	GLint	viewportWidth, viewportHeight;
+	GLuint  m_aaTarget;
 	
 	// Scene graph processing
 	int		listDepth;	        // how many lists have we recursed into
@@ -517,6 +533,9 @@ private:
  	 * before being uploaded. Dimensions are 512x512.
  	 */
 	GLfloat	*textureBuffer;	// RGBA8 format
+
+	// JTAG configuration settings
+	bool blockCulling;
 };
 
 } // Legacy3D

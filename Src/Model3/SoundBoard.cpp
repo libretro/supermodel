@@ -54,13 +54,29 @@
  *		ROM 600000-7FFFFF -> E00000-FFFFFF
  */
 
+#include "SoundBoard.h"
+
 #include "Supermodel.h"
+#include "OSD/Audio.h"
+#include "Sound/SCSP.h"
 
 // DEBUG
 //#define SUPERMODEL_LOG_AUDIO	// define this to log all audio to sound.bin
 #ifdef SUPERMODEL_LOG_AUDIO
 static FILE		*soundFP;
 #endif
+
+
+// Offsets of memory regions within sound board's pool
+#define OFFSET_RAM1	            0           // 1 MB SCSP1 RAM
+#define OFFSET_RAM2             0x100000    // 1 MB SCSP2 RAM
+#define LENGTH_CHANNEL_BUFFER   (sizeof(float)*NUM_SAMPLES_PER_FRAME)               // 2940 bytes (32 bits x 44.1 KHz x 1/60th second)
+#define OFFSET_AUDIO_FRONTLEFT  0x200000                                            // 2940 bytes (32 bits, 44.1 KHz, 1/60th second) left audio channel
+#define OFFSET_AUDIO_FRONTRIGHT (OFFSET_AUDIO_FRONTLEFT + LENGTH_CHANNEL_BUFFER)    // 2940 bytes right audio channel
+#define OFFSET_AUDIO_REARLEFT   (OFFSET_AUDIO_FRONTRIGHT + LENGTH_CHANNEL_BUFFER)   // 2940 bytes (32 bits, 44.1 KHz, 1/60th second) left audio channel
+#define OFFSET_AUDIO_REARRIGHT  (OFFSET_AUDIO_REARLEFT + LENGTH_CHANNEL_BUFFER)     // 2940 bytes right audio channel
+
+#define MEMORY_POOL_SIZE        (0x100000 + 0x100000 + 4*LENGTH_CHANNEL_BUFFER)
 
 
 /******************************************************************************
@@ -76,7 +92,7 @@ void CSoundBoard::UpdateROMBanks(void)
 }
 
 UINT8 CSoundBoard::Read8(UINT32 a)
-{ 
+{
 	switch ((a>>20)&0xF)
 	{
 	case 0x0:	// SCSP RAM 1 (master): 000000-0FFFFF
@@ -112,8 +128,8 @@ UINT8 CSoundBoard::Read8(UINT32 a)
 	return 0;
 }
 
-UINT16 CSoundBoard::Read16(UINT32 a) 
-{ 	
+UINT16 CSoundBoard::Read16(UINT32 a)
+{
 	switch ((a>>20)&0xF)
 	{
 	case 0x0:	// SCSP RAM 1 (master): 000000-0FFFFF
@@ -149,28 +165,28 @@ UINT16 CSoundBoard::Read16(UINT32 a)
 	return 0;
 }
 
-UINT32 CSoundBoard::Read32(UINT32 a) 
+UINT32 CSoundBoard::Read32(UINT32 a)
 {
 	UINT32	hi, lo;
-	
+
 	switch ((a>>20)&0xF)
 	{
 	case 0x0:	// SCSP RAM 1 (master): 000000-0FFFFF
 		hi = *(UINT16 *) &ram1[a];
 		lo = *(UINT16 *) &ram1[a+2];	// TODO: clamp? Possible bounds hazard.
 		return (hi<<16)|lo;
-		
+
 	case 0x1:	// SCSP registers (master): 100000-10FFFF
 		return SCSP_Master_r32(a);
-		
+
 	case 0x2:	// SCSP RAM 2 (slave): 200000-2FFFFF
 		hi = *(UINT16 *) &ram2[a&0x0FFFFF];
 		lo = *(UINT16 *) &ram2[(a+2)&0x0FFFFF];
 		return (hi<<16)|lo;
-	
+
 	case 0x3:	// SCSP registers (slave): 300000-30FFFF
 		return SCSP_Slave_r32(a);
-		
+
 	case 0x6:	// Program ROM: 600000-67FFFF
 		hi = *(UINT16 *) &soundROM[a&0x07FFFF];
 		lo = *(UINT16 *) &soundROM[(a+2)&0x07FFFF];
@@ -290,31 +306,17 @@ void CSoundBoard::Write32(unsigned int a,unsigned int d)
  the CSoundBoard object for now, unfortunately.
 ******************************************************************************/
 
-// Status of IRQ pins (IPL2-0) on 68K
-// TODO: can we get rid of this global variable altogether?
-static int	irqLine = 0;
-
-// Interrupt acknowledge callback (TODO: don't need this, default behavior in M68K.cpp should be fine)
+// Interrupt acknowledge callback; do not automatically clear interrupts!
 int IRQAck(int irqLevel)
 {
-	M68KSetIRQ(0);
-	irqLine = 0;
 	return M68K_IRQ_AUTOVECTOR;
 }
 
 // SCSP callback for generating IRQs
 void SCSP68KIRQCallback(int irqLevel)
 {
-	/*
-	 * IRQ arbitration logic: only allow higher priority IRQs to be asserted or
-	 * 0 to clear pending IRQ.
-	 */
-	if ((irqLevel>irqLine) || (0==irqLevel))
-	{
-		irqLine = irqLevel;	
-		
-	}
-	M68KSetIRQ(irqLine);
+	// SCSP is responsible for IRQ arbitration logic
+	M68KSetIRQ(irqLevel);
 }
 
 // SCSP callback for running the 68K
@@ -335,6 +337,20 @@ void CSoundBoard::WriteMIDIPort(UINT8 data)
 		DSB->SendCommand(data);
 }
 
+#ifdef SUPERMODEL_LOG_AUDIO
+static INT16 ClampINT16(float x)
+{
+    INT32 xi = (INT32)x;
+    if (xi > INT16_MAX) {
+        xi = INT16_MAX;
+    }
+    if (xi < INT16_MIN) {
+        xi = INT16_MIN;
+    }
+    return (INT16)xi;
+}
+#endif
+
 bool CSoundBoard::RunFrame(void)
 {
 	// Run sound board first to generate SCSP audio
@@ -346,25 +362,50 @@ bool CSoundBoard::RunFrame(void)
 	}
 	else
 	{
-		memset(audioL, 0, 44100/60*sizeof(INT16));
-		memset(audioR, 0, 44100/60*sizeof(INT16));
+		memset(audioFL, 0, LENGTH_CHANNEL_BUFFER);
+		memset(audioFR, 0, LENGTH_CHANNEL_BUFFER);
+		memset(audioRL, 0, LENGTH_CHANNEL_BUFFER);
+		memset(audioRR, 0, LENGTH_CHANNEL_BUFFER);
 	}
-	
-	// Run DSB and mix with existing audio
-	if (NULL != DSB)
-		DSB->RunFrame(audioL, audioR);
+
+	// Compute sound volume as 
+	float soundVol = (float)std::max(0,std::min(200,m_config["SoundVolume"].ValueAs<int>()));
+	soundVol = soundVol * (float)(1.0 / 100.0);
+
+	// Apply sound volume setting to SCSP channels only
+	for (int i = 0; i < NUM_SAMPLES_PER_FRAME; i++) {
+		audioFL[i] *= soundVol;
+		audioFR[i] *= soundVol;
+		audioRL[i] *= soundVol;
+		audioRR[i] *= soundVol;
+	}
+
+	// Run DSB and mix with existing audio, apply music volume
+	if (NULL != DSB) {
+		// Will need to mix with proper front, rear channels or both (game specific)
+		constexpr bool mixDSBWithFront = true; // Everything to front channels for now
+		// Case "both" not handled for now
+		if (mixDSBWithFront)
+			DSB->RunFrame(audioFL, audioFR);
+		else
+			DSB->RunFrame(audioRL, audioRR);
+	}
 
 	// Output the audio buffers
-	bool bufferFull = OutputAudio(44100/60, audioL, audioR, m_config["FlipStereo"].ValueAs<bool>());
+	bool bufferFull = OutputAudio(NUM_SAMPLES_PER_FRAME, audioFL, audioFR, audioRL, audioRR, m_config["FlipStereo"].ValueAs<bool>());
 
 #ifdef SUPERMODEL_LOG_AUDIO
 	// Output to binary file
 	INT16	s;
-	for (int i = 0; i < 44100/60; i++)
+	for (int i = 0; i < NUM_SAMPLES_PER_FRAME; i++)
 	{	
-		s = audioL[i];
+		s = ClampINT16(audioFL[i]);
 		fwrite(&s, sizeof(INT16), 1, soundFP);	// left channel
-		s = audioR[i];
+		s = ClampINT16(audioFR[i]);
+		fwrite(&s, sizeof(INT16), 1, soundFP);	// right channel
+		s = ClampINT16(audioRL[i]);
+		fwrite(&s, sizeof(INT16), 1, soundFP);	// left channel
+		s = ClampINT16(audioRR[i]);
 		fwrite(&s, sizeof(INT16), 1, soundFP);	// right channel
 	}
 #endif // SUPERMODEL_LOG_AUDIO
@@ -408,7 +449,7 @@ void CSoundBoard::SaveState(CBlockFile *SaveState)
 
 void CSoundBoard::LoadState(CBlockFile *SaveState)
 {
-	if (OKAY != SaveState->FindBlock("Sound Board"))
+	if (Result::OKAY != SaveState->FindBlock("Sound Board"))
 	{
 		ErrorLog("Unable to load sound board state. Save state file is corrupt.");
 		return;
@@ -439,14 +480,8 @@ void CSoundBoard::AttachDSB(CDSB *DSBPtr)
 	DebugLog("Sound Board connected to DSB\n");
 }
 
-// Offsets of memory regions within sound board's pool
-#define OFFSET_RAM1			0			// 1 MB SCSP1 RAM
-#define OFFSET_RAM2			0x100000	// 1 MB SCSP2 RAM
-#define OFFSET_AUDIO_LEFT	0x200000	// 1470 bytes (16 bits, 44.1 KHz, 1/60th second) left audio channel
-#define OFFSET_AUDIO_RIGHT	0x2005BE	// 1470 bytes right audio channel
-#define MEMORY_POOL_SIZE	(0x100000 + 0x100000 + 0x5BE + 0x5BE)
 
-bool CSoundBoard::Init(const UINT8 *soundROMPtr, const UINT8 *sampleROMPtr)
+Result CSoundBoard::Init(const UINT8 *soundROMPtr, const UINT8 *sampleROMPtr)
 {
 	float	memSizeMB = (float)MEMORY_POOL_SIZE/(float)0x100000;
 	
@@ -465,9 +500,11 @@ bool CSoundBoard::Init(const UINT8 *soundROMPtr, const UINT8 *sampleROMPtr)
 	// Set up memory pointers
 	ram1 = &memoryPool[OFFSET_RAM1];
 	ram2 = &memoryPool[OFFSET_RAM2];
-	audioL = (INT16 *) &memoryPool[OFFSET_AUDIO_LEFT];
-	audioR = (INT16 *) &memoryPool[OFFSET_AUDIO_RIGHT];
-	
+	audioFL = (float*)&memoryPool[OFFSET_AUDIO_FRONTLEFT];
+	audioFR = (float*)&memoryPool[OFFSET_AUDIO_FRONTRIGHT];
+	audioRL = (float*)&memoryPool[OFFSET_AUDIO_REARLEFT];
+	audioRR = (float*)&memoryPool[OFFSET_AUDIO_REARRIGHT];
+
 	// Initialize 68K core
 	M68KSetContext(&M68K);
 	M68KInit();
@@ -476,10 +513,10 @@ bool CSoundBoard::Init(const UINT8 *soundROMPtr, const UINT8 *sampleROMPtr)
 	M68KGetContext(&M68K);
 		
 	// Initialize SCSPs
-	SCSP_SetBuffers(audioL, audioR, 44100/60);
+	SCSP_SetBuffers(audioFL, audioFR, audioRL, audioRR, NUM_SAMPLES_PER_FRAME);
 	SCSP_SetCB(SCSP68KRunCallback, SCSP68KIRQCallback);
-	if (OKAY != SCSP_Init(m_config, 2))
-		return FAIL;
+	if (Result::OKAY != SCSP_Init(m_config, 2))
+		return Result::FAIL;
 	SCSP_SetRAM(0, ram1);
 	SCSP_SetRAM(1, ram2);
 	
@@ -490,7 +527,7 @@ bool CSoundBoard::Init(const UINT8 *soundROMPtr, const UINT8 *sampleROMPtr)
 	soundFP = fopen("sound.bin","ab");	// append mode
 #endif
 
-	return OKAY;
+	return Result::OKAY;
 }
 
 M68KCtx *CSoundBoard::GetM68K(void)
@@ -510,25 +547,17 @@ CSoundBoard::CSoundBoard(const Util::Config::Node &config)
 	memoryPool = NULL;
 	ram1 = NULL;
 	ram2 = NULL;
-	audioL = NULL;
-	audioR = NULL;
+	audioFL = NULL;
+	audioFR = NULL;
+	audioRL = NULL;
+	audioRR = NULL;
 	soundROM = NULL;
 	sampleROM = NULL;
-	
-	DebugLog("Built Sound Board\n");
-}
 
-static void Reverse16(UINT8 *buf, unsigned size)
-{
-	unsigned	i;
-	UINT8		tmp;
-	
-	for (i = 0; i < size; i += 2)
-	{
-		tmp = buf[i+0];
-		buf[i+0] = buf[i+1];
-		buf[i+1] = tmp;
-	}
+	sampleBank = nullptr;
+	ctrlReg = 0;
+
+	DebugLog("Built Sound Board\n");
 }
 
 CSoundBoard::~CSoundBoard(void)
@@ -539,9 +568,9 @@ CSoundBoard::~CSoundBoard(void)
 #endif
 
 	SCSP_Deinit();
-	
+
 	DSB = NULL;
-	
+
 	if (memoryPool != NULL)
 	{
 		delete [] memoryPool;
@@ -549,10 +578,12 @@ CSoundBoard::~CSoundBoard(void)
 	}
 	ram1 = NULL;
 	ram2 = NULL;
-	audioL = NULL;
-	audioR = NULL;
+	audioFL = NULL;
+	audioFR = NULL;
+	audioRL = NULL;
+	audioRR = NULL;
 	soundROM = NULL;
 	sampleROM = NULL;
-	
+
 	DebugLog("Destroyed Sound Board\n");
 }

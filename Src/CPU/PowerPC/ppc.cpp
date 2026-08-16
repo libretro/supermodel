@@ -1,7 +1,7 @@
 /**
  ** Supermodel
  ** A Sega Model 3 Arcade Emulator.
- ** Copyright 2011 Bart Trzynadlowski, Nik Henson
+ ** Copyright 2003-2026 The Supermodel Team
  **
  ** This file is part of Supermodel.
  **
@@ -28,15 +28,15 @@
 
 /* IBM/Motorola PowerPC 4xx/6xx Emulator */
 
+#include "ppc.h"
+#include "ppc_regs.h"
+
 #include <cstring>	// memset()
 #include "Supermodel.h"
-#include "ppc.h"
+#include "CPU/Bus.h"
 
 // Typedefs that Supermodel no longer provides
 typedef unsigned int	UINT;
-
-// C++ should allow this...
-#define INLINE	inline
 
 // Model 3 context provides read/write handlers
 static class IBus	*Bus = NULL;	// pointer to Model 3 bus object (for access handlers)
@@ -118,18 +118,21 @@ static UINT32		ppc_field_xlat[256];
 
 
 
-#define BITMASK_0(n)	(UINT32)(((UINT64)1 << n) - 1)
-#define CRBIT(x)		((ppc.cr[x / 4] & (1 << (3 - (x % 4)))) ? 1 : 0)
+#define BITMASK_0(n)	(UINT32)(((UINT64)1 << (n)) - 1)
+#define CRBIT(x)		((ppc.cr[(x) / 4] & (1 << (3 - ((x) % 4)))) ? 1 : 0)
 #define _BIT(n)			(1 << (n))
 #define GET_ROTATE_MASK(mb,me)		(ppc_rotate_mask[mb][me])
-#define ADD_CA(r,a,b)		((UINT32)r < (UINT32)a)
-#define SUB_CA(r,a,b)		(!((UINT32)a < (UINT32)b))
+#define ADD_CA(r,a,b)		((UINT32)(r) < (UINT32)(a))
+#define SUB_CA(r,a,b)		(!((UINT32)(a) < (UINT32)(b)))
 #define ADD_OV(r,a,b)		((~((a) ^ (b)) & ((a) ^ (r))) & 0x80000000)
 #define SUB_OV(r,a,b)		(( ((a) ^ (b)) & ((a) ^ (r))) & 0x80000000)
 
 #define XER_SO			0x80000000
 #define XER_OV			0x40000000
 #define XER_CA			0x20000000
+// Sync macros: update both the full XER word and the fast xer_ca byte
+#define SET_XER_CA_SET() do { XER |= XER_CA; ppc.xer_ca = 1; } while(0)
+#define SET_XER_CA_CLR() do { XER &= ~XER_CA; ppc.xer_ca = 0; } while(0)
 
 #define MSR_POW			0x00040000	/* Power Management Enable */
 #define MSR_WE			0x00040000
@@ -155,125 +158,10 @@ static UINT32		ppc_field_xlat[256];
 #define TSR_ENW			0x80000000
 #define TSR_WIS			0x40000000
 
-#define BYTE_REVERSE16(x)	(((x >> 8) | (x << 8)) & 0xFFFF)
-#define BYTE_REVERSE32(x)	((x >> 24) | ((x << 8) & 0x00FF0000) | ((x >> 8) & 0x0000FF00) | (x << 24))
+#define BYTE_REVERSE16(x)	((((x) >> 8) | ((x) << 8)) & 0xFFFF)
+#define BYTE_REVERSE32(x)	(((x) >> 24) | (((x) << 8) & 0x00FF0000) | (((x) >> 8) & 0x0000FF00) | ((x) << 24))
 
-typedef union {
-	UINT64	id;
-	double	fd;
-} FPR;
-
-typedef union {
-	UINT32 i;
-	float f;
-} FPR32;
-
-typedef struct {
-	UINT32 u;
-	UINT32 l;
-} BATENT;
-
-
-typedef struct {
-	bool	fatalError;	// if true, halt PowerPC until hard reset
-	
-	UINT32 r[32];
-	UINT32 pc;
-	UINT32 npc;
-
-	UINT32 *op;
-
-	UINT32 lr;
-	UINT32 ctr;
-	UINT32 xer;
-	UINT32 msr;
-	UINT8 cr[8];
-	UINT32 pvr;
-	UINT32 srr0;
-	UINT32 srr1;
-	UINT32 srr2;
-	UINT32 srr3;
-	UINT32 hid0;
-	UINT32 hid1;
-	UINT32 hid2;
-	UINT32 sdr1;
-	UINT32 sprg[4];
-
-	UINT32 dsisr;
-	UINT32 dar;
-	UINT32 ear;
-	UINT32 dmiss;
-	UINT32 dcmp;
-	UINT32 hash1;
-	UINT32 hash2;
-	UINT32 imiss;
-	UINT32 icmp;
-	UINT32 rpa;
-
-
-	BATENT ibat[4];
-	BATENT dbat[4];
-
-	UINT32 evpr;
-	UINT32 exier;
-	UINT32 exisr;
-	UINT32 bear;
-	UINT32 besr;
-	UINT32 iocr;
-	UINT32 br[8];
-	UINT32 iabr;
-	UINT32 esr;
-	UINT32 iccr;
-	UINT32 dccr;
-	UINT32 pit;
-	UINT32 pit_counter;
- 	UINT32 pit_int_enable;
-	UINT32 tsr;
-	UINT32 dbsr;
-	UINT32 sgr;
-	UINT32 pid;
-
-	int reserved;
-	UINT32 reserved_address;
-
-	int interrupt_pending;
-	int external_int;
-
-	UINT64 tb;		/* 56-bit timebase register */
-
-	int (*irq_callback)(int irqline);
-
-	PPC_FETCH_REGION	cur_fetch;
-	PPC_FETCH_REGION	* fetch;
-
-	// STUFF added for the 6xx series
-	UINT32 dec;
-	UINT32 fpscr;
-
-	FPR	fpr[32];
-	UINT32 sr[16];
-
-	// Timing related
-	int timer_ratio;
-	UINT32 timer_frac;
-	int tb_base_icount;
-	int dec_base_icount;
-	int dec_trigger_cycle;
-	
-	// Cycle related
-	UINT64 total_cycles;
-	int icount;
-	int cur_cycles;
-	int bus_freq_multiplier;
-	int cycles_per_second;
-
-#if HAS_PPC603
-	int is603;
-#endif
-#if HAS_PPC602
-	int is602;
-#endif
-} PPC_REGS;
+// PPC_REGS, FPR, FPR32, BATENT, PPC_FETCH_REGION are now in ppc_regs.h
 
 
 
@@ -290,25 +178,25 @@ static UINT32 ppc_rotate_mask[32][32];
 
 static void ppc_change_pc(UINT32 newpc)
 {
-	UINT i;
+	UINT32 offset	= newpc - ppc.cur_fetch.start;		//  unsigned wrap around can happen, that's defined behavour 
+	UINT32 range	= ppc.cur_fetch.end - ppc.cur_fetch.start;
 
-	if (ppc.cur_fetch.start <= newpc && newpc <= ppc.cur_fetch.end)
+	if (offset <= range)
 	{
-		ppc.op = &ppc.cur_fetch.ptr[(newpc-ppc.cur_fetch.start)/4];
-//		ppc.op = (UINT32 *)((void *)ppc.cur_fetch.ptr + (UINT32)(newpc - ppc.cur_fetch.start));
+		ppc.op = &ppc.cur_fetch.ptr[offset / 4];
 		return;
 	}
 
-	for(i = 0; ppc.fetch[i].ptr != NULL; i++)
+	for(UINT32 i = 0; ppc.fetch[i].ptr != NULL; i++)
 	{
-		if (ppc.fetch[i].start <= newpc && newpc <= ppc.fetch[i].end)
-		{
-			ppc.cur_fetch.start = ppc.fetch[i].start;
-			ppc.cur_fetch.end = ppc.fetch[i].end;
-			ppc.cur_fetch.ptr = ppc.fetch[i].ptr;
+		offset	= newpc - ppc.fetch[i].start;
+		range	= ppc.fetch[i].end - ppc.fetch[i].start;
 
-//			ppc.op = (UINT32 *)((UINT32)ppc.cur_fetch.ptr + (UINT32)(newpc - ppc.cur_fetch.start));
-			ppc.op = &ppc.cur_fetch.ptr[(newpc-ppc.cur_fetch.start)/4];			
+		if (offset <= range)
+		{
+			ppc.cur_fetch = ppc.fetch[i];
+
+			ppc.op = &ppc.cur_fetch.ptr[offset / 4];
 			return;
 		}
 	}
@@ -316,44 +204,62 @@ static void ppc_change_pc(UINT32 newpc)
 	DebugLog("Invalid PC %08X, previous PC %08X\n", newpc, ppc.pc);
 	ErrorLog("PowerPC is out of bounds. Halting emulation until reset.");
 	ppc.fatalError = true;
+	ppc.interrupt_pending |= 0x8;   // mirror for JIT chained-epilogue fast check
 }
 
-INLINE UINT8 READ8(UINT32 address)
+static inline UINT8 READ8(UINT32 address)
 {
 	return Bus->Read8(address);
 }
 
-INLINE UINT16 READ16(UINT32 address)
+static inline UINT16 READ16(UINT32 address)
 {
 	return Bus->Read16(address);
 }
 
-INLINE UINT32 READ32(UINT32 address)
+static inline UINT32 READ32(UINT32 address)
 {
 	return Bus->Read32(address);
 }
 
-INLINE UINT64 READ64(UINT32 address)
+static inline UINT64 READ64(UINT32 address)
 {
 	return Bus->Read64(address);
 }
 
-INLINE void WRITE8(UINT32 address, UINT8 data)
+#ifdef HAVE_PPC_JIT
+// Forward declaration — defined after JitArm64.h is included below.
+// Routes interpreter stores through the SMC page-bitmap check so that
+// self-modifying code patching (e.g. VF4 patching 0x61CF8 via emit_fallback)
+// is detected and the stale JIT block is invalidated.
+static void ppc_smc_write(UINT32 addr);
+#endif
+
+static inline void WRITE8(UINT32 address, UINT8 data)
 {
+#ifdef HAVE_PPC_JIT
+	ppc_smc_write(address);
+#endif
 	Bus->Write8(address,data);
 }
 
-INLINE void WRITE16(UINT32 address, UINT16 data)
+static inline void WRITE16(UINT32 address, UINT16 data)
 {
+#ifdef HAVE_PPC_JIT
+	ppc_smc_write(address);
+#endif
 	Bus->Write16(address,data);
 }
 
-INLINE void WRITE32(UINT32 address, UINT32 data)
+static inline void WRITE32(UINT32 address, UINT32 data)
 {
+#ifdef HAVE_PPC_JIT
+	ppc_smc_write(address);
+#endif
 	Bus->Write32(address,data);
 }
 
-INLINE void WRITE64(UINT32 address, UINT64 data)
+static inline void WRITE64(UINT32 address, UINT64 data)
 {
 	Bus->Write64(address,data);
 }
@@ -362,7 +268,7 @@ INLINE void WRITE64(UINT32 address, UINT64 data)
 /*********************************************************************/
 
 
-INLINE void SET_CR0(INT32 rd)
+static inline void SET_CR0(INT32 rd)
 {
 	if( rd < 0 ) {
 		CR(0) = 0x8;
@@ -376,12 +282,12 @@ INLINE void SET_CR0(INT32 rd)
 		CR(0) |= 0x1;
 }
 
-INLINE void SET_CR1(void)
+static inline void SET_CR1(void)
 {
 	CR(1) = (ppc.fpscr >> 28) & 0xf;
 }
 
-INLINE void SET_ADD_OV(UINT32 rd, UINT32 ra, UINT32 rb)
+static inline void SET_ADD_OV(UINT32 rd, UINT32 ra, UINT32 rb)
 {
 	if( ADD_OV(rd, ra, rb) )
 		XER |= XER_SO | XER_OV;
@@ -389,7 +295,7 @@ INLINE void SET_ADD_OV(UINT32 rd, UINT32 ra, UINT32 rb)
 		XER &= ~XER_OV;
 }
 
-INLINE void SET_SUB_OV(UINT32 rd, UINT32 ra, UINT32 rb)
+static inline void SET_SUB_OV(UINT32 rd, UINT32 ra, UINT32 rb)
 {
 	if( SUB_OV(rd, ra, rb) )
 		XER |= XER_SO | XER_OV;
@@ -397,41 +303,39 @@ INLINE void SET_SUB_OV(UINT32 rd, UINT32 ra, UINT32 rb)
 		XER &= ~XER_OV;
 }
 
-INLINE void SET_ADD_CA(UINT32 rd, UINT32 ra, UINT32 rb)
+static inline void SET_ADD_CA(UINT32 rd, UINT32 ra, UINT32 rb)
 {
 	if( ADD_CA(rd, ra, rb) )
-		XER |= XER_CA;
+		SET_XER_CA_SET();
 	else
-		XER &= ~XER_CA;
+		SET_XER_CA_CLR();
 }
 
-INLINE void SET_SUB_CA(UINT32 rd, UINT32 ra, UINT32 rb)
+static inline void SET_SUB_CA(UINT32 rd, UINT32 ra, UINT32 rb)
 {
 	if( SUB_CA(rd, ra, rb) )
-		XER |= XER_CA;
+		SET_XER_CA_SET();
 	else
-		XER &= ~XER_CA;
+		SET_XER_CA_CLR();
 }
 
-INLINE UINT32 check_condition_code(UINT32 bo, UINT32 bi)
+static inline UINT32 check_condition_code(UINT32 bo, UINT32 bi)
 {
-	UINT32 ctr_ok;
-	UINT32 condition_ok;
 	UINT32 bo0 = (bo & 0x10) ? 1 : 0;
 	UINT32 bo1 = (bo & 0x08) ? 1 : 0;
 	UINT32 bo2 = (bo & 0x04) ? 1 : 0;
 	UINT32 bo3 = (bo & 0x02) ? 1 : 0;
 
-	if( bo2 == 0 )
+	if (bo2 == 0)
 		--CTR;
 
-	ctr_ok = bo2 | ((CTR != 0) ^ bo3);
-	condition_ok = bo0 | (CRBIT(bi) ^ (~bo1 & 0x1));
+	UINT32 ctr_ok = bo2 | ((CTR != 0) ^ bo3);
+	UINT32 condition_ok = bo0 | (CRBIT(bi) ^ (bo1 ^ 0x1));
 
-	return ctr_ok && condition_ok;
+	return ctr_ok & condition_ok;
 }
 
-INLINE UINT64 ppc_read_timebase(void)
+static inline UINT64 ppc_read_timebase(void)
 {
 	int cycles = ppc.tb_base_icount - ppc.icount;
 
@@ -439,7 +343,7 @@ INLINE UINT64 ppc_read_timebase(void)
 	return ppc.tb + (cycles / ppc.timer_ratio);
 }
 
-INLINE void ppc_write_timebase_l(UINT32 tbl)
+static inline void ppc_write_timebase_l(UINT32 tbl)
 {
 	UINT64 tb = ppc_read_timebase();
 
@@ -448,7 +352,7 @@ INLINE void ppc_write_timebase_l(UINT32 tbl)
 	ppc.tb = (tb&~0xffffffff)|tbl;
 }
 
-INLINE void ppc_write_timebase_h(UINT32 tbh)
+static inline void ppc_write_timebase_h(UINT32 tbh)
 {
 	UINT64 tb = ppc_read_timebase();
 
@@ -457,7 +361,7 @@ INLINE void ppc_write_timebase_h(UINT32 tbh)
 	ppc.tb = (tb&0xffffffff)|((UINT64)(tbh) << 32);
 }
 
-INLINE UINT32 read_decrementer(void)
+static inline UINT32 read_decrementer(void)
 {
 	int cycles = ppc.dec_base_icount - ppc.icount;
 
@@ -465,7 +369,7 @@ INLINE UINT32 read_decrementer(void)
 	return DEC - (cycles / ppc.timer_ratio);
 }
 
-INLINE void write_decrementer(UINT32 value)
+static inline void write_decrementer(UINT32 value)
 {
 	if (((value&0x80000000) && !(read_decrementer()&0x80000000)))
 	{
@@ -488,13 +392,13 @@ INLINE void write_decrementer(UINT32 value)
 
 /*********************************************************************/
 
-INLINE void ppc_set_spr(int spr, UINT32 value)
+static inline void ppc_set_spr(int spr, UINT32 value)
 {
 	switch (spr)
 	{
 		case SPR_LR:		LR = value; return;
 		case SPR_CTR:		CTR = value; return;
-		case SPR_XER:		XER = value; return;
+		case SPR_XER:		XER = value; ppc.xer_ca = (value >> 29) & 1; return;
 		case SPR_SRR0:		ppc.srr0 = value; return;
 		case SPR_SRR1:		ppc.srr1 = value; return;
 		case SPR_SPRG0:		ppc.sprg[0] = value; return;
@@ -559,9 +463,10 @@ INLINE void ppc_set_spr(int spr, UINT32 value)
 	ErrorLog("PowerPC wrote to an invalid register. Halting emulation until reset.");
 	DebugLog("ppc: set_spr: unknown spr %d (%03X) !\n", spr, spr);
 	ppc.fatalError = true;
+	ppc.interrupt_pending |= 0x8;
 }
 
-INLINE UINT32 ppc_get_spr(int spr)
+static inline UINT32 ppc_get_spr(int spr)
 {
 	switch(spr)
 	{
@@ -621,16 +526,18 @@ INLINE UINT32 ppc_get_spr(int spr)
 	ErrorLog("PowerPC read from an invalid register. Halting emulation until reset.");
 	DebugLog("ppc: get_spr: unknown spr %d (%03X) !\n", spr, spr);
 	ppc.fatalError = true;
+	ppc.interrupt_pending |= 0x8;
 	return 0;
 }
 
-INLINE void ppc_set_msr(UINT32 value)
+static inline void ppc_set_msr(UINT32 value)
 {
 	if( value & (MSR_ILE | MSR_LE) )
 	{
 		ErrorLog("PowerPC entered an unemulated mode. Halting emulation until reset.");
 		DebugLog("ppc: set_msr: little_endian mode not supported !\n");
 		ppc.fatalError = true;
+		ppc.interrupt_pending |= 0x8;
 	}
 
 	MSR = value;
@@ -638,24 +545,12 @@ INLINE void ppc_set_msr(UINT32 value)
 	ppc603_check_interrupts();
 }
 
-INLINE UINT32 ppc_get_msr(void)
+static inline UINT32 ppc_get_msr(void)
 {
 	return MSR;
 }
 
-INLINE void ppc_set_cr(UINT32 value)
-{
-	CR(0) = (value >> 28) & 0xf;
-	CR(1) = (value >> 24) & 0xf;
-	CR(2) = (value >> 20) & 0xf;
-	CR(3) = (value >> 16) & 0xf;
-	CR(4) = (value >> 12) & 0xf;
-	CR(5) = (value >> 8) & 0xf;
-	CR(6) = (value >> 4) & 0xf;
-	CR(7) = (value >> 0) & 0xf;
-}
-
-INLINE UINT32 ppc_get_cr(void)
+static inline UINT32 ppc_get_cr(void)
 {
 	return CR(0) << 28 | CR(1) << 24 | CR(2) << 20 | CR(3) << 16 | CR(4) << 12 | CR(5) << 8 | CR(6) << 4 | CR(7);
 }
@@ -668,6 +563,23 @@ static void (* optable59[1024])(UINT32);
 static void (* optable63[1024])(UINT32);
 static void (* optable[64])(UINT32);
 
+#ifdef HAVE_PPC_JIT
+#include "Jit/JitArm64.h"
+
+// Definition of the SMC forward-declared above.
+static void ppc_smc_write(UINT32 addr) { JitArm64::get().smc_write(addr); }
+#endif
+
+// True while a JIT-compiled block is executing (set/cleared around blk->fn()
+// in ppc603.c). Used by ppc_set_irq_line to avoid calling ppc603_check_interrupts()
+// mid-block, which would corrupt MSR[EE] and npc before the block returns.
+static bool s_jit_executing = false;
+static bool s_ppc_jit_enabled = false;
+
+// Cached outside ppc struct so it survives ppc_base_init()'s memset.
+static void *s_jit_ram_base = nullptr;
+
+#include "PPCDisasm.h"
 #include "ppc603.c"
 
 /********************************************************************/
@@ -679,9 +591,10 @@ static void (* optable[64])(UINT32);
 
 void ppc_base_init(void)
 {
-	int i,j;
+	size_t i,j;
 
 	memset(&ppc, 0, sizeof(ppc));
+	ppc.ram_ptr = (UINT8 *)s_jit_ram_base;
 
 	for( i=0; i < 64; i++ ) {
 		optable[i] = ppc_invalid;
@@ -719,10 +632,9 @@ void ppc_base_init(void)
 	/* Calculate rotate mask table */
 	for( i=0; i < 32; i++ ) {
 		for( j=0; j < 32; j++ ) {
-			UINT32 mask;
 			int mb = i;
 			int me = j;
-			mask = ((UINT32)0xFFFFFFFF >> mb) ^ ((me >= 31) ? 0 : ((UINT32)0xFFFFFFFF >> (me + 1)));
+			UINT32 mask = ((UINT32)0xFFFFFFFF >> mb) ^ ((me >= 31) ? 0 : ((UINT32)0xFFFFFFFF >> (me + 1)));
 			if( mb > me )
 				mask = ~mask;
 
@@ -835,15 +747,15 @@ void ppc_init(const PPC_CONFIG *config)
 	
 	switch (config->bus_frequency)
 	{
-		case BUS_FREQUENCY_16MHZ: ppc.cycles_per_second = multiplier * 16000000; break;
-		case BUS_FREQUENCY_20MHZ: ppc.cycles_per_second = multiplier * 20000000; break;
-		case BUS_FREQUENCY_25MHZ: ppc.cycles_per_second = multiplier * 25000000; break;
-		case BUS_FREQUENCY_33MHZ: ppc.cycles_per_second = multiplier * 33000000; break;
-		case BUS_FREQUENCY_40MHZ: ppc.cycles_per_second = multiplier * 40000000; break;
-		case BUS_FREQUENCY_50MHZ: ppc.cycles_per_second = multiplier * 50000000; break;
-		case BUS_FREQUENCY_60MHZ: ppc.cycles_per_second = multiplier * 60000000; break;
-		case BUS_FREQUENCY_66MHZ: ppc.cycles_per_second = multiplier * 66000000; break;
-		case BUS_FREQUENCY_75MHZ: ppc.cycles_per_second = multiplier * 75000000; break;
+		case BUS_FREQUENCY_16MHZ: ppc.cycles_per_second = (int)(multiplier * 16000000); break;
+		case BUS_FREQUENCY_20MHZ: ppc.cycles_per_second = (int)(multiplier * 20000000); break;
+		case BUS_FREQUENCY_25MHZ: ppc.cycles_per_second = (int)(multiplier * 25000000); break;
+		case BUS_FREQUENCY_33MHZ: ppc.cycles_per_second = (int)(multiplier * 33000000); break;
+		case BUS_FREQUENCY_40MHZ: ppc.cycles_per_second = (int)(multiplier * 40000000); break;
+		case BUS_FREQUENCY_50MHZ: ppc.cycles_per_second = (int)(multiplier * 50000000); break;
+		case BUS_FREQUENCY_60MHZ: ppc.cycles_per_second = (int)(multiplier * 60000000); break;
+		case BUS_FREQUENCY_66MHZ: ppc.cycles_per_second = (int)(multiplier * 66000000); break;
+		case BUS_FREQUENCY_75MHZ: ppc.cycles_per_second = (int)(multiplier * 75000000); break;
 	}
 	
 	switch(config->pvr)
@@ -869,9 +781,22 @@ void ppc_shutdown(void)
 
 void ppc_set_irq_line(int irqline)
 {
-	ppc.interrupt_pending |= 0x1;
-	
-	ppc603_check_interrupts();
+	if (irqline)
+	{
+		ppc.interrupt_pending |= 0x1 | 0x8;  // 0x8 triggers JIT fast-exit (chained epilogue CBNZ)
+		// Guard: ppc603_check_interrupts() modifies MSR[EE] and npc via ppc603_exception().
+		// Calling it while a JIT block is mid-execution corrupts those fields before the block
+		// returns, leaving EE=0 so jit_done skips IRQ delivery permanently.
+		// When s_jit_executing is true the interrupt_pending bits above are sufficient —
+		// the chained epilogue's CBNZ exits the chain and jit_done delivers the interrupt safely.
+		if (!s_jit_executing)
+			ppc603_check_interrupts();
+	}
+	else
+	{
+		ppc.interrupt_pending &= ~(0x1 | 0x8);
+		if (ppc.fatalError) ppc.interrupt_pending |= 0x8;
+	}
 }
 
 UINT32 ppc_get_pc(void)
@@ -904,6 +829,11 @@ void ppc_set_timer_ratio(int ratio)
 	ppc.timer_ratio = ratio;
 }
 
+void ppc_set_jit_enabled(bool enabled)
+{
+	s_ppc_jit_enabled = enabled;
+}
+
 int ppc_get_timer_ratio()
 {
 	return ppc.timer_ratio;
@@ -916,6 +846,12 @@ int ppc_get_timer_ratio()
 void ppc_attach_bus(IBus *BusPtr)
 {
 	Bus = BusPtr;
+}
+
+void ppc_set_ram_ptr(UINT8 *ram_base)
+{
+	s_jit_ram_base = ram_base;
+	ppc.ram_ptr    = ram_base;
 }
 
 void ppc_save_state(CBlockFile *SaveState)
@@ -995,7 +931,7 @@ void ppc_save_state(CBlockFile *SaveState)
 
 void ppc_load_state(CBlockFile *SaveState)
 {	
-	if (OKAY != SaveState->FindBlock("PowerPC"))
+	if (Result::OKAY != SaveState->FindBlock("PowerPC"))
 	{
 		ErrorLog("Unable to load PowerPC state. Save state file is corrupt.");
 		return;
@@ -1014,6 +950,7 @@ void ppc_load_state(CBlockFile *SaveState)
 	SaveState->Read(&ppc.lr, sizeof(ppc.lr));
 	SaveState->Read(&ppc.ctr, sizeof(ppc.ctr));
 	SaveState->Read(&ppc.xer, sizeof(ppc.xer));
+	ppc.xer_ca = (ppc.xer >> 29) & 1;
 	SaveState->Read(&ppc.msr, sizeof(ppc.msr));
 	SaveState->Read(ppc.cr, sizeof(ppc.cr));
 	SaveState->Read(&ppc.pvr, sizeof(ppc.pvr));
@@ -1171,3 +1108,72 @@ UINT32 ppc_read_msr()
 {
 	return ppc_get_msr();
 }
+
+// ---------------------------------------------------------------------------
+// JIT support functions (aarch64 only) — extern "C" so JitArm64.o can link
+// ---------------------------------------------------------------------------
+
+extern "C" {
+
+PPC_REGS *ppc_get_state(void)
+{
+	return &ppc;
+}
+
+void jit_sync_fetch(UINT32 pc)
+{
+	ppc_change_pc(pc);
+}
+
+UINT32 ppc_read_opcode_at(UINT32 pc)
+{
+	UINT32 offset = pc - ppc.cur_fetch.start;
+	UINT32 range  = ppc.cur_fetch.end - ppc.cur_fetch.start;
+	if (offset <= range)
+		return ppc.cur_fetch.ptr[offset / 4];
+	for (int i = 0; ppc.fetch[i].ptr != NULL; i++) {
+		offset = pc - ppc.fetch[i].start;
+		range  = ppc.fetch[i].end - ppc.fetch[i].start;
+		if (offset <= range)
+			return ppc.fetch[i].ptr[offset / 4];
+	}
+	return 0;
+}
+
+void ppc_check_interrupts_jit(void)
+{
+	ppc603_check_interrupts();
+}
+
+// Memory bridge functions: called directly by JIT-compiled blocks
+UINT32 jit_read8(UINT32 addr)             { return (UINT32)Bus->Read8(addr); }
+UINT32 jit_read16(UINT32 addr)            { return (UINT32)Bus->Read16(addr); }
+UINT32 jit_read32(UINT32 addr)            { return Bus->Read32(addr); }
+UINT64 jit_read64(UINT32 addr)            { return Bus->Read64(addr); }
+UINT32 jit_read_tbl(void)                 { return (UINT32)ppc_read_timebase(); }
+UINT32 jit_read_tbu(void)                 { return (UINT32)(ppc_read_timebase() >> 32); }
+
+// SMC helper: invalidate any JIT block whose PC range covers addr.
+#ifdef HAVE_PPC_JIT
+static inline void smc_check(UINT32 addr) { JitArm64::get().smc_write(addr); }
+#else
+static inline void smc_check(UINT32 addr) { (void)addr; }
+#endif
+
+void   jit_write8(UINT32 addr, UINT32 d)  { smc_check(addr); Bus->Write8(addr, (UINT8)d); }
+void   jit_write16(UINT32 addr, UINT32 d) { smc_check(addr); Bus->Write16(addr, (UINT16)d); }
+void   jit_write32(UINT32 addr, UINT32 d) { smc_check(addr); Bus->Write32(addr, d); }
+void   jit_write64(UINT32 addr, UINT64 d) { Bus->Write64(addr, d); }
+
+
+// FP helpers: called with argument in D0, return result in D0 (AAPCS64 FP ABI)
+double jit_fres(double x)    { return (double)(1.0f / (float)x); }
+double jit_frsqrte(double x) { return 1.0 / sqrt(x); }
+double jit_frsp(double x)    { return (double)(float)x; }
+
+// The interpreter's FP arithmetic updates FPSCR[FPRF] (result class/sign) via set_fprf().
+// The JIT computes the correct result but omitted this flag; Daytona 2's opponent AI reads
+// it back (mffs/mcrfs) and misbehaves without it. Call after a JIT FP op stores FPR[rD].
+void jit_set_fprf(UINT32 rD) { set_fprf(FPR(rD)); }
+
+} // extern "C"

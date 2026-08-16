@@ -28,6 +28,7 @@
 #ifndef INCLUDED_BUS_H
 #define INCLUDED_BUS_H
 
+#include "Types.h"
 
 /*
  * IBus:
@@ -56,10 +57,10 @@ public:
 	 * Returns:
 	 *		Data of the appropriate size (8, 16, 32, or 64 bits).
 	 */
-	virtual UINT8	Read8(UINT32 addr)	{ return 0xFF; }
-	virtual UINT16	Read16(UINT32 addr)	{ return 0xFFFF; }
-	virtual UINT32	Read32(UINT32 addr)	{ return 0xFFFFFFFF; }
-	virtual UINT64	Read64(UINT32 addr)	{ return 0xFFFFFFFFFFFFFFFFULL; }
+	virtual UINT8	Read8(UINT32 /*addr*/)	{ return 0xFF; }
+	virtual UINT16	Read16(UINT32 /*addr*/)	{ return 0xFFFF; }
+	virtual UINT32	Read32(UINT32 /*addr*/)	{ return 0xFFFFFFFF; }
+	virtual UINT64	Read64(UINT32 /*addr*/)	{ return 0xFFFFFFFFFFFFFFFFULL; }
 	
 	/*
 	 * Write8(addr, data):
@@ -74,10 +75,10 @@ public:
 	 *				boundary, corresponding to the size).
 	 *		data	Data to write.
 	 */
-	virtual void	Write8(UINT32 addr, UINT8 data)		{}
-	virtual void	Write16(UINT32 addr, UINT16 data)	{}
-	virtual void	Write32(UINT32 addr, UINT32 data)	{}
-	virtual void	Write64(UINT32 addr, UINT64 data)	{}
+	virtual void	Write8(UINT32 /*addr*/, UINT8 /*data*/)		{}
+	virtual void	Write16(UINT32 /*addr*/, UINT16 /*data*/)	{}
+	virtual void	Write32(UINT32 /*addr*/, UINT32 /*data*/)	{}
+	virtual void	Write64(UINT32 /*addr*/, UINT64 /*data*/)	{}
 	
 	/*
 	 * IORead8(addr):
@@ -91,7 +92,7 @@ public:
 	 * Returns:
 	 *		Data.
 	 */
-	virtual UINT8	IORead8(UINT32 addr)	{ return 0xFF; }
+	virtual UINT8	IORead8(UINT32 /*addr*/)	{ return 0xFF; }
 	
 	/*
 	 * IOWrite8(addr, data):
@@ -102,7 +103,7 @@ public:
 	 *		addr	Address.
 	 *		data	Data to write.
 	 */
-	virtual void	IOWrite8(UINT32 addr, UINT8 data)	{}
+	virtual void	IOWrite8(UINT32 /*addr*/, UINT8 /*data*/)	{}
 };
 
 

@@ -1,0 +1,26 @@
+EXPORTS
+    retro_api_version @1
+    retro_cheat_reset @2
+    retro_cheat_set @3
+    retro_deinit @4
+    retro_get_memory_data @5
+    retro_get_memory_size @6
+    retro_get_region @7
+    retro_get_system_av_info @8
+    retro_get_system_info @9
+    retro_init @10
+    retro_load_game @11
+    retro_load_game_special @12
+    retro_reset @13
+    retro_run @14
+    retro_serialize @15
+    retro_serialize_size @16
+    retro_set_audio_sample @17
+    retro_set_audio_sample_batch @18
+    retro_set_controller_port_device @19
+    retro_set_environment @20
+    retro_set_input_poll @21
+    retro_set_input_state @22
+    retro_set_video_refresh @23
+    retro_unload_game @24
+    retro_unserialize @25

@@ -1,11 +1,32 @@
+/**
+ ** Supermodel
+ ** A Sega Model 3 Arcade Emulator.
+ ** Copyright 2003-2026 The Supermodel Team
+ **
+ ** This file is part of Supermodel.
+ **
+ ** Supermodel is free software: you can redistribute it and/or modify it under
+ ** the terms of the GNU General Public License as published by the Free
+ ** Software Foundation, either version 3 of the License, or (at your option)
+ ** any later version.
+ **
+ ** Supermodel is distributed in the hope that it will be useful, but WITHOUT
+ ** ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ ** FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ ** more details.
+ **
+ ** You should have received a copy of the GNU General Public License along
+ ** with Supermodel.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #ifndef INCLUDED_UTIL_CONFIG_H
 #define INCLUDED_UTIL_CONFIG_H
 
 #include "Util/GenericValue.h"
 #include <map>
 #include <memory>
-#include <iterator>
 #include <exception>
+#include <iterator>
 
 namespace Util
 {
@@ -35,128 +56,52 @@ namespace Util
       }
 
       void CheckEmptyOrMissing() const;
-      const Node &MissingNode(const std::string &key) const;
+      Node& MissingNode(const std::string& key) const;
+      Node &AddEmpty(const std::string &path);
       void AddChild(Node &parent, ptr_t &node);
       void DeepCopy(const Node &that);
       void Swap(Node &rhs);
       Node(); // prohibit accidental/unintentional creation of empty nodes
 
     public:
-      class const_iterator;
 
-      class iterator: public std::iterator<std::forward_iterator_tag, Node>
-      {
+      template <typename T>
+      class NodeIterator {
       private:
-        ptr_t m_node;
-        friend class const_iterator;    
+          std::shared_ptr<T> m_node;
+
       public:
-        inline iterator(ptr_t node = ptr_t())
-          : m_node(node)
-        {}
-        inline iterator(const iterator &it)
-          : m_node(it.m_node)
-        {}
-        inline iterator operator++()
-        {
-          // Prefix increment
-          m_node = m_node->m_next_sibling;
-          return *this;
-        }
-        inline iterator operator++(int)
-        {
-          // Postfix increment
-          iterator current(*this);
-          m_node = m_node->m_next_sibling;
-          return *this;
-        }
-        inline Node &operator*() const
-        {
-          return *m_node;
-        }
-        inline ptr_t operator->() const
-        {
-          return m_node;
-        }
-        inline bool operator==(const iterator &rhs) const
-        {
-          return m_node == rhs.m_node;
-        }
-        inline bool operator!=(const iterator &rhs) const
-        {
-          return m_node != rhs.m_node;
-        }
+          NodeIterator(std::shared_ptr<T> node = nullptr)
+              : m_node(std::move(node)) {}
+
+          NodeIterator& operator++() 
+          {
+              m_node = std::static_pointer_cast<T>(m_node->m_next_sibling);
+              return *this;
+          }
+
+          NodeIterator operator++(int) 
+          {
+              NodeIterator temp = *this;
+              ++(*this);
+              return temp;
+          }
+
+          T& operator*() const { return *m_node; }
+          T* operator->() const { return m_node.get(); }
+
+          bool operator==(const NodeIterator& rhs) const { return m_node == rhs.m_node; }
+          bool operator!=(const NodeIterator& rhs) const { return m_node != rhs.m_node; }
       };
 
-      class const_iterator: public std::iterator<std::forward_iterator_tag, const Node>
-      {
-      private:
-        const_ptr_t m_node;
-      public:
-        inline const_iterator()
-		  : m_node(const_ptr_t())
-        {}
-        inline const_iterator(const_ptr_t node)
-          : m_node(node)
-        {}
-        inline const_iterator(ptr_t node)
-          : m_node(std::const_pointer_cast<const Node>(node))
-        {}
-        inline const_iterator(const const_iterator &it)
-          : m_node(it.m_node)
-        {}
-        inline const_iterator(const Node::iterator &it)
-          : m_node(it.m_node)
-        {}
-        inline const_iterator operator++()
-        {
-          // Prefix increment
-          m_node = m_node->m_next_sibling;
-          return *this;
-        }
-        inline const_iterator operator++(int)
-        {
-          // Postfix increment
-          //iterator current(*this);	//unreferenced local variable
-          m_node = m_node->m_next_sibling;
-          return *this;
-        }
-        inline const Node &operator*() const
-        {
-          return *m_node;
-        }
-        inline const_ptr_t operator->() const
-        {
-          return m_node;
-        }
-        inline bool operator==(const const_iterator &rhs) const
-        {
-          return m_node == rhs.m_node;
-        }
-        inline bool operator!=(const const_iterator &rhs) const
-        {
-          return m_node != rhs.m_node;
-        }
-      };
+      using iterator = NodeIterator<Node>;
+      using const_iterator = NodeIterator<const Node>;
 
-      inline iterator begin()
-      {
-        return iterator(m_first_child);
-      }
+      iterator begin() { return iterator(m_first_child); }
+      iterator end() { return iterator(); }
 
-      inline iterator end()
-      {
-        return iterator();
-      }
-      
-      inline const_iterator begin() const
-      {
-        return iterator(m_first_child);
-      }
-
-      inline const_iterator end() const
-      {
-        return iterator();
-      }
+      const_iterator begin() const { return const_iterator(m_first_child); }
+      const_iterator end()   const { return const_iterator(); }
 
       const inline std::string &Key() const
       {
@@ -166,6 +111,11 @@ namespace Util
       inline std::shared_ptr<GenericValue> GetValue() const
       {
         return m_value;
+      }
+
+      inline void Clear()
+      {
+        m_value = nullptr;
       }
 
       inline void SetValue(const std::shared_ptr<GenericValue> &value)
@@ -217,37 +167,14 @@ namespace Util
       }
 
       // Add a child node. Multiple nodes of the same key may be added but only
-      // when specified as leaves. For example, adding "foo/bar" twice will 
+      // when specified as leaves. For example, adding "foo/bar" twice will
       // result in one "foo" with two "bar" children.
       template <typename T>
       Node &Add(const std::string &path, const T &value)
       {
-        std::vector<std::string> keys = Util::Format(path).Split('/');
-        Node *parent = this;
-        ptr_t node;
-        for (size_t i = 0; i < keys.size(); i++)
-        {
-          bool leaf = i == keys.size() - 1;
-          auto it = parent->m_children.find(keys[i]);
-          if (leaf || it == parent->m_children.end())
-          {
-            // Create node at this level
-            node = std::make_shared<Node>(keys[i]);
-            // The leaf node gets the value
-            if (leaf)
-              node->SetValue(value);
-            // Attach node to parent and move down to next nesting level: last
-            // created node is new parent
-            AddChild(*parent, node);
-            parent = node.get();
-          }
-          else
-          {
-            // Descend deeper...
-            parent = it->second.get();
-          }
-        }
-        return *node;
+        Node &new_leaf_node = AddEmpty(path);
+        new_leaf_node.SetValue(value);
+        return new_leaf_node;
       }
 
       Node &Add(const std::string &path)
@@ -266,12 +193,48 @@ namespace Util
           Add(key, value);
       }
 
+      // Set the value of the matching child node if it exists, else add new
+      template <typename T>
+      void Set(const std::string& key, const T& value, const std::string& group, T _min = 0, T _max = 0, const std::vector<T> &list = std::vector<T>{})
+      {
+          Node* node = TryGet(key);
+          if (node) {
+              node->SetValue(value);
+          }
+          else {
+              Add(key, value);
+          }
+
+          // key should have been added above 
+          node = TryGet(key);
+
+          if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char*>) {
+              node->m_value->SetValueRange(std::make_shared<ValueRange>(group, list));
+          }
+          else {
+              node->m_value->SetValueRange(std::make_shared<ValueRange>(group, _min, _max, list));
+          }
+      }
+
+      void SetEmpty(const std::string &key)
+      {
+        Node *node = TryGet(key);
+        if (node)
+        {
+          node->Clear();
+        }
+        else
+        {
+          AddEmpty(key);
+        }
+      }
+
       // True if value is empty (does not exist)
       inline bool Empty() const
       {
         return !m_value;
       }
-      
+
       // True if value exists (is not empty)
       inline bool Exists() const
       {
@@ -292,12 +255,13 @@ namespace Util
 
       // Always succeeds -- failed lookups permanently create an empty node.
       // Use with caution. Intended for hard-coded lookups.
-      const Node &operator[](const std::string &path) const;
-        
+      Node &operator[](const std::string &path);
+      const Node& operator[](const std::string& path) const;
+
       // These throw if the node is missing
       Node &Get(const std::string &path);
       const Node &Get(const std::string &path) const;
-        
+
       // This returns nullptr if node is missing
       Node *TryGet(const std::string &path);
       const Node *TryGet(const std::string &path) const;
@@ -305,13 +269,15 @@ namespace Util
       void Serialize(std::ostream *os, size_t indent_level = 0) const;
       std::string ToString(size_t indent_level = 0) const;
       Node &operator=(const Node &rhs);
-      Node &operator=(Node &&rhs);
+      Node& operator=(Node&& rhs) noexcept;
       Node(const std::string &key);
       Node(const std::string &key, const std::string &value);
       Node(const Node &that);
-      Node(Node &&that);
+      Node(Node&& that) noexcept;
       ~Node();
     };
+
+    void PrintConfigTree(const Node &config, int indent_level = 0, int tab_stops = 2);
   } // Config
 } // Util
 

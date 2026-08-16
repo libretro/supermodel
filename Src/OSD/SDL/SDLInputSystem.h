@@ -6,7 +6,7 @@
  ** This file is part of Supermodel.
  **
  ** Supermodel is free software: you can redistribute it and/or modify it under
- ** the terms of the GNU General Public License as published by the Free 
+ ** the terms of the GNU General Public License as published by the Free
  ** Software Foundation, either version 3 of the License, or (at your option)
  ** any later version.
  **
@@ -18,10 +18,10 @@
  ** You should have received a copy of the GNU General Public License along
  ** with Supermodel.  If not, see <http://www.gnu.org/licenses/>.
  **/
- 
+
 /*
  * SDLInputSystem.h
- * 
+ *
  * Header file for SDL input system.
  */
 
@@ -31,22 +31,16 @@
 #include "Types.h"
 #include "Inputs/InputSource.h"
 #include "Inputs/InputSystem.h"
-
-#ifdef SUPERMODEL_OSX
-#include <SDL/SDL.h>
-#else
-#include <SDL.h>
-#endif
+#include "SDLIncludes.h"
 
 #include <vector>
-using namespace std;
 
 #define NUM_SDL_KEYS (sizeof(s_keyMap) / sizeof(SDLKeyMapStruct))
 
 struct SDLKeyMapStruct
 {
 	const char *keyName;
-	SDLKey sdlKey;
+	SDL_Scancode sdlKey;
 };
 
 /*
@@ -55,17 +49,25 @@ struct SDLKeyMapStruct
 class CSDLInputSystem : public CInputSystem
 {
 private:
+	const Util::Config::Node& m_config;
+
+	// use gamecontroller api
+	bool m_useGameController;
+
 	// Lookup table to map key names to SDLKeys
 	static SDLKeyMapStruct s_keyMap[];
 
 	// Vector to keep track of attached joysticks
-	vector<SDL_Joystick*> m_joysticks;
+	std::vector<SDL_Joystick*> m_joysticks;
+
+	// Vector to keep track of attached gamepads
+	std::vector<SDL_GameController*> m_gamepads;
 
 	// Vector of joystick details
-	vector<JoyDetails> m_joyDetails;
+	std::vector<JoyDetails> m_joyDetails;
 
 	// Current key state obtained from SDL
-	Uint8 *m_keyState;
+	const Uint8 *m_keyState;
 
 	// Current mouse state obtained from SDL
 	int m_mouseX;
@@ -74,7 +76,23 @@ private:
 	short m_mouseWheelDir;
 	Uint8 m_mouseButtons;
 
-	/* 
+	// SDL2 ffb
+	SDL_HapticEffect eff;
+	unsigned sdlConstForceMax;
+	unsigned sdlSelfCenterMax;
+	unsigned sdlFrictionMax;
+	unsigned sdlVibrateMax;
+	struct hapticInfo
+	{
+		SDL_Haptic* SDLhaptic = NULL;
+		int effectConstantForceID = -1;
+		int effectVibrationID = -1;
+		int effectSpringForceID = -1;
+		int effectFrictionForceID = -1;
+	};
+	std::vector<hapticInfo> m_SDLHapticDatas;
+
+	/*
 	 * Opens all attached joysticks.
 	 */
 	void OpenJoysticks();
@@ -94,35 +112,55 @@ protected:
 
 	const char *GetKeyName(int keyIndex);
 
-	bool IsKeyPressed(int kbdNum, int keyIndex);
+	bool IsKeyPressed(int kbdNum, int keyIndex) const;
 
-	int GetMouseAxisValue(int mseNum, int axisNum);
-	
-	int GetMouseWheelDir(int mseNum);
+	int GetMouseAxisValue(int mseNum, int axisNum) const;
 
-	bool IsMouseButPressed(int mseNum, int butNum);
+	int GetMouseWheelDir(int mseNum) const;
 
-	int GetJoyAxisValue(int joyNum, int axisNum);
+	bool IsMouseButPressed(int mseNum, int butNum) const;
 
-	bool IsJoyPOVInDir(int joyNum, int povNum, int povDir);
+	int GetJoyAxisValue(int joyNum, int axisNum) const;
 
-	bool IsJoyButPressed(int joyNum, int butNum);
+	bool IsJoyPOVInDir(int joyNum, int povNum, int povDir) const;
+
+	bool IsJoyButPressed(int joyNum, int butNum) const;
 
 	bool ProcessForceFeedbackCmd(int joyNum, int axisNum, ForceFeedbackCmd ffCmd);
+
+	void StopAllEffect(int joyNum);
+
+	void StopConstanteforce(int joyNum);
+
+	void StopVibrationforce(int joyNum);
+
+	void StopSpringforce(int joyNum);
+
+	void StopFrictionforce(int joyNum);
+
+	void VibrationEffect(float strength, int joyNum);
+
+	void ConstantForceEffect(float force, int dir, int length, int joyNum);
+
+	void SpringForceEffect(float force, int joyNum);
+
+	void FrictionForceEffect(float force, int joyNum);
+
+	bool HasBasicForce(SDL_Haptic* hap);
 
 public:
 	/*
 	 * Constructs an SDL input system.
 	 */
-	CSDLInputSystem();
+	CSDLInputSystem(const Util::Config::Node& config, bool useGameController);
 
 	~CSDLInputSystem();
 
-	int GetNumKeyboards();	
+	int GetNumKeyboards() const;
 
-	int GetNumMice();
-	
-	int GetNumJoysticks();
+	int GetNumMice() const;
+
+	int GetNumJoysticks() const;
 
 	const KeyDetails *GetKeyDetails(int kbdNum);
 

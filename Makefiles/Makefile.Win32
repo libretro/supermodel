@@ -1,12 +1,12 @@
 ##
 ## Supermodel
 ## A Sega Model 3 Arcade Emulator.
-## Copyright 2011-2017 Bart Trzynadlowski, Nik Henson, Ian Curtis
+## Copyright 2003-2025 The Supermodel Team
 ##
 ## This file is part of Supermodel.
 ##
 ## Supermodel is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free 
+## the terms of the GNU General Public License as published by the Free
 ## Software Foundation, either version 3 of the License, or (at your option)
 ## any later version.
 ##
@@ -33,8 +33,20 @@
 # Configuration
 #
 # Edit as necessary. Some users may need to edit the "Platform Configuration"
-# section as well, namely SDL_LIBS and PLATFORM_LIBS.
+# section as well, namely SDL2_LIBS and PLATFORM_LIBS.
 ###############################################################################
+
+#
+# Must be included first
+#
+include Makefiles/Options.inc
+
+
+###############################################################################
+# Release Package Options
+###############################################################################
+
+PKG_TYPE = zip
 
 #
 # Bitness of build ('32' or '64')
@@ -42,15 +54,8 @@
 BITS = 64
 
 #
-# Path to SDL
-#
-SDL_INCLUDE_DIR = c:/tdm-gcc-64/include/SDL
-SDL_LIB_DIR = c:/tdm-gcc-64/lib
-
-#
 # Toolchain
 #
-
 CC = gcc
 CXX = g++
 LD = g++
@@ -66,33 +71,42 @@ ifneq ($(filter $(strip $(BITS)),32 64),$(strip $(BITS)))
 endif
 
 #
-# Use Bash or Windows Prompt shell commands?
+# Use Bash or Windows Command Prompt shell commands?
 #
-DELETE = rm -d -r -f
-ifeq ($(strip $(MSYSTEM)),)
-	DELETE = rmdir /s /q
+ifneq (,$(findstring cmd.exe,$(shell echo %COMSPEC%)))
+	# 'echo %COMSPEC%' returns path to cmd.exe on Windows, '%COMSPEC%' in bash
+	RMDIR = rmdir /s /q
+else
+	RMDIR = rm -d -r -f
 endif
 
 #
-# SDL
+# SDL2
 #
-#
-# (At least for SDL) The linked libs order is fundamental for a successful compiling!
-# https://stackoverflow.com/questions/24596596/sdl-doesnt-compile-in-native-enviroment
-# http://www.cplusplus.com/forum/beginner/110753/
-#
-SDL_LIBS = -lmingw32 -static-libgcc -static-libstdc++ -lSDLmain -lSDL -lm -luser32 -lgdi32 -lwinmm -ldxguid
-SDL_CFLAGS = -D_GNU_SOURCE=1 -Dmain=SDL_main
+ifneq (,$(findstring cmd.exe,$(shell echo %COMSPEC%)))
+	# When building in Command Prompt, we don't have sdl2-config and must hard-code the SDL2 include
+	# and library directories
+	SDL2_INCLUDE_DIR = \msys64\mingw64\include\SDL2
+	SDL2_LIB_DIR = \msys64\mingw64\lib
+	SDL2_LIBS = -lmingw32 -lSDL2main -lSDL2 -Wl,--no-undefined -lshell32 -lsetupapi -ladvapi32 -luuid -lversion -limm32 -lwinmm -lgdi32 -luser32 -lm -pipe
+	SDL2_CFLAGS =
+else
+	# Must strip out -mwindows so we don't create a GUI app (will not work in Command Prompt)
+	SDL2_LIBS = $(shell sdl2-config --static-libs | sed 's/-mwindows//g')
+	SDL2_CFLAGS = $(shell sdl2-config --cflags)
+endif
+SDL2_LIBS += -lSDL2_net -liphlpapi
 
 #
 # MinGW/Windows-specific
 #
 
-PLATFORM_INCLUDE_DIR = $(SDL_INCLUDE_DIR)
-PLATFORM_LIB_DIR = $(SDL_LIB_DIR)
-PLATFORM_LIBS = -ldinput8 -lglu32 -lole32 -loleaut32 -lopengl32 -lwbemuuid -lws2_32 -lz
-PLATFORM_CFLAGS = $(SDL_CFLAGS) -DSUPERMODEL_WIN32 $(addprefix -I,$(sort $(PLATFORM_INCLUDE_DIR)))
-PLATFORM_LDFLAGS = -static -L$(sort $(PLATFORM_LIB_DIR)) $(SDL_LIBS) $(PLATFORM_LIBS)
+PLATFORM_INCLUDE_DIR = $(SDL2_INCLUDE_DIR)
+PLATFORM_LIB_DIR = $(SDL2_LIB_DIR)
+PLATFORM_LIBS = -ldxerr8 -ldinput8 -lglu32 -lole32 -loleaut32 -lopengl32 -lwbemuuid -lws2_32 -lz
+PLATFORM_CXXFLAGS = $(SDL2_CFLAGS) -DSUPERMODEL_WIN32 $(addprefix -I,$(sort $(PLATFORM_INCLUDE_DIR)))
+PLATFORM_LDFLAGS = -static -L$(sort $(PLATFORM_LIB_DIR)) $(SDL2_LIBS) $(PLATFORM_LIBS)
+PLATFORM_BINARY_EXTENSION = .exe
 
 
 ###############################################################################
@@ -101,11 +115,24 @@ PLATFORM_LDFLAGS = -static -L$(sort $(PLATFORM_LIB_DIR)) $(SDL_LIBS) $(PLATFORM_
 
 PLATFORM_SRC_FILES = \
 	Src/OSD/Windows/DirectInputSystem.cpp \
-	Src/OSD/Windows/WinOutputs.cpp
+	Src/OSD/Windows/FileSystemPath.cpp \
+	Src/OSD/Windows/WinOutputs.cpp \
+	Src/OSD/Windows/SupermodelResources.rc
 
-include Makefiles/Makefile.inc
+include Makefiles/Rules.inc
 
-clean:	 
+clean:
 	$(SILENT)echo Cleaning up $(BIN_DIR) and $(OBJ_DIR)...
-	$(SILENT)$(DELETE) $(BIN_DIR)
-	$(SILENT)$(DELETE) $(OBJ_DIR)
+	$(SILENT)$(RMDIR) $(BIN_DIR)
+	$(SILENT)$(RMDIR) $(OBJ_DIR)
+
+
+###############################################################################
+# Platform-specific Rules
+#
+# This section must be placed *after* the inclusion of Makefiles/Rules.inc.
+###############################################################################
+
+$(OBJ_DIR)/SupermodelResources.o:	Src/OSD/Windows/SupermodelResources.rc Src/OSD/Windows/SupermodelManifest.xml | $(OBJ_DIR)
+	$(info Compiling              : $< -> $@)
+	$(SILENT)windres -i Src/OSD/Windows/SupermodelResources.rc -o $@

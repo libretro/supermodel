@@ -2,25 +2,12 @@
 #define _MODEL_H_
 
 #include <vector>
-#include <unordered_map>
-#include <map>
 #include <memory>
-#include <string.h>
-#include "Texture.h"
+#include <cstring>
+#include "Types.h"
 #include "Mat4.h"
 
 namespace New3D {
-
-struct ClipVertex
-{
-	float pos[4];
-};
-
-struct ClipPoly
-{
-	ClipVertex list[12];		// what's the max number we can hit for a triangle + 4 planes?
-	int count = 0;
-};
 
 struct Vertex					// half vertex
 {
@@ -28,17 +15,22 @@ struct Vertex					// half vertex
 	float normal[3];
 	float texcoords[2];
 	float fixedShade;
-};
 
-struct FVertex : Vertex			// full vertex including face attributes
-{
-	float faceNormal[3];
-	UINT8 faceColour[4];
-
-	FVertex& operator=(const Vertex& vertex) 
+	static bool Equal(const Vertex& p1, const Vertex& p2)
 	{
-		memcpy(this, &vertex, sizeof(Vertex));
-		return *this;
+		return (p1.pos[0] == p2.pos[0] &&
+			p1.pos[1] == p2.pos[1] &&
+			p1.pos[2] == p2.pos[2]);
+	}
+
+	static void Average(const Vertex& p1, const Vertex& p2, Vertex& p3)
+	{
+		p3.pos[3] = 1.0f;	//always 1
+		p3.fixedShade = (p1.fixedShade + p2.fixedShade) * 0.5f;
+
+		for (int i = 0; i < 3; i++)	{ p3.pos[i] = (p1.pos[i] + p2.pos[i]) * 0.5f; }
+		for (int i = 0; i < 3; i++)	{ p3.normal[i] = (p1.normal[i] + p2.normal[i]) * 0.5f; }
+		for (int i = 0; i < 2; i++)	{ p3.texcoords[i] = (p1.texcoords[i] + p2.texcoords[i]) * 0.5f; }
 	}
 };
 
@@ -47,87 +39,122 @@ struct R3DPoly
 	Vertex v[4];			// just easier to have them as an array
 	float faceNormal[3];	// we need this to help work out poly winding, i assume the h/w uses this instead of calculating normals itself
 	UINT8 faceColour[4];	// per face colour
+	float textureNP;
 	int number = 4;
 };
 
-struct Poly						// our polys are always 3 triangles, unlike the real h/w
+struct FVertex				// full vertex including face attributes
 {
-	Poly() {};	// default
+	Vertex base;			// composition instead of inheritance keeps FVertex standard-layout, making offsetof well-defined
+	float faceNormal[3];
+	UINT8 faceColour[4];
+	float textureNP;
 
-	Poly(bool firstTriangle, const R3DPoly& r3dPoly) {
-
-		if (firstTriangle) {
-			p1 = r3dPoly.v[0];
-			p2 = r3dPoly.v[1];
-			p3 = r3dPoly.v[2];
-		}
-		else {
-			p1 = r3dPoly.v[0];
-			p2 = r3dPoly.v[2];
-			p3 = r3dPoly.v[3];
-		}
-
-		// copy face attributes
-		for (int i = 0; i < 4; i++) {
-			p1.faceColour[i] = r3dPoly.faceColour[i];
-			p2.faceColour[i] = r3dPoly.faceColour[i];
-			p3.faceColour[i] = r3dPoly.faceColour[i];
-		}
-
-		for (int i = 0; i < 3; i++) {
-			p1.faceNormal[i] = r3dPoly.faceNormal[i];
-			p2.faceNormal[i] = r3dPoly.faceNormal[i];
-			p3.faceNormal[i] = r3dPoly.faceNormal[i];
-		}
+	FVertex& operator=(const Vertex& vertex)
+	{
+		base = vertex;
+		return *this;
 	}
 
-	FVertex p1;
-	FVertex p2;
-	FVertex p3;
+	FVertex() {}
+	FVertex(const R3DPoly& r3dPoly, int index)
+	{
+		for (int i = 0; i < 4; i++) { faceColour[i] = r3dPoly.faceColour[i]; }
+		for (int i = 0; i < 3; i++) { faceNormal[i] = r3dPoly.faceNormal[i]; }
+		textureNP = r3dPoly.textureNP;
+
+		*this = r3dPoly.v[index];
+	}
+
+	FVertex(const R3DPoly& r3dPoly, int index1, int index2)		// average of 2 points
+	{
+		Vertex::Average(r3dPoly.v[index1], r3dPoly.v[index2], base);
+
+		// copy face attributes
+		for (int i = 0; i < 4; i++) { faceColour[i] = r3dPoly.faceColour[i]; }
+		for (int i = 0; i < 3; i++) { faceNormal[i] = r3dPoly.faceNormal[i]; }
+		textureNP = r3dPoly.textureNP;
+	}
+
+	static bool Equal(const FVertex& p1, const FVertex& p2)
+	{
+		return Vertex::Equal(p1.base, p2.base);
+	}
+
+	static void Average(const FVertex& p1, const FVertex& p2, FVertex& p3)
+	{
+		Vertex::Average(p1.base, p2.base, p3.base);
+		for (int i = 0; i < 4; i++) { p3.faceColour[i] = p1.faceColour[i]; }
+		for (int i = 0; i < 3; i++) { p3.faceNormal[i] = p1.faceNormal[i]; }
+	}
 };
+
+enum class Layer { colour, trans1, trans2, trans12 /*both 1&2*/, all, none };
 
 struct Mesh
 {
 	//helper funcs
-	bool Render(bool alpha) 
+	bool Render(Layer layer, float nodeAlpha)
 	{
-		if (alpha) {
-			if (!textureAlpha && !polyAlpha) {
+		bool nAlpha = nodeAlpha < 1.0f;
+
+		switch (layer)
+		{
+		case Layer::colour:
+			if (polyAlpha || nAlpha) {
 				return false;
 			}
-		}
-		else {
-			if (polyAlpha) {
+			break;
+		case Layer::trans1:
+			if ((!textureAlpha && !polyAlpha && !nAlpha) || transLSelect) {
 				return false;
 			}
+			break;
+		case Layer::trans2:
+			if ((!textureAlpha && !polyAlpha && !nAlpha) || !transLSelect) {
+				return false;
+			}
+			break;
+		default:					// not using these types
+			return false;
 		}
 
 		return true;
 	}
 
+	enum TexWrapMode : int { repeat = 0, repeatClamp, mirror, mirrorClamp };
+
 	// texture
-	int format, x, y, width, height = 0;
-	bool mirrorU = false;
-	bool mirrorV = false;
-	bool inverted = false;
+	int		format		= 0;
+	int		x			= 0;
+	int		y			= 0;
+	int		width		= 0;
+	int		height		= 0;
+	int		page		= 0;
+	bool	inverted	= false;
+
+	TexWrapMode wrapModeU = TexWrapMode::repeat;
+	TexWrapMode wrapModeV = TexWrapMode::repeat;
 
 	// microtexture
 	bool	microTexture		= false;
 	int		microTextureID		= 0;
-	float	microTextureScale	= 0;
+	float	microTextureMinLOD	= 0;
 
 	// attributes
-	bool doubleSided	= false;
 	bool textured		= false;
 	bool polyAlpha		= false;		// specified in the rgba colour
 	bool textureAlpha	= false;		// use alpha in texture
 	bool alphaTest		= false;		// discard fragment based on alpha (ogl does this with fixed function)
-	bool clockWise		= true;			// we need to check if the matrix will change the winding
 	bool layered		= false;		// stencil poly
 	bool highPriority	= false;		// rendered over the top
+	bool transLSelect	= false;		// actually the transparency layer, false = layer 0, true = layer 1
+	bool translatorMap	= false;		// colours are multiplied by 16
+	bool noLosReturn	= false;		// line of sight test
 
 	// lighting
 	bool fixedShading	= false;
+	bool smoothShading	= false;
 	bool lighting		= false;
 	bool specular		= false;
 	float shininess		= 0;
@@ -138,12 +165,12 @@ struct Mesh
 
 	// opengl resources
 	int vboOffset		= 0;			// this will be calculated later
-	int triangleCount	= 0;
+	int vertexCount		= 0;			// /3 for triangles /4 for quads
 };
 
 struct SortingMesh : public Mesh		// This struct temporarily holds the model data, before it gets copied to the main buffer
 {
-	std::vector<Poly> polys;
+	std::vector<FVertex> verts;
 };
 
 struct Model
@@ -163,18 +190,22 @@ struct Model
 
 	//model scale step 1.5+
 	float scale = 1.0f;
+
+	//node transparency
+	float alpha = 1.0f;
 };
 
 struct Viewport
 {
-	int		vpX;					// these are the original hardware values
-	int		vpY;
-	int		vpWidth;
-	int		vpHeight;
+	float	vpX;					// these are the original hardware values
+	float	vpY;
+	float	vpWidth;
+	float	vpHeight;
 	float	angle_left;
 	float	angle_right;
 	float	angle_top;
 	float	angle_bottom;
+	float	cota;
 
 	Mat4	projectionMatrix;		// projection matrix, we will calc this later when we have scene near/far vals
 
@@ -184,7 +215,11 @@ struct Viewport
 	float	spotEllipse[4];			// spotlight ellipse (see RenderViewport())
 	float	spotRange[2];			// Z range
 	float	spotColor[3];			// color
-	float	fogParams[7];			// fog parameters (...)
+	float	fogColour[3];
+	float	fogStart;
+	float	fogDensity;
+	float	fogAttenuation;
+	float	fogAmbient;
 	float	scrollFog;				// a transparency value that determines if fog is blended over the bottom 2D layer
 	int		losPosX, losPosY;		// line of sight position
 	int		x, y;					// viewport coordinates (scaled and in OpenGL format)
@@ -198,8 +233,6 @@ struct Viewport
 	int		hardwareStep;			// not really a viewport param but will do here
 };
 
-enum class Clip { INSIDE, OUTSIDE, INTERCEPT, NOT_SET };
-
 class NodeAttributes
 {
 public:
@@ -208,14 +241,15 @@ public:
 
 	bool Push();
 	bool Pop();
-	bool StackLimit();
+	bool StackLimit() const;
 	void Reset();
 
 	int currentTexOffsetX;
 	int currentTexOffsetY;
 	int currentPage;
-	Clip currentClipStatus;
 	float currentModelScale;
+	float currentModelAlpha;
+	bool currentDisableCulling;
 
 private:
 
@@ -224,8 +258,9 @@ private:
 		int texOffsetX;
 		int texOffsetY;
 		int page;
-		Clip clip;
 		float modelScale;
+		float modelAlpha;	// from culling node
+		bool disableCulling;
 	};
 	std::vector<NodeAttribs> m_vecAttribs;
 };

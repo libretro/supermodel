@@ -18,7 +18,7 @@
  ** You should have received a copy of the GNU General Public License along
  ** with Supermodel.  If not, see <http://www.gnu.org/licenses/>.
  **/
- 
+
 /*
  * SCSPDSP.h
  * 
@@ -29,15 +29,16 @@
 #ifndef INCLUDED_SCSPDSP_H
 #define INCLUDED_SCSPDSP_H
 
-//#define DYNDSP
-#define DYNOPT	1		//set to 1 to enable optimization of recompiler
+#include "Types.h"
 
+//#define DYNDSP
 
 //the DSP Context
 struct _SCSPDSP
 {
 //Config
 	UINT16 *SCSPRAM;
+	UINT32 SCSPRAM_LENGTH;
 	unsigned int RBP;	//Ring buf pointer
 	unsigned int RBL;	//Delay ram (Ring buffer) size in words
 
@@ -80,8 +81,5 @@ void SCSPDSP_Init(_SCSPDSP *DSP);
 void SCSPDSP_SetSample(_SCSPDSP *DSP,INT32 sample,int SEL,int MXL);
 void SCSPDSP_Step(_SCSPDSP *DSP);
 void SCSPDSP_Start(_SCSPDSP *DSP);
-
-
-
 
 #endif	// INCLUDED_SCSPDSP_H

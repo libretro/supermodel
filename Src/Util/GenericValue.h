@@ -1,3 +1,24 @@
+/**
+ ** Supermodel
+ ** A Sega Model 3 Arcade Emulator.
+ ** Copyright 2003-2026 The Supermodel Team
+ **
+ ** This file is part of Supermodel.
+ **
+ ** Supermodel is free software: you can redistribute it and/or modify it under
+ ** the terms of the GNU General Public License as published by the Free
+ ** Software Foundation, either version 3 of the License, or (at your option)
+ ** any later version.
+ **
+ ** Supermodel is distributed in the hope that it will be useful, but WITHOUT
+ ** ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ ** FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ ** more details.
+ **
+ ** You should have received a copy of the GNU General Public License along
+ ** with Supermodel.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 /*
  * TODO:
  * -----
@@ -19,6 +40,7 @@
 #include <stdexcept>
 #include <memory>
 #include <cctype>
+#include <variant>
 
 namespace Util
 {
@@ -29,19 +51,19 @@ namespace Util
     template <typename T>
     struct IntegerEncodableAsHex
     {
-      static const bool value = std::is_integral<T>::value && sizeof(T) >= 2 && sizeof(T) <= 8;
+      static const bool value = std::is_integral_v<T> && sizeof(T) >= 2 && sizeof(T) <= 8;
     };
 
     // This case should never actually be called
     template <typename T>
-    static typename std::enable_if<!IntegerEncodableAsHex<T>::value, T>::type ParseInteger(const std::string &str)
+    static typename std::enable_if_t<!IntegerEncodableAsHex<T>::value, T> ParseInteger(const std::string & /*str*/)
     {
       return T();
     }
 
     // This case will be generated for hex encodable integers and executed
     template <typename T>
-    static typename std::enable_if<IntegerEncodableAsHex<T>::value, T>::type ParseInteger(const std::string &str)
+    static typename std::enable_if_t<IntegerEncodableAsHex<T>::value, T> ParseInteger(const std::string &str)
     {
       T tmp = 0;
       if (str.length() >= 3 && (
@@ -80,7 +102,7 @@ namespace Util
 
     // This case should never actually be called
     template <typename T>
-    inline T ParseBool(const std::string &str)
+    inline T ParseBool(const std::string & /*str*/)
     {
       return T();
     }
@@ -101,15 +123,73 @@ namespace Util
     }    
   }
 
+  // This class helps us validate paramater values
+  // by storing a list or a min/max of valid values
+  // variant is just a fancy c++ union, we can add as many types as we need to it
+  class ValueRange
+  {
+  public:
+
+      using Variant = std::variant<bool, unsigned, int, float, std::string>;
+
+      template <typename T>
+      ValueRange(const std::string& group, T min = 0, T max = 0, const std::vector<T> &list = std::vector<T>{}) :
+          m_group(group),
+          m_min(min),
+          m_max(max)
+      {
+          for (const auto& l : list) {
+              m_list.emplace_back(l);
+          }
+      }
+
+      ValueRange(const std::string& group, const std::vector<std::string> &list = std::vector<std::string>{}) :
+          m_group(group),
+          m_min(std::string("")),
+          m_max(std::string(""))
+      {
+          for (const auto& l : list) {
+              m_list.emplace_back(l);
+          }
+      }
+
+      Variant tempValue;        // kludge for the GUI because we need somewhere to store the val
+
+      const std::string& GetGroup() { return m_group; }
+      bool HasMinMax() { return m_min != m_max; }
+      Variant GetMin() { return m_min; }
+      Variant GetMax() { return m_max; }
+      std::vector<Variant>& GetList() { return m_list; }
+      int GetIndex() { return (int)m_min.index(); }      // gets the variant index (basically the type)
+
+  private:
+      std::string m_group;
+      Variant m_min;
+      Variant m_max;
+      std::vector<Variant> m_list;
+  };
+
   class GenericValue
   {
   private:
     std::type_index m_type;
+    std::shared_ptr<ValueRange> m_valueRange;
 
     virtual void *GetData() = 0;
     virtual const void *GetData() const = 0;
 
   public:
+
+    std::shared_ptr<ValueRange> GetValueRange()
+    {
+        return m_valueRange;
+    }
+
+    void SetValueRange(std::shared_ptr<ValueRange> v)
+    {
+        m_valueRange = v;
+    }
+
     template <typename T>
     inline bool Is() const
     {

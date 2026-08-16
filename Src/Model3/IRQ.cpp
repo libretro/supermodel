@@ -31,7 +31,10 @@
  *   call the PPC core directly, which should not happen in proper OO code.
  */
 
+#include "IRQ.h"
+
 #include "Supermodel.h"
+#include "CPU/PowerPC/ppc.h"
 
 
 /******************************************************************************
@@ -47,7 +50,7 @@ void CIRQ::SaveState(CBlockFile *SaveState)
 
 void CIRQ::LoadState(CBlockFile *SaveState)
 {
-	if (OKAY != SaveState->FindBlock("IRQ"))
+	if (Result::OKAY != SaveState->FindBlock("IRQ"))
 	{
 		ErrorLog("Unable to load IRQ controller state. Save state file is corrupt.");
 		return;
@@ -66,17 +69,16 @@ void CIRQ::Assert(unsigned irqBits)
 {
 	irqState |= irqBits;
 	if ((irqState&irqEnable))	// low 8 bits are maskable interrupts
-		//ppc_set_irq_line(0);
 		ppc_set_irq_line(1);
 	if ((irqState&(~0xFF)))		// any non-maskable interrupts pending?
-		//ppc_set_irq_line(0);
 		ppc_set_irq_line(1);
 }
 
-//TO-DO: CPU needs to have deassert logic!
 void CIRQ::Deassert(unsigned irqBits)
 {
 	irqState &= ~irqBits;
+	if (!(irqState & irqEnable) && !(irqState & (~0xFF)))
+		ppc_set_irq_line(0);	// if no pending IRQs, deassert CPU IRQ line
 }
 
 void CIRQ::WriteIRQEnable(UINT8 data)
@@ -84,12 +86,12 @@ void CIRQ::WriteIRQEnable(UINT8 data)
 	irqEnable = (unsigned) data;
 }
 
-UINT8 CIRQ::ReadIRQEnable(void)
+UINT8 CIRQ::ReadIRQEnable(void) const
 {
 	return (UINT8) (irqEnable&0xFF);
 }
 
-UINT8 CIRQ::ReadIRQState(void)
+UINT8 CIRQ::ReadIRQState(void) const
 {
 	return (UINT8) (irqState&0xFF);
 }
@@ -110,7 +112,9 @@ void CIRQ::Init(void)
 	// this function really only exists for consistency with other device classes
 }
 
-CIRQ::CIRQ(void)
+CIRQ::CIRQ(void) :
+	irqEnable(0),
+	irqState(0)
 {	
 	DebugLog("Built IRQ controller\n");
 }

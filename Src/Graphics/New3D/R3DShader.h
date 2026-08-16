@@ -1,9 +1,11 @@
 #ifndef _R3DSHADER_H_
 #define _R3DSHADER_H_
 
-#include "Pkgs/glew.h"
+#include <GL/glew.h>
 #include "Util/NewConfig.h"
 #include "Model.h"
+#include <map>
+#include <string>
 
 namespace New3D {
 
@@ -13,15 +15,20 @@ public:
 	R3DShader(const Util::Config::Node &config);
 
 	bool	LoadShader			(const char* vertexShader = nullptr, const char* fragmentShader = nullptr);
+	void	UnloadShader		();
 	void	SetMeshUniforms		(const Mesh* m);
 	void	SetModelStates		(const Model* model);
 	void	SetViewportUniforms	(const Viewport *vp);
 	void	Start				();
 	void	SetShader			(bool enable = true);
-	GLint	GetVertexAttribPos	(const char* attrib);
+	GLint	GetVertexAttribPos	(const std::string& attrib);
 	void	DiscardAlpha		(bool discard);				// use to remove alpha from texture alpha only polys for 1st pass
+	void	SetLayer			(Layer layer);
 
 private:
+
+	void PrintShaderResult(GLuint shader);
+	void PrintProgramResult(GLuint program);
 
 	// run-time config
 	const Util::Config::Node &m_config;
@@ -29,18 +36,25 @@ private:
 	// shader IDs
 	GLuint m_shaderProgram;
 	GLuint m_vertexShader;
+	GLuint m_geoShader;
 	GLuint m_fragmentShader;
 
 	// mesh uniform locations
-	GLint m_locTexture1;
-	GLint m_locTexture2;
-	GLint m_locTexture1Enabled;
-	GLint m_locTexture2Enabled;
+	GLint m_locTextureBank[2];		// 2 banks
+	GLint m_locTexture1Enabled;		// base texture
+	GLint m_locTexture2Enabled;		// micro texture
+	GLint m_locTexturePage;
 	GLint m_locTextureAlpha;
 	GLint m_locAlphaTest;
-	GLint m_locMicroTexScale;
-	GLint m_locBaseTexSize;
+	GLint m_locMicroTexMinLOD;
+	GLint m_locMicroTexID;
+	GLint m_locBaseTexInfo;
+	GLint m_locBaseTexType;
 	GLint m_locTextureInverted;
+	GLint m_locTexWrapMode;
+	GLint m_locTranslatorMap;
+	GLint m_locColourLayer;
+	GLint m_locPolyAlpha;
 
 	// cached mesh values
 	bool	m_textured1;
@@ -53,14 +67,26 @@ private:
 	float	m_specularValue;
 	bool	m_specularEnabled;
 	bool	m_fixedShading;
+	bool	m_smoothShading;
+	bool	m_translatorMap;
+	bool	m_polyAlpha;
+	int		m_texturePage;
 
 	bool	m_layered;
-	float	m_microTexScale;
-	float	m_baseTexSize[2];
+	bool	m_noLosReturn;
+	float	m_microTexMinLOD;
+	int		m_microTexID;
+	int		m_baseTexInfo[4];
+	int		m_baseTexType;
+	int		m_texWrapMode[2];
 	bool	m_textureInverted;
-	
+
 	// cached model values
 	float	m_modelScale;
+	float	m_nodeAlpha;
+	int		m_transX;
+	int		m_transY;
+	int		m_transPage;
 
 	// are our cache values dirty
 	bool	m_dirtyMesh;
@@ -73,6 +99,8 @@ private:
 	GLint m_locFogColour;
 	GLint m_locFogAttenuation;
 	GLint m_locFogAmbient;
+	GLint m_locProjMat;
+	GLint m_locCota;
 
 	// lighting / other
 	GLint m_locLighting;
@@ -83,19 +111,27 @@ private:
 	GLint m_locSpecularValue;
 	GLint m_locSpecularEnabled;
 	GLint m_locFixedShading;
+	GLint m_locSmoothShading;
 
 	GLint m_locSpotEllipse;
 	GLint m_locSpotRange;
 	GLint m_locSpotColor;
 	GLint m_locSpotFogColor;
-	
+
 	// model uniforms
 	GLint m_locModelScale;
+	GLint m_locNodeAlpha;
+	GLint m_locModelMat;
 
 	// global uniforms
 	GLint m_locHardwareStep;
 	GLint m_locDiscardAlpha;
+
+	// vertex attribute position cache
+	std::map<std::string, GLint> m_vertexLocCache;
+
 };
+
 
 } // New3D
 

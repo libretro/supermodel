@@ -1,3 +1,24 @@
+/**
+ ** Supermodel
+ ** A Sega Model 3 Arcade Emulator.
+ ** Copyright 2003-2026 The Supermodel Team
+ **
+ ** This file is part of Supermodel.
+ **
+ ** Supermodel is free software: you can redistribute it and/or modify it under
+ ** the terms of the GNU General Public License as published by the Free
+ ** Software Foundation, either version 3 of the License, or (at your option)
+ ** any later version.
+ **
+ ** Supermodel is distributed in the hope that it will be useful, but WITHOUT
+ ** ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ ** FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ ** more details.
+ **
+ ** You should have received a copy of the GNU General Public License along
+ ** with Supermodel.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 /*
  * Config Tree
  * ===========
@@ -7,7 +28,7 @@
  *
  * A hierarchical data structure supporting arbitrary nesting. Each node
  * (Config::Node) has a key and either a value or children (in fact, it may
- * have both, but this rarely makes semantic sense and so the config tree 
+ * have both, but this rarely makes semantic sense and so the config tree
  * builders take care not to allow it).
  *
  * Nesting is denoted with the '/' separator. For example:
@@ -20,10 +41,10 @@
  * [1] accesses the value of the node (more on this below). [2] accesses the
  * a child node with key "foo". [3] accesses the value of the child node "foo".
  * [4] accesses child "bar" of child "foo", and so forth.
- * 
+ *
  * Similar to map semantics, the operator [] never fails. If the node does not
  * exist, it creates a dummy "missing" node that is retained as a hidden child.
- * This node will have an empty value, which cannot be accessed, except using 
+ * This node will have an empty value, which cannot be accessed, except using
  * the ValueAsDefault<> method. This scheme exists to simplify lookup code for
  * keys known at compile time, the logic being that any "missing" key should
  * could just as well have been there in the first place, thus making the added
@@ -39,7 +60,7 @@
  *
  * Nodes at the same nesting level (siblings) are strung together in a
  * linked list. Parents also maintain pointers to the first and last of their
- * children (for order-preserving iteration) as well as a map for direct 
+ * children (for order-preserving iteration) as well as a map for direct
  * lookup by key.
  *
  * Keys may be reused at a given level. Key-value pairs will have their order
@@ -80,7 +101,7 @@
  *
  * Conversions as supported but are implemented via serialization and de-
  * serialization using sstream. Most "sane" conversions will work as expected.
- * When a conversion to T is desired, or if the stored value type is not 
+ * When a conversion to T is desired, or if the stored value type is not
  * precisely known, use:
  *
  *    node.ValueAs<T>()
@@ -103,7 +124,7 @@
  *  - Section nodes have their key set to the section name and value empty.
  *    They are the only nodes that can have children (i.e., IsLeaf() == false,
  *    HasChildren() == true).
- *  - Top-level node in the tree is the global section, and its key is 
+ *  - Top-level node in the tree is the global section, and its key is
  *    "Global".
  *  - Only the global section (top-level section) may have child nodes that are
  *    sections. The config tree can therefore only be up to 2 levels deep: the
@@ -126,6 +147,17 @@
  * Any setting not explicitly part of a section is assigned to the "Global"
  * section. For example, Setting0 and Setting1 above are both part of "Global".
  *
+ * Multiple sections can be specified like so:
+ *
+ *    [ Section1, Section2, Section3 ]
+ *    SettingX = foo
+ *    [ Section4, , Section5 ]
+ *    SettingX = bar
+ *
+ * In this example, SettingX will be set to "foo" in Section1, Section2, and
+ * Section3. It will be set to "bar" in Section4, Section5, and the "Global"
+ * section because of the unnamed element.
+ *
  * TODO
  * ----
  * - TryGet() can be made quicker by attempting a direct lookup first. We never
@@ -136,6 +168,7 @@
  */
 
 #include "Util/NewConfig.h"
+#include <iostream>
 
 namespace Util
 {
@@ -145,11 +178,11 @@ namespace Util
     {
       if (m_missing)
         throw std::range_error(Util::Format() << "Node \"" << m_key << "\" does not exist");
-      if (Empty() && !m_missing)
+      if (Empty())
         throw std::logic_error(Util::Format() << "Node \"" << m_key << "\" has no value" );
     }
 
-    const Node &Node::MissingNode(const std::string &key) const
+    Node &Node::MissingNode(const std::string &key) const
     {
       auto it = m_missing_nodes.find(key);
       if (it == m_missing_nodes.end())
@@ -161,9 +194,9 @@ namespace Util
       return it->second;
     }
 
-    const Node &Node::operator[](const std::string &path) const
+    Node &Node::operator[](const std::string &path)
     {
-      const Node *e = this;
+       Node *e = this;
       std::vector<std::string> keys = Util::Format(path).Split('/');
       for (auto &key: keys)
       {
@@ -173,6 +206,11 @@ namespace Util
         e = it->second.get();
       }
       return *e;
+    }
+
+    const Node& Node::operator[](const std::string& path) const
+    {
+        return const_cast<const Node&>(const_cast<Node&>(*this)[path]);
     }
 
     Node &Node::Get(const std::string &path)
@@ -226,7 +264,7 @@ namespace Util
       if (Exists())
         m_value->Serialize(os);
       *os << "\"  children={";
-      for (auto v: m_children)
+      for (const auto &v: m_children)
         *os << ' ' << v.first;
       *os << " }" << std::endl;
       for (ptr_t child = m_first_child; child; child = child->m_next_sibling)
@@ -240,8 +278,36 @@ namespace Util
       return os.str();
     }
 
+    // Adds an empty node (no value and where Empty() will return true)
+    Node &Node::AddEmpty(const std::string &path)
+    {
+      std::vector<std::string> keys = Util::Format(path).Split('/');
+      Node *parent = this;
+      ptr_t node;
+      for (size_t i = 0; i < keys.size(); i++)
+      {
+        bool leaf = i == keys.size() - 1;
+        auto it = parent->m_children.find(keys[i]);
+        if (leaf || it == parent->m_children.end())
+        {
+          // Create node at this level and leave it empty
+          node = std::make_shared<Node>(keys[i]);
+          // Attach node to parent and move down to next nesting level: last
+          // created node is new parent
+          AddChild(*parent, node);
+          parent = node.get();
+        }
+        else
+        {
+          // Descend deeper...
+          parent = it->second.get();
+        }
+      }
+      return *node;
+    }
+
     // Adds a newly-created node (which, among other things, implies no
-    // children) as a child 
+    // children) as a child
     void Node::AddChild(Node &parent, ptr_t &node)
     {
       if (!parent.m_last_child)
@@ -253,7 +319,7 @@ namespace Util
       {
         parent.m_last_child->m_next_sibling = node;
         parent.m_last_child = node;
-      }    
+      }
       parent.m_children[node->m_key] = node;
     }
 
@@ -279,7 +345,7 @@ namespace Util
       m_last_child.swap(rhs.m_last_child);
       m_children.swap(rhs.m_children);
      const_cast<std::string *>(&m_key)->swap(*const_cast<std::string *>(&rhs.m_key));
-      m_value.swap(rhs.m_value); 
+      m_value.swap(rhs.m_value);
     }
 
     Node &Node::operator=(const Node &rhs)
@@ -288,7 +354,7 @@ namespace Util
       return *this;
     }
 
-    Node &Node::operator=(Node &&rhs)
+    Node &Node::operator=(Node &&rhs) noexcept
     {
       Swap(rhs);
       return *this;
@@ -320,7 +386,7 @@ namespace Util
       DeepCopy(that);
     }
 
-    Node::Node(Node &&that)
+    Node::Node(Node &&that) noexcept
     {
       Swap(that);
     }
@@ -328,6 +394,21 @@ namespace Util
     Node::~Node()
     {
       //std::cout << ">>> Destroyed " << m_key << " (" << this << ")" << std::endl;
+    }
+
+    void PrintConfigTree(const Node &config, int indent_level, int tab_stops)
+    {
+      std::fill_n(std::ostream_iterator<char>(std::cout), tab_stops * indent_level, ' ');
+      std::cout << config.Key();
+      if (config.Exists())
+      {
+        std::cout << " = " << config.ValueAs<std::string>();
+      }
+      std::cout << std::endl;
+      for (const Node &child: config)
+      {
+        PrintConfigTree(child, indent_level + 1, tab_stops);
+      }
     }
   } // Config
 } // Util

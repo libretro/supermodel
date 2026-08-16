@@ -33,6 +33,8 @@
  *   the vectors do not run out of memory because so few PCI devices exist.
  */
 
+#include "PCI.h"
+
 #include "Supermodel.h"
 
 
@@ -45,10 +47,10 @@
  *
  * Reads a PCI register belonging to a particular device.
  */
-UINT32 CPCIBus::ReadConfigSpace(unsigned device, unsigned reg, unsigned bits, unsigned offset)
+UINT32 CPCIBus::ReadConfigSpace(unsigned device, unsigned reg, unsigned bits, unsigned offset) const
 {
-	unsigned	i;
-	
+	unsigned i;
+
 	// Alignment check
 #ifdef DEBUG
 	if (((bits==16)&&(offset&1)) || ((bits==32)&&(offset&3)))
@@ -61,7 +63,7 @@ UINT32 CPCIBus::ReadConfigSpace(unsigned device, unsigned reg, unsigned bits, un
 		if (DeviceVector[i].device == device)
 			return DeviceVector[i].DeviceObject->ReadPCIConfigSpace(device, reg, bits, offset);
 	}
-	
+
 	DebugLog("PCI read request for unknown device (device=%d,reg=%X)\n", device, reg);
 	return 0;
 }
@@ -74,8 +76,8 @@ UINT32 CPCIBus::ReadConfigSpace(unsigned device, unsigned reg, unsigned bits, un
  */
 void CPCIBus::WriteConfigSpace(unsigned device, unsigned reg, unsigned bits, unsigned offset, UINT32 data)
 {
-	unsigned	i;
-	
+	unsigned i;
+
 	// Search device vector for a matching device
 	for (i = 0; i < DeviceVector.size(); i++)
 	{
@@ -85,11 +87,11 @@ void CPCIBus::WriteConfigSpace(unsigned device, unsigned reg, unsigned bits, uns
 			return;
 		}
 	}
-	
+
 //	printf("PCI write request for unknown device (device=%d, reg=%X, data=%X)\n", device, reg, data);
 	DebugLog("PCI write request for unknown device (device=%d, reg=%X, data=%X)\n", device, reg, data);
 }
-	
+
 /*
  * CPCIBus::Reset():
  *
@@ -115,11 +117,11 @@ void CPCIBus::Reset(void)
 void CPCIBus::AttachDevice(unsigned device, IPCIDevice *DeviceObjectPtr)
 {
 	struct DeviceObjectLink	D;
-	
+
 	D.device = device;
 	D.DeviceObject = DeviceObjectPtr;
 	DeviceVector.push_back(D);
-	
+
 	DebugLog("Attached device %d to PCI bus\n", device);
 }
 
@@ -139,7 +141,7 @@ void CPCIBus::Init(void)
  * Constructor.
  */
 CPCIBus::CPCIBus(void)
-{	
+{
 	DebugLog("Built PCI bus\n");
 }
 
@@ -149,6 +151,6 @@ CPCIBus::CPCIBus(void)
  * Destructor.
  */
 CPCIBus::~CPCIBus(void)
-{	
+{
 	DebugLog("Destroyed PCI bus\n");
 }

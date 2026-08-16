@@ -6,7 +6,7 @@
  ** This file is part of Supermodel.
  **
  ** Supermodel is free software: you can redistribute it and/or modify it under
- ** the terms of the GNU General Public License as published by the Free 
+ ** the terms of the GNU General Public License as published by the Free
  ** Software Foundation, either version 3 of the License, or (at your option)
  ** any later version.
  **
@@ -22,10 +22,10 @@
 /*
  * InputSystem.h
  *
- * Header file for CInputSystem. Defines the base class for an input system, 
+ * Header file for CInputSystem. Defines the base class for an input system,
  * the interface between the OS-independent and OS-dependent code.
  */
- 
+
 #ifndef INCLUDED_INPUTSYSTEM_H
 #define INCLUDED_INPUTSYSTEM_H
 
@@ -56,8 +56,8 @@ class CInputSource;
 #define ANY_JOYSTICK -1
 
 // Default keyboard, mouse and joystick settings
-#define DEFAULT_KEY_SENSITIVITY 25
-#define DEFAULT_KEY_DECAYSPEED 50
+#define DEFAULT_DIGITAL_SENSITIVITY 25
+#define DEFAULT_DIGITAL_DECAYSPEED 50
 #define DEFAULT_MSE_DEADZONE 0
 #define DEFAULT_JOY_AXISMINVAL -32768
 #define DEFAULT_JOY_AXISOFFVAL 0
@@ -99,7 +99,7 @@ class CInputSource;
 
 /*
  * Enumeration of all recognised mouse parts
- */ 
+ */
 enum EMousePart
 {
   MouseUnknown = -1,
@@ -228,17 +228,17 @@ struct JoyPartsStruct
 struct KeySettings
 {
   int kbdNum;             // Keyboard number (or ANY_KEYBOARD for settings that apply to all keyboards)
-  unsigned sensitivity;   // Key sensitivity for analog controls as percentage 1-100, where 100 is extremely responsive 
+  unsigned sensitivity;   // Key sensitivity for analog controls as percentage 1-100, where 100 is extremely responsive
     unsigned decaySpeed;    // Decay speed as percentage 1-200 of on speed
-  
+
   /*
    * Creates a KeySettings with default settings
    */
   KeySettings()
   {
     kbdNum = ANY_KEYBOARD;
-    sensitivity = DEFAULT_KEY_SENSITIVITY;
-    decaySpeed = DEFAULT_KEY_DECAYSPEED;
+    sensitivity = DEFAULT_DIGITAL_SENSITIVITY;
+    decaySpeed = DEFAULT_DIGITAL_DECAYSPEED;
   }
 };
 
@@ -315,20 +315,20 @@ struct JoyDetails
 };
 
 /*
- * Abstract base class that represents an input system.  An input system encapsulates all the O/S dependent code to read keyboards, 
+ * Abstract base class that represents an input system.  An input system encapsulates all the O/S dependent code to read keyboards,
  * mice and joysticks.
  */
 class CInputSystem
-{ 
+{
 private:
   // Array of valid key names
   static const char *s_validKeyNames[];
 
   // Lookup table for translating mouse mapping strings to their respective mouse parts
-  static MousePartsStruct s_mseParts[];
+  static const MousePartsStruct s_mseParts[];
 
   // Lookup table for translating joystick mapping strings to their respective joystick parts
-  static JoyPartsStruct s_joyParts[];
+  static const JoyPartsStruct s_joyParts[];
 
   // Ids and names of axes
   static const char *s_axisIds[];
@@ -343,10 +343,10 @@ private:
   CInputSource **m_anyKeySources;
   CInputSource **m_anyMseSources;
   CInputSource **m_anyJoySources;
-  CInputSource ***m_keySources; 
+  CInputSource ***m_keySources;
   CInputSource ***m_mseSources;
   CInputSource ***m_joySources;
-  
+
   // Default key, mouse and joystick settings
   KeySettings m_defKeySettings;
   MouseSettings m_defMseSettings;
@@ -359,6 +359,10 @@ private:
 
   // Empty input source
   CMultiInputSource *m_emptySource;
+
+  // Common settings (not bound to any specific input device instance)
+  unsigned m_digitalSensitivity;
+  unsigned m_digitalDecaySpeed;
 
   //
   // Helper methods
@@ -374,11 +378,11 @@ private:
    */
   void ClearSourceCache(bool deleteCache = false);
 
-  /* 
+  /*
    * Releases a source from the cache.
-   */ 
+   */
   void ReleaseSource(CInputSource *&source);
-  
+
   /*
    * Returns a key source for the given keyboard number (or all keyboards if ANY_KEYBOARD supplied) and key index.
    * Will check the source cache first and if not found will create the source with CreateAnyKeySource or CreateKeySource.
@@ -420,47 +424,47 @@ private:
    */
   void CheckJoySources(int joyNum, bool fullAxisOnly, std::vector<CInputSource*> &sources, std::string &mapping, std::vector<CInputSource*> &badSources);
 
-  bool ParseInt(std::string str, int &num);
+  static bool ParseInt(const std::string& str, int &num);
 
-  std::string IntToString(int num);
+  static std::string IntToString(int num);
 
-  bool EqualsIgnoreCase(std::string str1, const char *str2);
+  static bool EqualsIgnoreCase(const std::string& str1, const char *str2);
 
-  bool StartsWithIgnoreCase(std::string str1, const char *str2);
+  static bool StartsWithIgnoreCase(const std::string& str1, const char *str2);
 
   /*
    * Returns true if the given string represents a valid key name.
    */
-  bool IsValidKeyName(std::string str);
+  static bool IsValidKeyName(const std::string& str);
 
   /*
    * Returns the EMousePart with the given mapping name or MouseUnknown if not found.
    */
-  EMousePart LookupMousePart(std::string str);
+  static EMousePart LookupMousePart(const std::string& str);
 
   /*
    * Returns the mapping name for the given EMousePart.
    */
-  const char *LookupName(EMousePart msePart);
+  static const char *LookupName(EMousePart msePart);
 
   /*
    * Returns the EJoyPart with the given mapping name or JoyUnknown if not found.
    */
-  EJoyPart LookupJoyPart(std::string str);
+  static EJoyPart LookupJoyPart(const std::string& str);
 
   /*
    * Returns the mapping name for the given EJoyPart.
    */
-  const char *LookupName(EJoyPart joyPart);
+  static const char *LookupName(EJoyPart joyPart);
 
-  size_t ParseDevMapping(std::string str, const char *devType, int &devNum);
+  static size_t ParseDevMapping(const std::string& str, const char *devType, int &devNum);
 
   /*
-   * Parses the given mapping string, possibly representing more than one mapping, and returns an input source for it or NULL if the 
+   * Parses the given mapping string, possibly representing more than one mapping, and returns an input source for it or NULL if the
    * mapping is invalid.
    * If fullAxisOnly is true, then only mappings that represent a full axis range (eg MouseXAxis) are parsed.
    */
-  CInputSource* ParseMultiSource(std::string str, bool fullAxisOnly, bool isOr);
+  CInputSource* ParseMultiSource(const std::string& str, bool fullAxisOnly, bool isOr);
 
   /*
    * Parses the given single mapping string and returns an input source for it, or NULL if non exists.
@@ -468,16 +472,31 @@ private:
   CInputSource* ParseSingleSource(std::string str);
 
   /*
+   * Prints common (i.e., independent of any particular device) settings to stdout.
+   */
+  void PrintCommonSettings() const;
+
+  /*
+   * Reads common settings from INI file.
+   */
+  void LoadCommonSettings(const Util::Config::Node &config);
+
+  /*
+   * Writes common settings to INI file.
+   */
+  void StoreCommonSettings(Util::Config::Node *config);
+
+  /*
    * Prints the given key settings to stdout.
    */
-  void PrintKeySettings(int kbdNum, KeySettings *settings);
+  static void PrintKeySettings(int kbdNum, KeySettings *settings);
 
   /*
    * Reads key settings from an INI file for the given keyboard number, or common settings if ANY_KEYBOARD specified.
    * Returns NULL if no relevant settings were found in the INI file.
    */
   KeySettings *LoadKeySettings(const Util::Config::Node &config, int kbdNum);
-  
+
   /*
    * Writes the given key settings to an INI file, only writing out settings that are different to their defaults.
    */
@@ -486,7 +505,7 @@ private:
   /*
    * Prints the given mouse settings to stdout.
    */
-  void PrintMouseSettings(int mseNum, MouseSettings *settings);
+  static void PrintMouseSettings(int mseNum, MouseSettings *settings);
 
   /*
    * Loads mouse settings from a config object for the given mouse number, or common settings if ANY_MOUSE specified.
@@ -498,7 +517,7 @@ private:
    * Stores the given mouse settings to a config object, only storing settings that differ from their defaults.
    */
   void StoreMouseSettings(Util::Config::Node *config, MouseSettings *settings);
-  
+
   /*
    * Prints the given joystick settings to stdout.
    */
@@ -520,7 +539,7 @@ protected:
   unsigned m_dispX;
   unsigned m_dispY;
   unsigned m_dispW;
-  unsigned m_dispH; 
+  unsigned m_dispH;
 
   // Flag to indicate if system has grabbed mouse
   bool m_grabMouse;
@@ -533,12 +552,12 @@ protected:
   /*
    * Returns true if the given EMousePart is an axis.
    */
-  bool IsAxis(EMousePart msePart);
+  static bool IsAxis(EMousePart msePart);
 
   /*
    * Returns true if the given EMousePart represents a full axis, eg MouseXAxis or MouseXAxisInv.
    */
-  bool IsFullAxis(EMousePart msePart);
+  static bool IsFullAxis(EMousePart msePart);
 
   /*
    * Returns true if the EMousePart represents an axis and sets axisPart and axisDir as follows:
@@ -546,43 +565,43 @@ protected:
    * axisDir will be AXIS_FULL, AXIS_INVERTED, AXIS_POS or AXIS_POS depending on whether the axis has the full range, has
    * the full range but inverted, is negative only, or is positive only.
    */
-  bool GetAxisDetails(EMousePart msePart, int &axisNum, int &axisDir);
+  static bool GetAxisDetails(EMousePart msePart, int &axisNum, int &axisDir);
 
   /*
    * Returns true if the given EMousePart represets a button, eg MouseButtonLeft.
    */
-  bool IsButton(EMousePart msePart);
+  static bool IsButton(EMousePart msePart);
 
   /*
    * Returns the button number (indexed from 0) of the given EMousePart if it is a button, or -1 otherwise.
    */
-  int GetButtonNumber(EMousePart msePart);
+  static int GetButtonNumber(EMousePart msePart);
 
-  /* 
-   * Returns the EMousePart that represents the axis component for the given axis number (AXIS_X, AXIS_Y or AXIS_Z) and direction 
+  /*
+   * Returns the EMousePart that represents the axis component for the given axis number (AXIS_X, AXIS_Y or AXIS_Z) and direction
    * (AXIS_FULL, AXIS_INVERTED, AXIS_POS or AXIS_POS), or MouseUnknown otherwise.
    */
-  EMousePart GetMouseAxis(int axisNum, int axisDir);
+  static EMousePart GetMouseAxis(int axisNum, int axisDir);
 
   /*
    * Returns the EMousePart that represents the mouse button with the given number (0-4), or MouseUnknown otherwise.
    */
-  EMousePart GetMouseButton(int butNum);
+  static EMousePart GetMouseButton(int butNum);
 
   /*
    * Returns true if the given EJoyPart is an axis.
    */
-  bool IsAxis(EJoyPart joyPart);
+  static bool IsAxis(EJoyPart joyPart);
 
   /*
    * Returns true if the given EJoyPart represents a full axis, eg JoyXAxis.
    */
-  bool IsFullAxis(EJoyPart joyPart);
+  static bool IsFullAxis(EJoyPart joyPart);
 
   /*
    * Returns true if the given EJoyPart represents a slider axis, eg JoyS1Axis.
    */
-  bool IsSliderAxis(EJoyPart joyPart);
+  static bool IsSliderAxis(EJoyPart joyPart);
 
   /*
    * Returns true if joystick part represents an axis and sets axisPart and axisDir as follows:
@@ -590,46 +609,46 @@ protected:
    * axisDir is AXIS_FULL, AXIS_INVERTED, AXIS_POS or AXIS_POS depending on whether the axis has the full range, has
    * the full range but inverted, is negative only, or is positive only.
    */
-  bool GetAxisDetails(EJoyPart joyPart, int &axisNum, int &axisDir);
+  static bool GetAxisDetails(EJoyPart joyPart, int &axisNum, int &axisDir);
 
   /*
    * Returns true if the given EJoyPart represents a POV hat direction, eg JoyPOV0Left.
-   */ 
-  bool IsPOV(EJoyPart joyPart);
+   */
+  static bool IsPOV(EJoyPart joyPart);
 
   /*
    * Returns true if the EJoyPart represents a POV hat direction and sets povNum and povDir as follows:
    * povNum will be the POV hat number 0-4,
    * povDir will be POV_UP, POV_DOWN, POV_LEFT or POV_RIGHT.
    */
-  bool GetPOVDetails(EJoyPart joyPart, int &povNum, int &povDir);
+  static bool GetPOVDetails(EJoyPart joyPart, int &povNum, int &povDir);
 
   /*
    * Returns true if the given EJoyPart is a button
    */
-  bool IsButton(EJoyPart joyPart);
+  static bool IsButton(EJoyPart joyPart);
 
   /*
    * Returns the button number (indexed from 0) of the given EJoyPart if it is a button, or -1 otherwise.
    */
-  int GetButtonNumber(EJoyPart joyPart);
+  static int GetButtonNumber(EJoyPart joyPart);
 
-  /* 
+  /*
    * Returns the EJoyPart that represents the axis component for the given axis number (AXIS_X, AXIS_Y, AXIS_Z, AXIS_RX, AXIS_RY or AXIS_RZ) and
    * direction (AXIS_FULL, AXIS_INVERTED, AXIS_POS or AXIS_POS), or JoyUnknown otherwise.
    */
-  EJoyPart GetJoyAxis(int axisNum, int axisDir);
+  static EJoyPart GetJoyAxis(int axisNum, int axisDir);
 
   /*
-   * Returns the EJoyPart that represents the POV hot direction for the given POV number (0-4) and direction (POV_UP, POV_DOWN, 
+   * Returns the EJoyPart that represents the POV hot direction for the given POV number (0-4) and direction (POV_UP, POV_DOWN,
    * POV_LEFT or POV_RIGHT), JoyUnknown otherwise.
    */
-  EJoyPart GetJoyPOV(int povNum, int povDir);
+  static EJoyPart GetJoyPOV(int povNum, int povDir);
 
   /*
    * Returns the EJoyPart that represents the joystick button with the given number (0-31), or JoyUnknown otherwise.
    */
-  EJoyPart GetJoyButton(int butNum);
+  static EJoyPart GetJoyButton(int butNum);
 
   //
   // Abstract methods subclass must implement (ie system-specific code)
@@ -647,41 +666,41 @@ protected:
    */
   virtual const char *GetKeyName(int keyIndex) = 0;
 
-  /* 
+  /*
    * Returns true if for the given keyboard the key with the system-specific key index is currently pressed.
    */
-  virtual bool IsKeyPressed(int kbdNum, int keyIndex) = 0;
+  virtual bool IsKeyPressed(int kbdNum, int keyIndex) const = 0;
 
   /*
    * Returns the current axis value for the given mouse and axis number (AXIS_X, AXIS_Y or AXIS_Z).
    */
-  virtual int GetMouseAxisValue(int mseNum, int axisNum) = 0;
+  virtual int GetMouseAxisValue(int mseNum, int axisNum) const = 0;
 
   /*
    * Returns the current direction (-1, 0 or 1) the Z-axis (wheel) is moving in for the given mouse.
    */
-  virtual int GetMouseWheelDir(int mseNum) = 0;
+  virtual int GetMouseWheelDir(int mseNum) const = 0;
 
   /*
    * Returns true if for the given mouse the button with the given number is currently pressed.
    */
-  virtual bool IsMouseButPressed(int mseNum, int butNum) = 0;
+  virtual bool IsMouseButPressed(int mseNum, int butNum) const = 0;
 
   /*
    * Returns the current axis value for the given joystick and axis number (AXIS_X, AXIS_Y, AXIS_Z, AXIS_RX, AXIS_RY or AXIS_RZ).
    */
-  virtual int GetJoyAxisValue(int joyNum, int axisNum) = 0;
+  virtual int GetJoyAxisValue(int joyNum, int axisNum) const = 0;
 
   /*
    * Returns true if for the given joystick the POV-hat controller with the given number is pointing in a particular direction (POV_UP, POV_DOWN,
    * POV_LEFT or POV_RIGHT)
    */
-  virtual bool IsJoyPOVInDir(int joyNum, int povNum, int povDir) = 0;
+  virtual bool IsJoyPOVInDir(int joyNum, int povNum, int povDir) const = 0;
 
   /*
    * Returns true if for the given joystick the button with the given number is currently pressed.
    */
-  virtual bool IsJoyButPressed(int joyNum, int butNum) = 0;
+  virtual bool IsJoyButPressed(int joyNum, int butNum) const = 0;
 
   /*
    * Processes the given force feedback command for the given joystick and axis number.
@@ -711,7 +730,7 @@ protected:
    * Creates an input source combining all joysticks for the given EJoyPart.
    */
   virtual CInputSource *CreateAnyJoySource(EJoyPart joyPart);
-  
+
   /*
    * Creates an input source for the given keyboard number and key index.
    */
@@ -747,26 +766,26 @@ public:
 
   /*
    * Sets the current display geometry so that mouse movements can be scaled properly.
-   */ 
+   */
   void SetDisplayGeom(unsigned dispX, unsigned dispY, unsigned dispW, unsigned dispH);
 
   /*
-   * Returns the number of attached keyboards (or 0 if the system cannot handle keyboards at all or ANY_KEYBOARD if the system cannot 
+   * Returns the number of attached keyboards (or 0 if the system cannot handle keyboards at all or ANY_KEYBOARD if the system cannot
    * handle multiple keyboards).
    */
-  virtual int GetNumKeyboards() = 0;
-  
+  virtual int GetNumKeyboards() const = 0;
+
   /*
-   * Returns the number of attached mice (or 0 if the system cannot handle mice at all or ANY_MOUSE if the system cannot handle 
+   * Returns the number of attached mice (or 0 if the system cannot handle mice at all or ANY_MOUSE if the system cannot handle
    * multiple mice).
    */
-  virtual int GetNumMice() = 0;
-  
+  virtual int GetNumMice() const = 0;
+
   /*
-   * Returns number of attached joysticks (or 0 if the system cannot handle joysticks at all or ANY_JOYSTICK if the system cannot 
+   * Returns number of attached joysticks (or 0 if the system cannot handle joysticks at all or ANY_JOYSTICK if the system cannot
    * handle multiple joysticks).
    */
-  virtual int GetNumJoysticks() = 0;
+  virtual int GetNumJoysticks() const = 0;
 
   /*
    * Returns details about the keyboard with the given number, or NULL if it does not exist.
@@ -820,7 +839,7 @@ public:
    * If no settings are found and useDefault is false, NULL is returned.  If useDefault is true then default settings are returned.
    */
   JoySettings *GetJoySettings(int joyNum, bool useDefault);
-  
+
   /*
    * Returns the input source for the given mapping, or NULL if mapping is not valid.
    */
@@ -833,7 +852,7 @@ public:
    * readFlags specifies which types of inputs (keyboards, mice, joysticks) are to be read and whether to merge the inputs to a common
    * mapping, eg return MOUSE_XAXIS rather than MOUSE3_XAXIS.
    * If fullAxisOnly is true, then only mappings representing a full axis are returned, eg JOY1_XAXIS is allowed but not JOY1_XAXIS_POS.
-   */ 
+   */
   bool ReadMapping(char *buffer, unsigned bufSize, bool fullAxisOnly = false, unsigned readFlags = READ_ALL, const char *escapeMapping = "KEY_ESCAPE");
 
   /*
@@ -871,22 +890,22 @@ public:
     CInputSystem *m_system; // Parent input system
     int m_kbdNum;           // Keyboard number
     int m_keyIndex;         // Key index
-    int m_incr;             // Key increment for analog values 
+    int m_incr;             // Key increment for analog values
     int m_decr;             // Key decrement for analog values
     int m_val;              // Current analog key value
-    int m_maxVal;           // Maximum analog key value
+    static constexpr int m_maxVal = 10000; // Maximum analog key value
 
   public:
     CKeyInputSource(CInputSystem *system, int kbdNum, int keyIndex, unsigned sensitivity, unsigned decaySpeed);
 
-    bool GetValueAsSwitch(bool &val);
+    bool GetValueAsSwitch(bool &val) const;
 
     bool GetValueAsAnalog(int &val, int minVal, int offVal, int maxVal);
   };
 
   /*
    * Input source for the X- or Y-axis of a mouse.
-   */ 
+   */
   class CMseAxisInputSource : public CInputSource
   {
   private:
@@ -899,12 +918,12 @@ public:
     /*
      * Scales the mouse axis value to the given range.
      */
-    int ScaleAxisValue(int minVal, int offVal, int maxVal);
+    int ScaleAxisValue(int minVal, int offVal, int maxVal) const;
 
   public:
     CMseAxisInputSource(CInputSystem *system, int mseNum, int axisNum, int axisDir, unsigned deadZone);
 
-    bool GetValueAsSwitch(bool &val);
+    bool GetValueAsSwitch(bool &val) const;
 
     bool GetValueAsAnalog(int &val, int minVal, int offVal, int maxVal);
   };
@@ -916,20 +935,24 @@ public:
   {
   private:
     CInputSystem *m_system; // Parent input system
-    int m_mseNum;           // Mouse number 
+    int m_mseNum;           // Mouse number
     int m_butNum;           // Button number
+    int m_incr;             // Increment for analog values
+    int m_decr;             // Decrement for analog values
+    int m_val;              // Current analog value
+    static constexpr int m_maxVal = 10000; // Maximum analog value
 
   public:
-    CMseButInputSource(CInputSystem *system, int mseNum, int butNum);
+    CMseButInputSource(CInputSystem *system, int mseNum, int butNum, unsigned sensitivity, unsigned decaySpeed);
 
-    bool GetValueAsSwitch(bool &val);
+    bool GetValueAsSwitch(bool &val) const;
 
     bool GetValueAsAnalog(int &val, int minVal, int offVal, int maxVal);
   };
 
   /*
    * Input source for the axis of a joystick.
-   */ 
+   */
   class CJoyAxisInputSource : public CInputSource
   {
   private:
@@ -949,13 +972,13 @@ public:
     /*
      * Scales the joystick axis value to the given range.
      */
-    int ScaleAxisValue(int minVal, int offVal, int maxVal);
+    int ScaleAxisValue(int minVal, int offVal, int maxVal) const;
 
   public:
     CJoyAxisInputSource(CInputSystem *system, int joyNum, int axisNum, int axisDir, int axisMinVal, int axisOffVal, int axisMaxVal,
       unsigned deadZone, unsigned saturation);
 
-    bool GetValueAsSwitch(bool &val);
+    bool GetValueAsSwitch(bool &val) const;
 
     bool GetValueAsAnalog(int &val, int minVal, int offVal, int maxVal);
 
@@ -972,11 +995,15 @@ public:
     int m_joyNum;           // Joystick number
     int m_povNum;           // POV hat number
     int m_povDir;           // POV hat direction (POV_UP, POV_LEFT, POV_RIGHT, POV_DOWN)
+    int m_incr;             // Increment for analog values
+    int m_decr;             // Decrement for analog values
+    int m_val;              // Current analog value
+    static constexpr int m_maxVal = 10000; // Maximum analog value
 
   public:
-    CJoyPOVInputSource(CInputSystem *system, int joyNum, int povNum, int povDir);
+    CJoyPOVInputSource(CInputSystem *system, int joyNum, int povNum, int povDir, unsigned sensitivity, unsigned decaySpeed);
 
-    bool GetValueAsSwitch(bool &val);
+    bool GetValueAsSwitch(bool &val) const;
 
     bool GetValueAsAnalog(int &val, int minVal, int offVal, int maxVal);
   };
@@ -990,11 +1017,15 @@ public:
     CInputSystem *m_system; // Parent input system
     int m_joyNum;           // Joystick number
     int m_butNum;           // Button number
+    int m_incr;             // Increment for analog values
+    int m_decr;             // Decrement for analog values
+    int m_val;              // Current analog value
+    static constexpr int m_maxVal = 10000; // Maximum analog value
 
   public:
-    CJoyButInputSource(CInputSystem *system, int joyNum, int butNum);
+    CJoyButInputSource(CInputSystem *system, int joyNum, int butNum, unsigned sensivity, unsigned decaySpeed);
 
-    bool GetValueAsSwitch(bool &val);
+    bool GetValueAsSwitch(bool &val) const;
 
     bool GetValueAsAnalog(int &val, int minVal, int offVal, int maxVal);
   };

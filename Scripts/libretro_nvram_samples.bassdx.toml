@@ -1,0 +1,151 @@
+# Supermodel NVRAM sample campaign. Paths support ~ and environment variables.
+
+[retroarch]
+executable = "~/Retro/Apps/RetroArch/Nightly/RetroArch (ARM).app/Contents/MacOS/RetroArch"
+core = "~/Library/Application Support/RetroArch/cores/supermodel_libretro.dylib"
+rom_dir = "${SUPERMODEL_ROM_DIR}"
+system_assets = "../Config"
+base_config = "~/Library/Application Support/RetroArch/config/retroarch.cfg"
+
+[campaign]
+game = "bassdx"
+standard_srm = "~/Documents/RetroArch/model3-nvram-analysis/bassdx/game-base.srm"
+output_dir = "~/Documents/RetroArch/model3-nvram-analysis/bassdx/generated"
+
+# Common timings, in real seconds.
+startup_wait = 5.0
+button_hold = 0.06
+button_hold_long = 0.12
+default_wait = 0.18
+settle_before_close = 0.5
+close_gap = 0.7
+shutdown_timeout = 15.0
+window_width = 496
+window_height = 384
+
+# A macro may be a comma-separated string or an array of strings. Macros can
+# reference other macros; *N repeats a button or macro. CLOSE performs the
+# exact clean shutdown sequence Esc, wait, Esc on this RetroArch process only.
+[macros]
+EnterServ = "L3, WAIT(0.7)"
+OpenGameAssignments = "R3*9, L3, WAIT(0.5)"
+SelectDifficultyType = "R3*1"
+ExitDifficultyType = "R3*6, L3, WAIT(0.5)"
+# SelectCabinetType = "R3*8"
+# ExitCabinetType = "R3*2, L3, WAIT(0.5)"
+# SelectLinkType = "R3*9"
+# ExitLinkType = "R3, L3, WAIT(0.5)"
+ExitServfromGame = "R3*5, L3, WAIT(3.0)"
+OpenCountryAssignments = "R3*7,L3*2, R3*4, L3, R3*2, L3, R3*3, LONG(R3)+L3"
+SelectCountryType = ""
+ExitCountryType = "L3, R3*3, L3, WAIT(0.5)"
+ExitServfromCountry = "R3*5, L3, WAIT(3.0)"
+Close = "CLOSE"
+
+# Starting from the immutable DELUXE standard above, one press on Cabinet Type
+# selects TWIN. The script copies the standard again before every other sample.
+[[samples]]
+suffix = "difficulty-00-normal"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectDifficultyType, L3*0, WAIT(0.5)",
+  "@ExitDifficultyType",
+  "@ExitServfromGame",
+  "@Close",
+]
+
+[[samples]]
+suffix = "difficulty-01-medium-hard"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectDifficultyType, L3*1, WAIT(0.5)",
+  "@ExitDifficultyType",
+  "@ExitServfromGame",
+  "@Close",
+]
+
+[[samples]]
+suffix = "difficulty-02-very-hard"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectDifficultyType, L3*2, WAIT(0.5)",
+  "@ExitDifficultyType",
+  "@ExitServfromGame",
+  "@Close",
+]
+
+[[samples]]
+suffix = "difficulty-03-very-easy"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectDifficultyType, L3*3, WAIT(0.5)",
+  "@ExitDifficultyType",
+  "@ExitServfromGame",
+  "@Close",
+]
+
+[[samples]]
+suffix = "difficulty-04-medium-easy"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectDifficultyType, L3*4, WAIT(0.5)",
+  "@ExitDifficultyType",
+  "@ExitServfromGame",
+  "@Close",
+]
+
+[[samples]]
+suffix = "country-00-usa"
+sequence = [
+  "@EnterServ",
+  "@OpenCountryAssignments",
+  "@SelectCountryType, R3*0, WAIT(0.5)",
+  "@ExitCountryType",
+  "@ExitServfromCountry",
+  "@Close",
+]
+
+[[samples]]
+suffix = "country-01-export"
+sequence = [
+  "@EnterServ",
+  "@OpenCountryAssignments",
+  "@SelectCountryType, R3*1, WAIT(0.5)",
+  "@ExitCountryType",
+  "@ExitServfromCountry",
+  "@Close",
+]
+
+[[samples]]
+suffix = "country-02-australia"
+sequence = [
+  "@EnterServ",
+  "@OpenCountryAssignments",
+  "@SelectCountryType, R3*2, WAIT(0.5)",
+  "@ExitCountryType",
+  "@ExitServfromCountry",
+  "@Close",
+]
+
+[[samples]]
+suffix = "country-03-japan"
+sequence = [
+  "@EnterServ",
+  "@OpenCountryAssignments",
+  "@SelectCountryType, R3*3, WAIT(0.5)",
+  "@ExitCountryType",
+  "@ExitServfromCountry",
+  "@Close",
+]
+
+# Add further samples in the same form. WAIT(seconds) can appear anywhere.
+# If @Close/CLOSE is omitted, the script automatically closes RetroArch cleanly.
+#
+# [[samples]]
+# suffix = "another-setting"
+# sequence = "@EnterServ, R3*4, L3, WAIT(1.0), @Close"

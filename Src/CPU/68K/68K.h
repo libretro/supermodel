@@ -37,6 +37,7 @@
 #include "Musashi/m68k.h"
 #include "Musashi/m68kctx.h"
 #include "CPU/Bus.h"
+#include "BlockFile.h"
 
 // This doesn't work for now (needs to be added to the prototypes in m68k.h for m68k_read_memory*)
 //#ifndef FASTCALL
@@ -239,7 +240,7 @@ extern void M68KAttachBus(IBus *BusPtr);
  * Returns:
  *		Always returns OKAY.
  */
-extern bool M68KInit(void);
+extern Result M68KInit(void);
 
 /*
  * M68KGetContext(M68KCtx *Dest):

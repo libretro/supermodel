@@ -26,6 +26,8 @@
  * all very simple classes.
  */
 
+#include "InputTypes.h"
+
 #include "Supermodel.h"
 
 /*
@@ -48,12 +50,12 @@ void CSwitchInput::Poll()
 		value = m_offVal;
 }
 
-bool CSwitchInput::Pressed()
+bool CSwitchInput::Pressed() const
 {
 	return prevValue == m_offVal && value == m_onVal;
 }
 
-bool CSwitchInput::Released()
+bool CSwitchInput::Released() const
 {
 	return prevValue == m_onVal && value == m_offVal;
 }
@@ -83,12 +85,12 @@ void CAnalogInput::Poll()
 		value = m_minVal;
 }
 
-bool CAnalogInput::HasValue()
+bool CAnalogInput::HasValue() const
 {
 	return value > m_minVal;
 }
 
-double CAnalogInput::ValueAsFraction()
+double CAnalogInput::ValueAsFraction() const
 {
 	double frac = (double)(value - m_minVal)/(double)(m_maxVal - m_minVal);
 	return (frac >= 0.0 ? frac : -frac);
@@ -98,7 +100,7 @@ double CAnalogInput::ValueAsFraction()
  * CAxisInput
  */
 CAxisInput::CAxisInput(const char *inputId, const char *inputLabel, unsigned inputGameFlags, const char *defaultMapping, 
-	CAnalogInput *negInput, CAnalogInput *posInput,	UINT16 minVal, UINT16 offVal, UINT16 maxVal) : 
+	std::shared_ptr<CAnalogInput> negInput, std::shared_ptr<CAnalogInput> posInput,	UINT16 minVal, UINT16 offVal, UINT16 maxVal) :
 	CInput(inputId, inputLabel, INPUT_FLAGS_AXIS, inputGameFlags, defaultMapping, offVal), m_negInput(negInput), m_posInput(posInput), 
 		m_minVal(minVal), m_offVal(offVal), m_maxVal(maxVal)
 {
@@ -132,12 +134,12 @@ void CAxisInput::Poll()
 		value = m_offVal;
 }
 
-bool CAxisInput::HasValue()
+bool CAxisInput::HasValue() const
 {
 	return value != m_offVal;
 }
 
-double CAxisInput::ValueAsFraction()
+double CAxisInput::ValueAsFraction() const
 {
 	double frac = (double)(value - m_minVal)/(double)(m_maxVal - m_minVal);
 	return (frac >= 0.0 ? frac : -frac);
@@ -147,8 +149,8 @@ double CAxisInput::ValueAsFraction()
  * CGearShift4Input
  */
 CGearShift4Input::CGearShift4Input(const char *inputId, const char *inputLabel, unsigned inputGameFlags,
-		CSwitchInput *shift1Input, CSwitchInput *shift2Input, CSwitchInput *shift3Input, CSwitchInput *shift4Input, CSwitchInput *shiftNInput,
-		CSwitchInput *shiftUpInput, CSwitchInput *shiftDownInput) : 
+	std::shared_ptr<CSwitchInput> shift1Input, std::shared_ptr<CSwitchInput> shift2Input, std::shared_ptr<CSwitchInput> shift3Input, std::shared_ptr<CSwitchInput> shift4Input, std::shared_ptr<CSwitchInput> shiftNInput,
+	std::shared_ptr<CSwitchInput> shiftUpInput, std::shared_ptr<CSwitchInput> shiftDownInput) :
 	CInput(inputId, inputLabel, INPUT_FLAGS_VIRTUAL, inputGameFlags),
 		m_shift1Input(shift1Input), m_shift2Input(shift2Input), m_shift3Input(shift3Input), m_shift4Input(shift4Input), m_shiftNInput(shiftNInput),
 		m_shiftUpInput(shiftUpInput), m_shiftDownInput(shiftDownInput)
@@ -175,9 +177,9 @@ void CGearShift4Input::Poll()
 }
 
 CTriggerInput::CTriggerInput(const char *inputId, const char *inputLabel, unsigned inputGameFlags,
-	CSwitchInput *triggerInput, CSwitchInput *offscreenInput, UINT16 offVal, UINT16 onVal) :
+	std::shared_ptr<CSwitchInput> triggerInput, std::shared_ptr<CSwitchInput> offscreenInput, UINT16 offVal, UINT16 onVal) :
 	CInput(inputId, inputLabel, INPUT_FLAGS_VIRTUAL, inputGameFlags),
-	m_triggerInput(triggerInput), m_offscreenInput(offscreenInput), m_autoTrigger(false), m_offscreenCount(0), m_offVal(offVal), m_onVal(onVal)
+	m_triggerInput(triggerInput), m_offscreenInput(offscreenInput), m_offVal(offVal), m_onVal(onVal), m_autoTrigger(false), m_offscreenCount(0), offscreenValue(0)
 {
 	//
 }

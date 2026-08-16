@@ -23,6 +23,8 @@
  * Outputs.cpp
  */
 
+#include "Outputs.h"
+
 #include "Supermodel.h"
 
 const char *COutputs::s_outputNames[] =
@@ -35,7 +37,12 @@ const char *COutputs::s_outputNames[] =
 		"LampView4",
 		"LampLeader",
 		"RawDrive",
-		"RawLamps"
+		"RawLamps",
+		"BillDigit1",
+		"BillDigit2",
+		"BillDigit3",
+		"BillDigit4",
+		"BillDigit5"
 	};
 
 const char *COutputs::GetOutputName(EOutputs output)
@@ -97,3 +104,12 @@ void COutputs::SetValue(EOutputs output, UINT8 value)
 	if (firstSet || value != prevValue)
 		SendOutput(output, prevValue, value);
 }
+
+bool COutputs::HasValue(EOutputs output) 
+{
+	int idx = (unsigned)output;
+	if (idx < 0 || idx >= NUM_OUTPUTS)
+		return false;
+	return !m_first[output]; 
+}
+

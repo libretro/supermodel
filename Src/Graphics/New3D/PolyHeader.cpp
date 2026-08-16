@@ -5,7 +5,7 @@ namespace New3D {
 
 PolyHeader::PolyHeader()
 {
-	header = NULL;
+	header = nullptr;
 }
 
 PolyHeader::PolyHeader(UINT32* h) 
@@ -50,10 +50,6 @@ int	PolyHeader::NumPolysTotal()
 
 int	PolyHeader::NumTrianglesTotal()
 {
-	if (header[6] == 0) {
-		return 0;			// no poly data
-	}
-
 	UINT32* start = header;	// save start address
 
 	int count = (NumVerts() == 4) ? 2 : 1;
@@ -117,7 +113,7 @@ int	PolyHeader::NumVerts()
 
 int PolyHeader::NumSharedVerts()
 {
-	int sharedVerts[] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
+	static const int sharedVerts[] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 
 	return sharedVerts[header[0] & 0xf];
 }
@@ -135,9 +131,9 @@ bool PolyHeader::SharedVertex(int vertex)
 
 void PolyHeader::FaceNormal(float n[3]) 
 {
-	n[0] = (float)(((INT32)header[1]) >> 8) * (1.0f / 4194304.0f);
-	n[1] = (float)(((INT32)header[2]) >> 8) * (1.0f / 4194304.0f);
-	n[2] = (float)(((INT32)header[3]) >> 8) * (1.0f / 4194304.0f);
+	n[0] = (float)(((INT32)header[1]) >> 8) * (float)(1.0 / 4194304.0);
+	n[1] = (float)(((INT32)header[2]) >> 8) * (float)(1.0 / 4194304.0);
+	n[2] = (float)(((INT32)header[3]) >> 8) * (float)(1.0 / 4194304.0);
 }
 
 float PolyHeader::UVScale()
@@ -152,7 +148,7 @@ bool PolyHeader::DoubleSided()
 
 bool PolyHeader::LastPoly() 
 {
-	if ((header[1] & 4) > 0 || header[6] == 0) {
+	if ((header[1] & 4) > 0) {
 		return true;
 	}
 
@@ -172,6 +168,16 @@ bool PolyHeader::FixedShading()
 bool PolyHeader::SmoothShading()
 {
 	return (header[1] & 0x8) > 0;
+}
+
+bool PolyHeader::NoLosReturn()
+{
+	return (header[1] & 0x1) > 0;
+}
+
+bool PolyHeader::EdgeOnTranslucency()
+{
+	return (header[1] & 0x80) > 0;
 }
 
 //
@@ -286,22 +292,19 @@ int PolyHeader::X()
 
 int PolyHeader::Y()
 {
-	//=======
+	//====
 	int y;
-	int page;
-	//=======
+	//====
 
-	if (Page()) {
-		page = 1024;
-	}
-	else {
-		page = 0;
-	}
-
-	y = (32 * (header[5] & 0x1F) + page);	// if we hit 2nd page add 1024 to y coordinate
+	y = 32 * (header[5] & 0x1F);	// if we hit 2nd page add 1024 to y coordinate
 	y &= 2047;
 
 	return y;
+}
+
+float PolyHeader::TextureNP()
+{
+	return (float)(header[5] >> 8);
 }
 
 //
@@ -383,38 +386,27 @@ bool PolyHeader::TranslucencyPatternSelect()
 }
 
 //
-// misc
+// hashing
 //
 
 UINT64 PolyHeader::Hash()
 {
 	UINT64 hash = 0;
 
-	hash |= (header[2] & 3);							// bits 0-1 uv mirror bits
-	hash |= (UINT64)((header[3] >> 0) & 7) << 2;		// bits 2-4 tex height
-	hash |= (UINT64)((header[3] >> 3) & 7) << 5;		// bits 5-7 tex width
-	hash |= (UINT64)X() << 8;							// bits 8-17 x offset
-	hash |= (UINT64)Y() << 18;							// bits 18-27 y offset
-	hash |= (UINT64)TexFormat() << 28;					// bits 28-30 tex format
-	hash |= (UINT64)TexEnabled() << 31;					// bits 31 textures enabled
-	hash |= (UINT64)LightEnabled() << 32;				// bits 32 light enabled
-	hash |= (UINT64)DoubleSided() << 33;				// bits 33 double sided
-	hash |= (UINT64)AlphaTest() << 34;					// bits 34 contour processing
-	hash |= (UINT64)PolyAlpha() << 35;					// bits 35 poly alpha processing
-	hash |= (UINT64)TextureAlpha() << 36;				// bits 36 texture alpha processing
-	hash |= (UINT64)MicroTexture() << 37;				// bits 37 microtexture enable
-	hash |= (UINT64)HighPriority() << 38;				// bits 38 high priority enable
-	hash |= (UINT64)SpecularEnabled() << 39;			// bits 39 enable specular reflection
-	hash |= (UINT64)SmoothShading() << 40;				// bits 40 smooth shading
-	hash |= (UINT64)((header[6] >> 11) & 0x1F) << 41;	// bits 41-45 light modifier
-	hash |= (UINT64)FixedShading() << 46;				// bits 46 fixed shading
-	hash |= (UINT64)TranslatorMap() << 47;				// bits 47 translator map
-	hash |= (UINT64)Layered() << 48;					// bits 48 layered texture
-	hash |= (UINT64)(header[0] >> 26) << 49;			// bits 49-54 specular coefficient (opacity)
-	hash |= (UINT64)((header[6] >> 5) & 3) << 55;		// bits 55-56 specular exponent
-	hash |= (UINT64)MicroTextureID() << 57;				// bits 57-59 Microtexture texture number 0-7
-	hash |= (UINT64)MicroTextureMinLOD() << 60;			// bits 60-61 Microtexture min lod index
-	hash |= (UINT64)((header[3] >> 6) & 3) << 62;		// bits 62-63 uv smooth bits
+	hash |= (UINT64)(header[3] & 0xFF);											// bits 0-7 tex width / height / uv smooth
+	hash |= (UINT64)(((header[4] & 0x1F) << 1) | ((header[5] >> 7) & 1)) << 8;	// bits 8-13 x offset
+	hash |= (UINT64)(header[5] & 0x1F) << 14;									// bits 14-18 y offset
+	hash |= (UINT64)((header[4] & 0xC0) >> 6) << 19;							// bits 19-20 page / translatormap
+	hash |= (UINT64)DoubleSided() << 21;										// bits 21 double sided
+	hash |= (UINT64)AlphaTest() << 22;											// bits 22 contour processing
+	hash |= (UINT64)PolyAlpha() << 23;											// bits 23 poly alpha processing
+	hash |= (UINT64)(header[2] & 0xFF) << 24;									// bits 24-31 microtexture / uv mirror
+	hash |= (UINT64)SpecularEnabled() << 32;									// bits 32 enable specular reflection
+	hash |= (UINT64)SmoothShading() << 33;										// bits 33 smooth shading
+	hash |= (UINT64)FixedShading() << 34;										// bits 34 fixed shading
+	hash |= (UINT64)(header[0] >> 26) << 35;									// bits 35-40 specular coefficient (opacity)
+	hash |= (UINT64)(header[6] & 0x3FFFF) << 41;								// bits 41-58 Translucency pattern select / disable lighting / Polygon light modifier / Texture enable / Texture format / Shininess / High priority / Layered polygon / Translucency mode
+	hash |= (UINT64)NoLosReturn() << 59;										// bits 59 no line of sight return
 
 	return hash;
 }

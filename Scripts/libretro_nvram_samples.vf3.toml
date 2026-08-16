@@ -1,0 +1,567 @@
+# Supermodel NVRAM sample campaign. Paths support ~ and environment variables.
+
+[retroarch]
+executable = "~/Retro/Apps/RetroArch/Nightly/RetroArch (ARM).app/Contents/MacOS/RetroArch"
+core = "~/Library/Application Support/RetroArch/cores/supermodel_libretro.dylib"
+rom_dir = "${SUPERMODEL_ROM_DIR}"
+system_assets = "../Config"
+base_config = "~/Library/Application Support/RetroArch/config/retroarch.cfg"
+
+[campaign]
+game = "vf3"
+standard_srm = "~/Documents/RetroArch/model3-nvram-analysis/vf3/game-base.srm"
+output_dir = "~/Documents/RetroArch/model3-nvram-analysis/vf3/generated"
+
+# Common timings, in real seconds.
+startup_wait = 5.0
+button_hold = 0.06
+button_hold_long = 4
+default_wait = 0.2
+settle_before_close = 0.5
+close_gap = 0.7
+shutdown_timeout = 15.0
+window_width = 496
+window_height = 384
+
+# A macro may be a comma-separated string or an array of strings. Macros can
+# reference other macros; *N repeats a button or macro. CLOSE performs the
+# exact clean shutdown sequence Esc, wait, Esc on this RetroArch process only.
+[macros]
+EnterServ = "L3, WAIT(2.0)"
+OpenGameAssignments = "R3*9, L3, WAIT(0.5)"
+ExitServfromGame = "R3*6, L3, WAIT(5.0)"
+SelectDifficultyType = "R3*3"
+ExitDifficultyType = "R3*13, L3, WAIT(0.5)"
+OpenCountryAssignments = "@OpenGameAssignments"
+ExitServfromCountry = "@ExitServfromGame"
+SelectCountryType = "R3*13"
+ExitCountryType = "R3*3, L3, WAIT(0.5)"
+# SelectCabinetType = "R3*3"
+# ExitCabinetType = "R3*2, L3, WAIT(0.5)"
+# ExitCabinetType01 = "R3*1, L3, WAIT(0.5)"
+# OpenNetAssignments = "@OpenGameAssignments"
+# ExitServfromNet = "@ExitServfromGame"
+# SelectLinkType = "R3*3"
+# ExitLinkType = "R3*2, L3, WAIT(0.5)"
+# ExitLinkType01 = "@ExitLinkType"
+# ExitLinkType02 = "@ExitLinkType"
+# SelectLinkId = "R3*1"
+# ExitLinkId = "R3*1, L3, WAIT(0.5)"
+# SelectChristmasType = "R3*5"
+# ExitChristmasType = "R3*2, L3, WAIT(0.5)"
+Close = "CLOSE"
+
+# Starting from the immutable DELUXE standard above, one press on Cabinet Type
+# selects TWIN. The script copies the standard again before every other sample.
+[[samples]]
+suffix = "difficulty-00-normal"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectDifficultyType, L3*0, WAIT(0.5)",
+  "@ExitDifficultyType",
+  "@ExitServfromGame",
+  "@Close",
+]
+
+[[samples]]
+suffix = "difficulty-01-hard"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectDifficultyType, L3*1, WAIT(0.5)",
+  "@ExitDifficultyType",
+  "@ExitServfromGame",
+  "@Close",
+]
+
+[[samples]]
+suffix = "difficulty-02-hardest"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectDifficultyType, L3*2, WAIT(0.5)",
+  "@ExitDifficultyType",
+  "@ExitServfromGame",
+  "@Close",
+]
+
+[[samples]]
+suffix = "difficulty-03-easy"
+sequence = [
+  "@EnterServ",
+  "@OpenGameAssignments",
+  "@SelectDifficultyType, L3*3, WAIT(0.5)",
+  "@ExitDifficultyType",
+  "@ExitServfromGame",
+  "@Close",
+]
+
+# [[samples]]
+# suffix = "difficulty-04-easy"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*4, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+
+# [[samples]]
+# suffix = "difficulty-00-level-08"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*0, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-01-level-09"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*1, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-02-level-10"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*2, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-03-level-11"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*3, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-04-level-12"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*4, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-05-level-13"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*5, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-06-level-14"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*6, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-07-level-15"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*7, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-08-level-16"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*8, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-09-level-01"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*9, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-10-level-02"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*10, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-11-level-03"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*11, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-12-level-04"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*12, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-13-level-05"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*13, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-14-level-06"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*14, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "difficulty-15-level-07"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectDifficultyType, L3*15, WAIT(0.5)",
+#   "@ExitDifficultyType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+
+[[samples]]
+suffix = "country-00-japan"
+sequence = [
+  "@EnterServ",
+  "@OpenCountryAssignments",
+  "@SelectCountryType, L3*0, WAIT(0.5)",
+  "@ExitCountryType",
+  "@ExitServfromCountry",
+  "@Close",
+]
+
+[[samples]]
+suffix = "country-01-usa"
+sequence = [
+  "@EnterServ",
+  "@OpenCountryAssignments",
+  "@SelectCountryType, L3*1, WAIT(0.5)",
+  "@ExitCountryType",
+  "@ExitServfromCountry",
+  "@Close",
+]
+
+[[samples]]
+suffix = "country-02-export"
+sequence = [
+  "@EnterServ",
+  "@OpenCountryAssignments",
+  "@SelectCountryType, L3*2, WAIT(0.5)",
+  "@ExitCountryType",
+  "@ExitServfromCountry",
+  "@Close",
+]
+
+[[samples]]
+suffix = "country-03-asia"
+sequence = [
+  "@EnterServ",
+  "@OpenCountryAssignments",
+  "@SelectCountryType, L3*3, WAIT(0.5)",
+  "@ExitCountryType",
+  "@ExitServfromCountry",
+  "@Close",
+]
+
+# [[samples]]
+# suffix = "country-04-asia"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenCountryAssignments",
+#   "@SelectCountryType, R3*4, WAIT(0.5)",
+#   "@ExitCountryType",
+#   "@ExitServfromCountry",
+#   "@Close",
+# ]
+
+# [[samples]]
+# suffix = "cabinet-00-deluxe"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectCabinetType, L3*0, WAIT(0.5)",
+#   "@ExitCabinetType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "cabinet-01-upright"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectCabinetType, L3*1, WAIT(0.5)",
+#   "@ExitCabinetType01",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+
+# [[samples]]
+# suffix = "link-00-single"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkType, L3*0, WAIT(0.5)",
+#   "@ExitLinkType",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "link-01-master"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkType, L3*1, WAIT(0.5)",
+#   "@ExitLinkType01",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "link-02-slave"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkType, L3*2, WAIT(0.5)",
+#   "@ExitLinkType02",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+
+# [[samples]]
+# suffix = "link-id-00-cabinet-01"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkId, L3, R3*2, L3*0, WAIT(0.5)",
+#   "@ExitLinkId",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "link-id-01-cabinet-02"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkId, L3, R3*2, L3*1, WAIT(0.5)",
+#   "@ExitLinkId",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "link-id-02-cabinet-03"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkId, L3, R3*2, L3*2, WAIT(0.5)",
+#   "@ExitLinkId",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "link-id-03-cabinet-04"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkId, L3, R3*2, L3*3, WAIT(0.5)",
+#   "@ExitLinkId",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+
+# [[samples]]
+# suffix = "link-id-04-car-05"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkId, L3*4, WAIT(0.5)",
+#   "@ExitLinkId",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "link-id-05-car-06"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkId, L3*5, WAIT(0.5)",
+#   "@ExitLinkId",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "link-id-06-car-07"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkId, L3*6, WAIT(0.5)",
+#   "@ExitLinkId",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "link-id-07-car-08"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenNetAssignments",
+#   "@SelectLinkId, L3*7, WAIT(0.5)",
+#   "@ExitLinkId",
+#   "@ExitServfromNet",
+#   "@Close",
+# ]
+
+# [[samples]]
+# suffix = "christmas-mode-00-off"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectChristmasType, L3*0, WAIT(0.5)",
+#   "@ExitChristmasType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "christmas-mode-01-on"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectChristmasType, L3*1, WAIT(0.5)",
+#   "@ExitChristmasType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "special-car-02-skyline"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectCarType, L3*2, WAIT(0.5)",
+#   "@ExitCarType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "special-car-03-ferrari"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectCarType, L3*3, WAIT(0.5)",
+#   "@ExitCarType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "special-car-04-porsche"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectCarType, L3*4, WAIT(0.5)",
+#   "@ExitCarType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "special-car-05-mazda"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectCarType, L3*5, WAIT(0.5)",
+#   "@ExitCarType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+#
+# [[samples]]
+# suffix = "special-car-06-zauber"
+# sequence = [
+#   "@EnterServ",
+#   "@OpenGameAssignments",
+#   "@SelectCarType, L3*6, WAIT(0.5)",
+#   "@ExitCarType",
+#   "@ExitServfromGame",
+#   "@Close",
+# ]
+
+# Add further samples in the same form. WAIT(seconds) can appear anywhere.
+# If @Close/CLOSE is omitted, the script automatically closes RetroArch cleanly.
+#
+# [[samples]]
+# suffix = "another-setting"
+# sequence = "@EnterServ, R3*4, L3, WAIT(1.0), @Close"

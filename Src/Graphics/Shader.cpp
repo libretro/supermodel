@@ -44,7 +44,7 @@
 
 #include <new>
 #include <cstdio>
-#include "Pkgs/glew.h"
+#include <GL/glew.h>
 #include "Supermodel.h"
 
 
@@ -53,17 +53,24 @@ static char *LoadShaderSource(const char *file)
 {
 	FILE	*fp;
 	char	*buf;
-	int		size;
+	long	size;
 
 	// Open shader and get the file size
 	fp = fopen(file, "r");
-	if (NULL == fp)
+	if (nullptr == fp)
 	{
 		ErrorLog("Unable to open shader source file: %s", file);
-		return NULL;
+		return nullptr;
 	}
+
 	fseek(fp, 0, SEEK_END);
 	size = ftell(fp);
+
+	// -1 means an error has happened
+	if (size == -1) { 
+		return nullptr; 
+	}
+
 	rewind(fp);
 
 	// Allocate memory and read it in
@@ -75,20 +82,20 @@ static char *LoadShaderSource(const char *file)
 		return NULL;
 	}
 	buf[size] = '\0';	// for safety, actual size might be smaller once newline characters are converted
-	size = fread(buf, sizeof(char), size, fp);
-	buf[size] = '\0';
+	auto read = fread(buf, sizeof(char), size, fp);
+	buf[read] = '\0';
 	
 	fclose(fp);
 	return buf;
 }
 
-bool LoadShaderProgram(GLuint *shaderProgramPtr, GLuint *vertexShaderPtr, GLuint *fragmentShaderPtr, std::string vsFile, std::string fsFile, const char *vsString, const char *fsString)
+Result LoadShaderProgram(GLuint *shaderProgramPtr, GLuint *vertexShaderPtr, GLuint *fragmentShaderPtr, const std::string& vsFile, const std::string& fsFile, const char *vsString, const char *fsString)
 {
 	char		infoLog[2048];
 	const char	*vsSource, *fsSource;	// source code
 	GLuint		shaderProgram, vertexShader, fragmentShader;
 	GLint		result, len;
-	bool		ret = OKAY;
+	Result		ret = Result::OKAY;
 	
 	// Load shaders from files if specified
 	if (!vsFile.empty())
@@ -101,14 +108,14 @@ bool LoadShaderProgram(GLuint *shaderProgramPtr, GLuint *vertexShaderPtr, GLuint
 		fsSource = fsString;
 	if (vsSource == NULL || fsSource == NULL)
 	{
-		ret = FAIL;
+		ret = Result::FAIL;
 		goto Quit;
 	}
 
 	// Ensure that shader support exists
 	if ((glCreateProgram==NULL) || (glCreateShader==NULL) || (glShaderSource==NULL) || (glCompileShader==NULL))
 	{
-		ret = FAIL;
+		ret = Result::FAIL;
 		ErrorLog("OpenGL 2.x does not appear to be present. Unable to proceed.");
 		goto Quit;
 	}
@@ -129,7 +136,7 @@ bool LoadShaderProgram(GLuint *shaderProgramPtr, GLuint *vertexShaderPtr, GLuint
 	{
 		glGetShaderInfoLog(vertexShader, 2048, &len, infoLog);
 		ErrorLog("Vertex shader failed to compile. Your OpenGL driver said:\n%s", infoLog);
-		ret = FAIL;	// error
+		ret = Result::FAIL;	// error
 	}
 	
 	// Attempt to compile fragment shader
@@ -140,7 +147,7 @@ bool LoadShaderProgram(GLuint *shaderProgramPtr, GLuint *vertexShaderPtr, GLuint
 	{
 		glGetShaderInfoLog(fragmentShader, 2048, &len, infoLog);
 		ErrorLog("Fragment shader failed to compile. Your OpenGL driver said:\n%s", infoLog);
-		ret = FAIL;	// error
+		ret = Result::FAIL;	// error
 	}
 	
 	// Link
@@ -152,11 +159,11 @@ bool LoadShaderProgram(GLuint *shaderProgramPtr, GLuint *vertexShaderPtr, GLuint
 	{
 		glGetProgramInfoLog(shaderProgram, 2048, &len, infoLog);
 		ErrorLog("Failed to link shader objects. Your OpenGL driver said:\n%s\n", infoLog);
-		ret = FAIL;	// error
+		ret = Result::FAIL;	// error
 	}
 
 	// Enable the shader (if no errors)
-	if (ret == OKAY)
+	if (ret == Result::OKAY)
 		glUseProgram(shaderProgram);
 
 	// Clean up and quit 

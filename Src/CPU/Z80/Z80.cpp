@@ -1,7 +1,7 @@
 /**
  ** Supermodel
  ** A Sega Model 3 Arcade Emulator.
- ** Copyright 2011 Bart Trzynadlowski, Nik Henson
+ ** Copyright 2003-2026 The Supermodel Team
  **
  ** This file is part of Supermodel.
  **
@@ -29,10 +29,12 @@
  * Please see Z80.h for a discussion of known inaccuracies.
  */
 
-#include <cstdio> // for NULL
-#include "Supermodel.h"
 #include "Z80.h"  // must include this first to define CZ80
 
+#include <cstdio> // for NULL
+#include "Supermodel.h"
+
+#include "Debugger/CPU/Z80Debug.h"
 
 /******************************************************************************
  Internal Helper Macros
@@ -2268,7 +2270,6 @@ int CZ80::Run(int numCycles)
       break;
     case 0xCB:      /* CB prefix */
       adr = IX + (signed char) GetBYTE_pp(pc);
-      adr = adr;
       op = GetBYTE(pc);
       cycles -= cycleTables[4][op];
       switch (op & 7) {
@@ -2454,7 +2455,7 @@ int CZ80::Run(int numCycles)
       break;
     case 0x41:      /* OUT (C),B */
       cycles -= cycleTables[2][0x41];
-      OUTPUT(lreg(BC), BC);
+      OUTPUT(lreg(BC), hreg(BC));
       break;
     case 0x42:      /* SBC HL,BC */
       cycles -= cycleTables[2][0x42];
@@ -2505,7 +2506,7 @@ int CZ80::Run(int numCycles)
       break;
     case 0x49:      /* OUT (C),C */
       cycles -= cycleTables[2][0x49];
-      OUTPUT(lreg(BC), BC);
+      OUTPUT(lreg(BC), lreg(BC));
       break;
     case 0x4A:      /* ADC HL,BC */
       cycles -= cycleTables[2][0x4A];
@@ -2544,7 +2545,7 @@ int CZ80::Run(int numCycles)
       break;
     case 0x51:      /* OUT (C),D */
       cycles -= cycleTables[2][0x51];
-      OUTPUT(lreg(BC), DE);
+      OUTPUT(lreg(BC), hreg(DE));
       break;
     case 0x52:      /* SBC HL,DE */
       cycles -= cycleTables[2][0x52];
@@ -2582,7 +2583,7 @@ int CZ80::Run(int numCycles)
       break;
     case 0x59:      /* OUT (C),E */
       cycles -= cycleTables[2][0x59];
-      OUTPUT(lreg(BC), DE);
+      OUTPUT(lreg(BC), lreg(DE));
       break;
     case 0x5A:      /* ADC HL,DE */
       cycles -= cycleTables[2][0x5A];
@@ -2620,7 +2621,7 @@ int CZ80::Run(int numCycles)
       break;
     case 0x61:      /* OUT (C),H */
       cycles -= cycleTables[2][0x61];
-      OUTPUT(lreg(BC), HL);
+      OUTPUT(lreg(BC), hreg(HL));
       break;
     case 0x62:      /* SBC HL,HL */
       cycles -= cycleTables[2][0x62];
@@ -2658,7 +2659,7 @@ int CZ80::Run(int numCycles)
       break;
     case 0x69:      /* OUT (C),L */
       cycles -= cycleTables[2][0x69];
-      OUTPUT(lreg(BC), HL);
+      OUTPUT(lreg(BC), lreg(HL));
       break;
     case 0x6A:      /* ADC HL,HL */
       cycles -= cycleTables[2][0x6A];
@@ -2726,7 +2727,7 @@ int CZ80::Run(int numCycles)
       break;
     case 0x79:      /* OUT (C),A */
       cycles -= cycleTables[2][0x79];
-      OUTPUT(lreg(BC), AF);
+      OUTPUT(lreg(BC), hreg(AF));
       break;
     case 0x7A:      /* ADC HL,SP */
       cycles -= cycleTables[2][0x7A];
@@ -3503,7 +3504,6 @@ int CZ80::Run(int numCycles)
       break;
     case 0xCB:      /* CB prefix */
       adr = IY + (signed char) GetBYTE_pp(pc);
-      adr = adr;
       op = GetBYTE(pc);
       cycles -= cycleTables[4][op];
       switch (op & 7) {
@@ -3801,7 +3801,7 @@ void CZ80::SetINT(bool state)
   intLine = state;
 }
 
-UINT16 CZ80::GetPC(void)
+UINT16 CZ80::GetPC(void) const
 {
   return pc;
 }
@@ -3945,7 +3945,7 @@ void CZ80::SaveState(CBlockFile *StateFile, const char *name)
 
 void CZ80::LoadState(CBlockFile *StateFile, const char *name)
 {
-  if (OKAY != StateFile->FindBlock(name))
+  if (Result::OKAY != StateFile->FindBlock(name))
   {
     ErrorLog("Unable to load Z80 state. Save state file is corrupt.");
     return;

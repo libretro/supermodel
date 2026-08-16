@@ -28,25 +28,30 @@
 #ifndef INCLUDED_AUDIO_H
 #define INCLUDED_AUDIO_H
 
+#include "Types.h"
+#include "Util/NewConfig.h"
+#include "Game.h"
+
 typedef void (*AudioCallbackFPtr)(void *data);
 
 extern void SetAudioCallback(AudioCallbackFPtr callback, void *data);
 
 extern void SetAudioEnabled(bool enabled);
+extern void SetAudioType(Game::AudioTypes type);
 
 /*
  * OpenAudio()
  *
  * Initializes the audio system.
  */
-extern bool OpenAudio();
+extern Result OpenAudio(const Util::Config::Node& config);
 
 /*
  * OutputAudio(unsigned numSamples, *INT16 leftBuffer, *INT16 rightBuffer)
  *
  * Sends a chunk of two-channel audio with the given number of samples to the audio system.
  */
-extern bool OutputAudio(unsigned numSamples, INT16 *leftBuffer, INT16 *rightBuffer, bool flipStereo);
+extern bool OutputAudio(unsigned numSamples, const float* leftFrontBuffer, const float* rightFrontBuffer, const float* leftRearBuffer, const float* rightRearBuffer, bool flipStereo);
 
 /*
  * CloseAudio()

@@ -28,6 +28,10 @@
 #ifndef INCLUDED_PPC_H
 #define INCLUDED_PPC_H
 
+#include "BlockFile.h"
+#include "Types.h"
+#include "ppc_regs.h"
+#include "Debugger/CPU/PPCDebug.h"
 
 /******************************************************************************
  Definitions
@@ -332,13 +336,7 @@ typedef struct {
 	PPC_BUS_FREQUENCY bus_frequency;
 } PPC_CONFIG;
 
-typedef struct
-{
-	UINT32	start;
-	UINT32	end;
-	UINT32	* ptr;
-
-} PPC_FETCH_REGION;
+// PPC_FETCH_REGION is defined in ppc_regs.h (included at top of this file)
 
 
 /******************************************************************************
@@ -357,9 +355,23 @@ extern int ppc_get_cycles_per_sec(void);
 extern int ppc_get_bus_freq_multipler(void);
 extern int ppc_get_timer_ratio(void);
 extern void ppc_set_timer_ratio(int ratio);
+extern void ppc_set_jit_enabled(bool enabled);
 
 // These have been added to support the new Supermodel
 extern void ppc_attach_bus(class IBus *BusPtr);		// must be called first!
+extern void ppc_set_ram_ptr(UINT8 *ram_base);			// set RAM base for JIT inline fast-path
+
+// JIT support (exposed for use by JitArm64.cpp)
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern PPC_REGS *ppc_get_state(void);
+extern UINT32    ppc_read_opcode_at(UINT32 pc);
+extern void      ppc_dispatch_opcode(UINT32 opcode);
+extern void      ppc_check_interrupts_jit(void);
+#ifdef __cplusplus
+}
+#endif
 extern void ppc_save_state(class CBlockFile *SaveState);
 extern void ppc_load_state(class CBlockFile *SaveState);
 extern UINT32 ppc_get_gpr(unsigned num);

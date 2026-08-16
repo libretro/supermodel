@@ -24,10 +24,13 @@
  * 
  * Header file defining for SCSP emulation.
  */
-
+#define MAX_SCSP	2
 #ifndef INCLUDED_SCSP_H
 #define INCLUDED_SCSP_H
 
+#include "BlockFile.h"
+#include "Types.h"
+#include "Util/NewConfig.h"
 
 void SCSP_w8(UINT32 addr,UINT8 val);
 void SCSP_w16(UINT32 addr,UINT16 val);
@@ -58,7 +61,7 @@ UINT8 SCSP_MidiOutR();
  * Returns:
  *		FAIL if an error occured (prints own error messages), OKAY otherwise.
  */
-bool SCSP_Init(const Util::Config::Node &config, int n);
+Result SCSP_Init(const Util::Config::Node &config, int n);
 
 void SCSP_SetRAM(int n,UINT8 *r);
 void SCSP_RTECheck();
@@ -80,7 +83,7 @@ UINT32 SCSP_Slave_r32(UINT32 addr);
 // Supermodel interface functions
 void SCSP_SaveState(CBlockFile *StateFile);
 void SCSP_LoadState(CBlockFile *StateFile);
-void SCSP_SetBuffers(INT16 *leftBufferPtr, INT16 *rightBufferPtr, int bufferLength);
+void SCSP_SetBuffers(float *leftBufferPtr, float *rightBufferPtr, float* leftRearBufferPtr, float* rightRearBufferPtr, int bufferLength);
 void SCSP_Deinit(void);
 
 

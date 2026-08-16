@@ -1,7 +1,7 @@
 /**
  ** Supermodel
  ** A Sega Model 3 Arcade Emulator.
- ** Copyright 2011 Bart Trzynadlowski, Nik Henson 
+ ** Copyright 2003-2026 The Supermodel Team
  **
  ** This file is part of Supermodel.
  **
@@ -43,9 +43,11 @@
  *
  */
 
+#include "53C810.h"
+
 #include <cstring>
 #include "Supermodel.h"
-
+#include "CPU/PowerPC/ppc.h"
 
 /******************************************************************************
  Save States
@@ -63,12 +65,13 @@ void C53C810::SaveState(CBlockFile *SaveState)
   SaveState->Write(&Ctx.regDCNTL, sizeof(Ctx.regDCNTL));
   SaveState->Write(&Ctx.regDMODE, sizeof(Ctx.regDMODE));
   SaveState->Write(&Ctx.regDSTAT, sizeof(Ctx.regDSTAT));
+  SaveState->Write(&Ctx.regDIEN, sizeof(Ctx.regDIEN));
   SaveState->Write(&Ctx.regISTAT, sizeof(Ctx.regISTAT));
 }
 
 void C53C810::LoadState(CBlockFile *SaveState)
 {
-  if (OKAY != SaveState->FindBlock("53C810"))
+  if (Result::OKAY != SaveState->FindBlock("53C810"))
   {
     ErrorLog("Unable to load 53C810 state. Save state file is corrupt.");
     return;
@@ -83,6 +86,7 @@ void C53C810::LoadState(CBlockFile *SaveState)
   SaveState->Read(&Ctx.regDCNTL, sizeof(Ctx.regDCNTL));
   SaveState->Read(&Ctx.regDMODE, sizeof(Ctx.regDMODE));
   SaveState->Read(&Ctx.regDSTAT, sizeof(Ctx.regDSTAT));
+  SaveState->Read(&Ctx.regDIEN, sizeof(Ctx.regDIEN));
   SaveState->Read(&Ctx.regISTAT, sizeof(Ctx.regISTAT));
 }
 
@@ -98,19 +102,20 @@ static inline UINT32 Fetch(struct NCR53C810Context *Ctx, UINT32 offset)
 }
 
 //TODO: what happens if interrupt is executed in single step mode?
-static bool SCRIPTS_Int_IntFly(struct NCR53C810Context *Ctx)
+static Result SCRIPTS_Int_IntFly(struct NCR53C810Context *Ctx)
 {
   Ctx->halt = true;   // halt SCRIPTS execution
   Ctx->regISTAT |= 1; // DMA interrupt pending
   Ctx->regDSTAT |= 4; // SCRIPTS interrupt instruction received
-  Ctx->IRQ->Assert(Ctx->scsiIRQ); 
+  if (Ctx->regDIEN & 4)
+    Ctx->IRQ->Assert(Ctx->scsiIRQ);
   if ((Ctx->regDBC&0x100000)) // INTFLY
     return ErrorLog("53C810 INTFLY instruction not emulated!");
   // DSP not incremented (VF3 relies on this)
-  return OKAY;
+  return Result::OKAY;
 }
 
-static bool SCRIPTS_MoveMemory(struct NCR53C810Context *Ctx)
+static Result SCRIPTS_MoveMemory(struct NCR53C810Context *Ctx)
 {
   UINT32    src, dest;
   unsigned  numBytes, i;
@@ -122,7 +127,7 @@ static bool SCRIPTS_MoveMemory(struct NCR53C810Context *Ctx)
   // Not implemented: illegal instruction interrupt when src and dest are not aligned the same way
 
   DebugLog("53C810: Move Memory %08X -> %08X, %X\n", src, dest, numBytes);
-  //if (dest==0x94000000)printf("53C810: Move Memory %08X -> %08X, %X\n", src, dest, numBytes);    
+  //if (dest==0x94000000)printf("53C810: Move Memory %08X -> %08X, %X\n", src, dest, numBytes);
 
   // Perform a 32-bit copy if possible
   for (i = 0; i < (numBytes/4); i++)
@@ -146,14 +151,14 @@ static bool SCRIPTS_MoveMemory(struct NCR53C810Context *Ctx)
   Ctx->regTEMP = dest;
   Ctx->regDSP += 12;
 
-  return OKAY;
+  return Result::OKAY;
 }
 
 // Invalid instruction handler
-static bool SCRIPTS_Invalid(struct NCR53C810Context *Ctx)
+static Result SCRIPTS_Invalid(struct NCR53C810Context *Ctx)
 {
   DebugLog("53C810 encountered an unrecognized instruction (%02X%06X, DSP=%08X)\n!", Ctx->regDCMD, Ctx->regDBC, Ctx->regDSP);
-  return FAIL;
+  return Result::FAIL;
 }
 
 void C53C810::Run(bool singleStep)
@@ -175,8 +180,11 @@ void C53C810::Run(bool singleStep)
     // Issue IRQ and finish
     Ctx.regISTAT |= 1;            // DMA interrupt pending
     Ctx.regDSTAT |= 8;            // single step interrupt
-    Ctx.IRQ->Assert(Ctx.scsiIRQ); // generate an interrupt
-    DebugLog("53C810: Asserted IRQ\n");
+    if (Ctx.regDIEN & 8)
+    {
+      Ctx.IRQ->Assert(Ctx.scsiIRQ); // generate an interrupt
+      DebugLog("53C810: Asserted IRQ\n");
+    }
   }
   else
   {
@@ -190,14 +198,14 @@ void C53C810::Run(bool singleStep)
       Ctx.regDSPS = Fetch(&Ctx, 4); // word 2
     
       // Execute!
-      if (OpTable[Ctx.regDCMD](&Ctx) != OKAY)
+      if (OpTable[Ctx.regDCMD](&Ctx) != Result::OKAY)
         break;
     }
   }
 }
 
 // Insert instructions into the LUT under control of the mask
-void C53C810::Insert(UINT8 mask, UINT8 op, bool (*Handler)(struct NCR53C810Context *))
+void C53C810::Insert(UINT8 mask, UINT8 op, Result (*Handler)(struct NCR53C810Context *))
 {
   UINT32  i;
 
@@ -315,6 +323,9 @@ void C53C810::WriteRegister(unsigned reg, UINT8 data)
   case 0x38:    // DMODE
     Ctx.regDMODE = data;
     break;
+  case 0x39:    // DIEN
+    Ctx.regDIEN = data;
+    break;
   case 0x3B:    // DCNTL
     Ctx.regDCNTL = data;
     if ((Ctx.regDCNTL&0x14) == 0x14)    // single step
@@ -394,8 +405,10 @@ UINT8 C53C810::ReadRegister(unsigned reg)
     return (Ctx.regDSPS>>16)&0xFF;
   case 0x33:    // DSPS 31-24
     return (Ctx.regDSPS>>24)&0xFF;
-  case 0x38:
+  case 0x38:    // DMODE
     return Ctx.regDMODE;
+  case 0x39:    // DIEN
+    return Ctx.regDIEN;
   case 0x3B:    // DCNTL
     return Ctx.regDCNTL;
   default:  // get it from the register file
@@ -406,11 +419,11 @@ UINT8 C53C810::ReadRegister(unsigned reg)
   return Ctx.regs[reg&0xFF];
 } 
 
-UINT32 C53C810::ReadPCIConfigSpace(unsigned device, unsigned reg, unsigned bits, unsigned offset)
+UINT32 C53C810::ReadPCIConfigSpace(unsigned device, unsigned reg, unsigned bits, unsigned offset) const
 {
   UINT32  d;
   
-  if ((bits==8))
+  if (bits == 8)
   {
     DebugLog("53C810 %d-bit PCI read request for reg=%02X\n", bits, reg);
     return 0;
@@ -419,15 +432,15 @@ UINT32 C53C810::ReadPCIConfigSpace(unsigned device, unsigned reg, unsigned bits,
   switch (reg)
   {
   case 0x00:  // Device ID and Vendor ID
-    d = 0x00011000; // 0x1000 = LSI Logic
+    d = FLIPENDIAN32(0x00011000); // 0x1000 = LSI Logic, 0x0001 = 53c810a
     switch (bits)
     {
     case 8:
-      d >>= (3-offset)*8; // offset will be 0-3; select appropriate byte
+      d >>= (3-offset)*8;         // offset will be 0-3; select appropriate byte
       d &= 0xFF;
       break;
     case 16:
-      d >>= (2-offset)*8; // offset will be 0 or 2 only; select either high or low word
+      d >>= (2-offset)*8;         // offset will be 0 or 2 only; select either high or low word
       d &= 0xFFFF;
       break;
     default:
@@ -445,6 +458,14 @@ UINT32 C53C810::ReadPCIConfigSpace(unsigned device, unsigned reg, unsigned bits,
 void C53C810::WritePCIConfigSpace(unsigned device, unsigned reg, unsigned bits, unsigned offset, UINT32 data)
 {
   DebugLog("53C810 PCI %d-bit write request for reg=%02X, data=%08X\n", bits, reg, data);
+
+  if (reg == 4) // set base address of SCSI device
+      baseAddress = data & 0xFF;
+}
+
+UINT8 C53C810::GetBaseAddress(void) const
+{
+  return baseAddress;
 }
 
 void C53C810::Reset(void)
@@ -467,6 +488,7 @@ void C53C810::Reset(void)
   Ctx.regDCNTL = 0;
   Ctx.regDMODE = 0;
   Ctx.regDSTAT = 0x80;  // DMA FIFO empty
+  Ctx.regDIEN = 0;
   Ctx.regISTAT = 0;
   Ctx.halt = false;
   

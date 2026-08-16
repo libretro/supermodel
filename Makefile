@@ -1,662 +1,643 @@
-DEBUG=0
-PSS_STYLE=1
-EXTERNAL_ZLIB=0
-HAVE_GRIFFIN=1
-STATIC_LINKING=0
-ENDIANNESS_DEFINES=
+# Supermodel Libretro Core - Unified Makefile
+# Follows libretro/skeletor pattern with all platforms consolidated
 
-SPACE :=
-SPACE := $(SPACE) $(SPACE)
-BACKSLASH :=
-BACKSLASH := \$(BACKSLASH)
-filter_out1 = $(filter-out $(firstword $1),$1)
-filter_out2 = $(call filter_out1,$(call filter_out1,$1))
-unixpath = $(subst \,/,$1)
-unixcygpath = /$(subst :,,$(call unixpath,$1))
+STATIC_LINKING := 0
+DEBUG ?= 0
+PSS_STYLE ?= 1
+EXTERNAL_ZLIB ?= 0
+HAVE_GRIFFIN ?= 1
 
+# Core definitions
+CORE_DIR := .
+TARGET_NAME := supermodel
+
+# ============================================================
+# Platform Auto-Detection
+# ============================================================
 ifeq ($(platform),)
-	platform = unix
-	ifeq ($(shell uname -a),)
-		platform = win
-	else ifneq ($(findstring MINGW,$(shell uname -a)),)
-		platform = win
-	else ifneq ($(findstring Darwin,$(shell uname -a)),)
-		platform = osx
-		arch = intel
-		ifeq ($(shell uname -p),powerpc)
-			arch = ppc
-		endif
-	else ifneq ($(findstring win,$(shell uname -a)),)
-		platform = win
-	endif
+    platform = unix
+    ifeq ($(shell uname -a),)
+        platform = win
+    else ifneq ($(findstring MINGW,$(shell uname -a)),)
+        platform = win
+    else ifneq ($(findstring Darwin,$(shell uname -a)),)
+        platform = osx
+    else ifneq ($(findstring win,$(shell uname -a)),)
+        platform = win
+    endif
 endif
 
-# system platform
+# System platform (for native builds)
 system_platform = unix
 ifeq ($(shell uname -a),)
-	EXE_EXT = .exe
-	system_platform = win
+    system_platform = win
 else ifneq ($(findstring Darwin,$(shell uname -a)),)
-	system_platform = osx
-	arch = intel
-	ifeq ($(shell uname -p),powerpc)
-		arch = ppc
-	endif
+    system_platform = osx
 else ifneq ($(findstring MINGW,$(shell uname -a)),)
-	system_platform = win
+    system_platform = win
 endif
 
-# Replace 'sample' with the name of the core
-TARGET_NAME := sample
+# ============================================================
+# Source Files (extracted from Makefile.common)
+# ============================================================
+LIBRETRO_COMM_DIR := $(CORE_DIR)/Src/OSD/libretro/libretro-common
+DEPS_DIR := $(CORE_DIR)/deps
+MUSASHI_DIR := $(CORE_DIR)/Src/CPU/68K/Musashi
+MUSASHI_GEN_DIR := $(CORE_DIR)/build/libretro/musashi
+MUSASHI_GENERATOR := $(MUSASHI_GEN_DIR)/m68kmake
+MUSASHI_GENERATED := $(MUSASHI_GEN_DIR)/m68kops.h \
+                     $(MUSASHI_GEN_DIR)/m68kops.c \
+                     $(MUSASHI_GEN_DIR)/m68kopac.c \
+                     $(MUSASHI_GEN_DIR)/m68kopdm.c \
+                     $(MUSASHI_GEN_DIR)/m68kopnz.c
+
+INCFLAGS := -I$(CORE_DIR) \
+            -I$(DEPS_DIR)/ugui \
+            -I$(LIBRETRO_COMM_DIR)/include \
+            -I$(CORE_DIR)/Src/OSD/libretro/include \
+            -I$(CORE_DIR)/Src/OSD/libretro \
+            -I$(CORE_DIR)/Src/OSD \
+            -I$(CORE_DIR)/Src \
+            -I$(MUSASHI_DIR) \
+            -I$(MUSASHI_GEN_DIR)
+
+COREDEFINES := -D__LIBRETRO__ -DSUPERMODEL_OSD_LIBRETRO
+COREDEFINES += -DPSS_STYLE=$(PSS_STYLE)
+
+# C Source Files (28 files)
+SOURCES_C := $(CORE_DIR)/Src/Pkgs/unzip.c \
+             $(CORE_DIR)/Src/Pkgs/ioapi.c \
+             $(MUSASHI_DIR)/m68kcpu.c \
+             $(MUSASHI_GEN_DIR)/m68kops.c \
+             $(MUSASHI_GEN_DIR)/m68kopac.c \
+             $(MUSASHI_GEN_DIR)/m68kopdm.c \
+             $(MUSASHI_GEN_DIR)/m68kopnz.c \
+             $(DEPS_DIR)/ugui/ugui.c \
+             $(CORE_DIR)/Src/ugui_tools.c \
+             $(LIBRETRO_COMM_DIR)/streams/file_stream.c \
+             $(LIBRETRO_COMM_DIR)/streams/file_stream_transforms.c \
+             $(LIBRETRO_COMM_DIR)/file/file_path.c \
+             $(LIBRETRO_COMM_DIR)/file/retro_dirent.c \
+             $(LIBRETRO_COMM_DIR)/vfs/vfs_implementation.c \
+             $(LIBRETRO_COMM_DIR)/lists/dir_list.c \
+             $(LIBRETRO_COMM_DIR)/lists/string_list.c \
+             $(LIBRETRO_COMM_DIR)/string/stdstring.c \
+             $(LIBRETRO_COMM_DIR)/compat/compat_strl.c \
+             $(LIBRETRO_COMM_DIR)/compat/fopen_utf8.c \
+             $(LIBRETRO_COMM_DIR)/compat/compat_strcasestr.c \
+             $(LIBRETRO_COMM_DIR)/compat/compat_posix_string.c \
+             $(LIBRETRO_COMM_DIR)/encodings/encoding_utf.c \
+             $(LIBRETRO_COMM_DIR)/memmap/memalign.c \
+             $(LIBRETRO_COMM_DIR)/time/rtime.c \
+             $(LIBRETRO_COMM_DIR)/hash/rhash.c
+
+# Add libretro-common glsym for non-Android
+ifeq (,$(findstring android,$(platform)))
+    SOURCES_C += $(LIBRETRO_COMM_DIR)/glsym/glsym_gl.c \
+                 $(LIBRETRO_COMM_DIR)/glsym/rglgen.c
+endif
+
+# C++ Source Files (80 files - verified to exist)
+SOURCES_CXX := $(CORE_DIR)/Src/CPU/PowerPC/PPCDisasm.cpp \
+               $(CORE_DIR)/Src/BlockFile.cpp \
+               $(CORE_DIR)/Src/Model3/93C46.cpp \
+               $(CORE_DIR)/Src/Model3/JTAG.cpp \
+               $(CORE_DIR)/Src/Pkgs/imgui/imgui.cpp \
+               $(CORE_DIR)/Src/Pkgs/imgui/imgui_draw.cpp \
+               $(CORE_DIR)/Src/Pkgs/imgui/imgui_tables.cpp \
+               $(CORE_DIR)/Src/Pkgs/imgui/imgui_widgets.cpp \
+               $(CORE_DIR)/Src/Pkgs/imgui/imgui_impl_opengl3.cpp \
+               $(CORE_DIR)/Src/Graphics/Legacy3D/Error.cpp \
+               $(CORE_DIR)/Src/Graphics/Shader.cpp \
+               $(CORE_DIR)/Src/Graphics/GLSLVersion.cpp \
+               $(CORE_DIR)/Src/Model3/Real3D.cpp \
+               $(CORE_DIR)/Src/Graphics/Legacy3D/Legacy3D.cpp \
+               $(CORE_DIR)/Src/Graphics/Legacy3D/Models.cpp \
+               $(CORE_DIR)/Src/Graphics/Legacy3D/TextureRefs.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/New3D.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/Mat4.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/Model.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/PolyHeader.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/TextureBank.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/VBO.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/Vec.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/R3DShader.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/R3DFloat.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/R3DScrollFog.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/R3DFrameBuffers.cpp \
+               $(CORE_DIR)/Src/Graphics/New3D/GLSLShader.cpp \
+               $(CORE_DIR)/Src/Graphics/FBO.cpp \
+               $(CORE_DIR)/Src/Graphics/SuperAA.cpp \
+               $(CORE_DIR)/Src/Graphics/Render2D.cpp \
+               $(CORE_DIR)/Src/Model3/TileGen.cpp \
+               $(CORE_DIR)/Src/Model3/Model3.cpp \
+               $(CORE_DIR)/Src/CPU/PowerPC/ppc.cpp \
+               $(if $(filter android aarch64 rpi64 osx,$(platform)),$(CORE_DIR)/Src/CPU/PowerPC/Jit/JitArm64.cpp,) \
+               $(CORE_DIR)/Src/Model3/SoundBoard.cpp \
+               $(CORE_DIR)/Src/Sound/SCSP.cpp \
+               $(CORE_DIR)/Src/Sound/SCSPDSP.cpp \
+               $(CORE_DIR)/Src/CPU/68K/68K.cpp \
+               $(CORE_DIR)/Src/Model3/DSB.cpp \
+               $(CORE_DIR)/Src/CPU/Z80/Z80.cpp \
+               $(CORE_DIR)/Src/Model3/IRQ.cpp \
+               $(CORE_DIR)/Src/Model3/53C810.cpp \
+               $(CORE_DIR)/Src/Model3/PCI.cpp \
+               $(CORE_DIR)/Src/Model3/RTC72421.cpp \
+               $(CORE_DIR)/Src/Model3/DriveBoard/DriveBoard.cpp \
+               $(CORE_DIR)/Src/Model3/DriveBoard/WheelBoard.cpp \
+               $(CORE_DIR)/Src/Model3/DriveBoard/JoystickBoard.cpp \
+               $(CORE_DIR)/Src/Model3/DriveBoard/SkiBoard.cpp \
+               $(CORE_DIR)/Src/Model3/DriveBoard/BillBoard.cpp \
+               $(CORE_DIR)/Src/Model3/DriveBoard/Z80CTC.cpp \
+               $(CORE_DIR)/Src/Model3/MPC10x.cpp \
+               $(CORE_DIR)/Src/Inputs/Input.cpp \
+               $(CORE_DIR)/Src/Inputs/Inputs.cpp \
+               $(CORE_DIR)/Src/Inputs/InputSource.cpp \
+               $(CORE_DIR)/Src/Inputs/InputSystem.cpp \
+               $(CORE_DIR)/Src/Inputs/InputTypes.cpp \
+               $(CORE_DIR)/Src/Inputs/MultiInputSource.cpp \
+               $(CORE_DIR)/Src/OSD/Outputs.cpp \
+               $(CORE_DIR)/Src/Sound/MPEG/MpegAudio.cpp \
+               $(CORE_DIR)/Src/Model3/Crypto.cpp \
+               $(CORE_DIR)/Src/OSD/Logger.cpp \
+               $(CORE_DIR)/Src/Util/Format.cpp \
+               $(CORE_DIR)/Src/Util/NewConfig.cpp \
+               $(CORE_DIR)/Src/Util/ByteSwap.cpp \
+               $(CORE_DIR)/Src/Util/ConfigBuilders.cpp \
+               $(CORE_DIR)/Src/GameLoader.cpp \
+               $(CORE_DIR)/Src/Pkgs/tinyxml2.cpp \
+               $(CORE_DIR)/Src/ROMSet.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/libretroAudio.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/libretroThread.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/libretroCrosshair.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/libretroGui.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/LibretroBlockFileMemory.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/CLibretroInputSystem.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/CLibretroOutputSystem.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/LibretroNetBoard.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/LibretroWrapper.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/vfs_ioapi.cpp \
+               $(CORE_DIR)/Src/OSD/libretro/libretro.cpp
+
+# Platform-specific OSD FileSystemPath implementation
+ifeq ($(platform),win)
+    SOURCES_CXX += $(CORE_DIR)/Src/OSD/Windows/FileSystemPath.cpp
+else ifeq ($(platform),osx)
+    SOURCES_CXX += $(CORE_DIR)/Src/OSD/OSX/FileSystemPath.cpp
+else
+    # osx, unix, android, rpi64, aarch64 all use Unix FileSystemPath
+    SOURCES_CXX += $(CORE_DIR)/Src/OSD/Unix/FileSystemPath.cpp
+endif
+
+# Renderer selection: new3d (default) or legacy.
+#   make platform=rpi64 RENDERER=legacy
+# Legacy3D is the old desktop-GL renderer. It is being ported to run inside the
+# GLES3 context (GLES2-style code: client vertex arrays, #version 100 shaders),
+# so on GLES platforms it is only compiled in when explicitly asked for.
+RENDERER ?= new3d
+
+LEGACY3D_SOURCES := %/Legacy3D/Error.cpp %/Legacy3D/Legacy3D.cpp %/Legacy3D/Models.cpp %/Legacy3D/TextureRefs.cpp
+
+ifeq ($(RENDERER),legacy)
+    RENDERER_DEFINES := -DUSE_LEGACY3D
+    DROP_LEGACY3D :=
+else
+    RENDERER_DEFINES :=
+    DROP_LEGACY3D := 1
+endif
+
+# Platform-specific source filtering (MUST be before OBJECTS computation!)
+# macOS and Android don't support Legacy3D (old fixed-pipeline OpenGL)
+ifeq ($(platform),osx)
+    SOURCES_CXX := $(filter-out $(LEGACY3D_SOURCES),$(SOURCES_CXX))
+endif
+ifeq ($(platform),android)
+    SOURCES_CXX := $(filter-out $(LEGACY3D_SOURCES),$(SOURCES_CXX))
+endif
+
+# rpi64 and aarch64 use GLES3 (RetroArch on RPi5 provides only GLES context via EGL)
+ifeq ($(platform),rpi64)
+    SOURCES_C := $(filter-out %/glsym/glsym_gl.c,$(SOURCES_C))
+    SOURCES_C += $(LIBRETRO_COMM_DIR)/glsym/glsym_es3.c
+ifdef DROP_LEGACY3D
+    SOURCES_CXX := $(filter-out $(LEGACY3D_SOURCES),$(SOURCES_CXX))
+endif
+endif
+ifeq ($(platform),aarch64)
+    SOURCES_C := $(filter-out %/glsym/glsym_gl.c,$(SOURCES_C))
+    SOURCES_C += $(LIBRETRO_COMM_DIR)/glsym/glsym_es3.c
+ifdef DROP_LEGACY3D
+    SOURCES_CXX := $(filter-out $(LEGACY3D_SOURCES),$(SOURCES_CXX))
+endif
+endif
+
+# Renderer capabilities exposed to the Libretro option layer. Keep these as
+# feature defines rather than platform tests so future ports only need to
+# enable the capability here.
+ifneq ($(filter $(CORE_DIR)/Src/Graphics/Legacy3D/Legacy3D.cpp,$(SOURCES_CXX)),)
+    RENDERER_DEFINES += -DHAVE_LEGACY3D
+endif
+
+ifneq ($(filter $(platform),osx android rpi64 aarch64),$(platform))
+    RENDERER_DEFINES += -DHAVE_QUAD_RENDERING
+endif
+
+ifneq ($(filter $(platform),android rpi64 aarch64),$(platform))
+    RENDERER_DEFINES += -DHAVE_CRT_COLOURS
+    RENDERER_DEFINES += -DHAVE_SUPERSAMPLING
+endif
+
+# GIT version
 GIT_VERSION := " $(shell git rev-parse --short HEAD || echo unknown)"
 ifneq ($(GIT_VERSION)," unknown")
-	CFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
-	CXXFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
+    COREDEFINES += -DGIT_VERSION=\"$(GIT_VERSION)\"
 endif
-
-ifneq (,$(findstring msvc,$(platform)))
-LIBM :=
-else
-LIBM := -lm
-endif
-LIBS :=
-
-CORE_DIR := .
-
-# Unix
-ifeq ($(platform), unix)
-	TARGET := $(TARGET_NAME)_libretro.so
-	fpic := -fPIC
-ifneq ($(findstring SunOS,$(shell uname -a)),)
-	CC = gcc
-	SHARED := -shared -z defs
-else
-	SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T -Wl,-no-undefined
-endif
-
-else ifeq ($(platform), linux-portable)
-	TARGET := $(TARGET_NAME)_libretro.so
-	fpic := -fPIC -nostdlib
-	SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T
-	LIBM :=
-# OS X
-else ifeq ($(platform), osx)
-	TARGET := $(TARGET_NAME)_libretro.dylib
-	fpic := -fPIC
-	SHARED := -dynamiclib
-	ifeq ($(arch),ppc)
-		ENDIANNESS_DEFINES += -DMSB_FIRST
-	endif
-	OSXVER = `sw_vers -productVersion | cut -d. -f 2`
-	OSX_LT_MAVERICKS = `(( $(OSXVER) <= 9)) && echo "YES"`
-	fpic += -mmacosx-version-min=10.1
-	ifndef ($(NOUNIVERSAL))
-		CFLAGS += $(ARCHFLAGS)
-		CXXFLAGS += $(ARCHFLAGS)
-		LDFLAGS += $(ARCHFLAGS)
-	endif
-
-# iOS
-else ifneq (,$(findstring ios,$(platform)))
-
-	TARGET := $(TARGET_NAME)_libretro_ios.dylib
-	fpic := -fPIC
-	SHARED := -dynamiclib
-	ifeq ($(IOSSDK),)
-		IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
-	endif
-	ifeq ($(platform),ios-arm64)
-		CC = cc -arch arm64 -isysroot $(IOSSDK)
-	else
-	  CC = cc -arch armv7 -isysroot $(IOSSDK)
-	endif
-	CFLAGS += -DIOS
-	CXXFLAGS += -DIOS
-ifeq ($(platform),$(filter $(platform),ios9 ios-arm64))
-	CC +=  -miphoneos-version-min=8.0
-	CFLAGS += -miphoneos-version-min=8.0
-	CXXFLAGS += -miphoneos-version-min=8.0
-else
-	CC +=  -miphoneos-version-min=5.0
-	CFLAGS += -miphoneos-version-min=5.0
-	CXXFLAGS += -miphoneos-version-min=5.0
-endif
-
-# Theos iOS
-else ifeq ($(platform), theos_ios)
-	DEPLOYMENT_IOSVERSION = 5.0
-	TARGET = iphone:latest:$(DEPLOYMENT_IOSVERSION)
-	ARCHS = armv7 armv7s
-	TARGET_IPHONEOS_DEPLOYMENT_VERSION=$(DEPLOYMENT_IOSVERSION)
-	THEOS_BUILD_DIR := objs
-	include $(THEOS)/makefiles/common.mk
-	LIBRARY_NAME = $(TARGET_NAME)_libretro_ios
-
-# QNX
-else ifeq ($(platform), qnx)
-	TARGET := $(TARGET_NAME)_libretro_qnx.so
-	fpic := -fPIC
-	SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T -Wl,-no-undefined
-	CC = qcc -Vgcc_ntoarmv7le
-	AR = qcc -Vgcc_ntoarmv7le
-	PLATFORM_DEFINES := -D__BLACKBERRY_QNX__ -marm -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp
-
-# PS3
-else ifeq ($(platform), ps3)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).a
-	CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
-	AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
-	PLATFORM_DEFINES := -D__CELLOS_LV2
-	ENDIANNESS_DEFINES += -DMSB_FIRST
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# sncps3
-else ifeq ($(platform), sncps3)
-	TARGET := $(TARGET_NAME)_libretro_ps3.a
-	CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
-	AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
-	PLATFORM_DEFINES := -D__CELLOS_LV2
-	ENDIANNESS_DEFINES += -DMSB_FIRST
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# PSP
-else ifeq ($(platform), psp1)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).a
-	CC = psp-gcc$(EXE_EXT)
-	AR = psp-ar$(EXE_EXT)
-	PLATFORM_DEFINES := -DPSP -G0
-	PLATFORM_DEFINES += -march=allegrex -mfp32 -mgp32 -mlong32 -mabi=eabi
-	PLATFORM_DEFINES += -fomit-frame-pointer -fstrict-aliasing
-	PLATFORM_DEFINES += -falign-functions=32 -falign-loops -falign-labels -falign-jumps
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# Vita
-else ifeq ($(platform), vita)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).a
-	CC = arm-vita-eabi-gcc$(EXE_EXT)
-	AR = arm-vita-eabi-ar$(EXE_EXT)
-	PLATFORM_DEFINES := -DVITA
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# DOS
-else ifeq ($(platform), dos)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).a
-	CC = i686-pc-msdosdjgpp-gcc
-	AR = i686-pc-msdosdjgpp-ar
-	CFLAGS += -march=i386
-	CXXFLAGS += -march=i386
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# CTR(3DS)
-else ifeq ($(platform), ctr)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).a
-	CC = $(DEVKITARM)/bin/arm-none-eabi-gcc$(EXE_EXT)
-	AR = $(DEVKITARM)/bin/arm-none-eabi-ar$(EXE_EXT)
-	PLATFORM_DEFINES := -DARM11 -D_3DS
-	CFLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard
-	CFLAGS += -Wall -mword-relocations
-	CFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
-	CXXFLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard
-	CXXFLAGS += -Wall -mword-relocations
-	CXXFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# Raspberry Pi 1
-else ifeq ($(platform), rpi1)
-	TARGET := $(TARGET_NAME)_libretro.so
-	fpic := -fPIC
-	SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T -Wl,-no-undefined
-	CFLAGS += -DARM11
-	CFLAGS += -marm -march=armv6j -mfpu=vfp -mfloat-abi=hard -funsafe-math-optimizations
-	CFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
-	CXXFLAGS += -DARM11
-	CXXFLAGS += -marm -march=armv6j -mfpu=vfp -mfloat-abi=hard -funsafe-math-optimizations
-	CXXFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
-
-# Raspberry Pi 2
-else ifeq ($(platform), rpi2)
-	TARGET := $(TARGET_NAME)_libretro.so
-	fpic := -fPIC
-	SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T -Wl,-no-undefined
-	CFLAGS += -DARM
-	CFLAGS += -marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations
-	CFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
-	CXXFLAGS += -DARM
-	CXXFLAGS += -marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations
-	CXXFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
-
-# Lightweight PS3 Homebrew SDK
-else ifeq ($(platform), psl1ght)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).a
-	CC = $(PS3DEV)/ppu/bin/ppu-gcc$(EXE_EXT)
-	AR = $(PS3DEV)/ppu/bin/ppu-ar$(EXE_EXT)
-	PLATFORM_DEFINES := -D__CELLOS_LV2
-	ENDIANNESS_DEFINES += -DMSB_FIRST
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# Xbox 360
-else ifeq ($(platform), xenon)
-	TARGET := $(TARGET_NAME)_libretro_xenon360.a
-	CC = xenon-gcc$(EXE_EXT)
-	AR = xenon-ar$(EXE_EXT)
-	PLATFORM_DEFINES := -D__LIBXENON__
-	ENDIANNESS_DEFINES += -DMSB_FIRST
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# Nintendo Game Cube
-else ifeq ($(platform), ngc)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).a
-	CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
-	AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-	PLATFORM_DEFINES := -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float
-	PLATFORM_DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
-	ENDIANNESS_DEFINES += -DMSB_FIRST
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# Nintendo Wii
-else ifeq ($(platform), wii)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).a
-	CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
-	AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-	PLATFORM_DEFINES := -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
-	PLATFORM_DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
-	ENDIANNESS_DEFINES += -DMSB_FIRST
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# Nintendo WiiU
-else ifeq ($(platform), wiiu)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).a
-	CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
-	AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-	PLATFORM_DEFINES := -DGEKKO -DHW_RVL -mwup -mcpu=750 -meabi -mhard-float
-	PLATFORM_DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
-	ENDIANNESS_DEFINES += -DMSB_FIRST
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# Nintendo Switch (libtransistor)
-else ifeq ($(platform), switch)
-	EXT=a
-        TARGET := $(TARGET_NAME)_libretro_$(platform).$(EXT)
-        include $(LIBTRANSISTOR_HOME)/libtransistor.mk
-        STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-
-# ARM
-else ifneq (,$(findstring armv,$(platform)))
-	TARGET := $(TARGET_NAME)_libretro.so
-	SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T -Wl,-no-undefined
-	fpic := -fPIC
-	ifneq (,$(findstring cortexa5,$(platform)))
-		PLATFORM_DEFINES += -marm -mcpu=cortex-a5
-	else ifneq (,$(findstring cortexa8,$(platform)))
-		PLATFORM_DEFINES += -marm -mcpu=cortex-a8
-	else ifneq (,$(findstring cortexa9,$(platform)))
-		PLATFORM_DEFINES += -marm -mcpu=cortex-a9
-	else ifneq (,$(findstring cortexa15a7,$(platform)))
-		PLATFORM_DEFINES += -marm -mcpu=cortex-a15.cortex-a7
-	else
-		PLATFORM_DEFINES += -marm
-	endif
-	ifneq (,$(findstring softfloat,$(platform)))
-		PLATFORM_DEFINES += -mfloat-abi=softfp
-	else ifneq (,$(findstring hardfloat,$(platform)))
-		PLATFORM_DEFINES += -mfloat-abi=hard
-	endif
-	PLATFORM_DEFINES += -DARM
-
-# emscripten
-else ifeq ($(platform), emscripten)
-	TARGET := $(TARGET_NAME)_libretro_$(platform).bc
-	STATIC_LINKING=1
-	EXTERNAL_ZLIB=1
-
-# GCW0
-else ifeq ($(platform), gcw0)
-	TARGET := $(TARGET_NAME)_libretro.so
-	CC = /opt/gcw0-toolchain/usr/bin/mipsel-linux-gcc
-	CXX = /opt/gcw0-toolchain/usr/bin/mipsel-linux-g++
-	AR = /opt/gcw0-toolchain/usr/bin/mipsel-linux-ar
-	fpic := -fPIC
-	SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T -Wl,-no-undefined
-	PLATFORM_DEFINES += -ffast-math -march=mips32 -mtune=mips32r2 -mhard-float
-	EXTERNAL_ZLIB = 1
-	
-# Windows MSVC 2017 all architectures
-else ifneq (,$(findstring windows_msvc2017,$(platform)))
-
-	PlatformSuffix = $(subst windows_msvc2017_,,$(platform))
-	ifneq (,$(findstring desktop,$(PlatformSuffix)))
-		WinPartition = desktop
-		MSVC2017CompileFlags = -DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP -FS
-		LDFLAGS += -MANIFEST -LTCG:incremental -NXCOMPAT -DYNAMICBASE -DEBUG -OPT:REF -INCREMENTAL:NO -SUBSYSTEM:WINDOWS -MANIFESTUAC:"level='asInvoker' uiAccess='false'" -OPT:ICF -ERRORREPORT:PROMPT -NOLOGO -TLBID:1
-		LIBS += kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
-	else ifneq (,$(findstring uwp,$(PlatformSuffix)))
-		WinPartition = uwp
-		MSVC2017CompileFlags = -DWINAPI_FAMILY=WINAPI_FAMILY_APP -DWINDLL -D_UNICODE -DUNICODE -DWRL_NO_DEFAULT_LIB -FS
-		LDFLAGS += -APPCONTAINER -NXCOMPAT -DYNAMICBASE -MANIFEST:NO -LTCG -OPT:REF -SUBSYSTEM:CONSOLE -MANIFESTUAC:NO -OPT:ICF -ERRORREPORT:PROMPT -NOLOGO -TLBID:1 -DEBUG:FULL -WINMD:NO
-		LIBS += WindowsApp.lib
-	endif
-
-	CFLAGS   += $(MSVC2017CompileFlags)
-	CXXFLAGS += $(MSVC2017CompileFlags)
-
-	TargetArchMoniker = $(subst $(WinPartition)_,,$(PlatformSuffix))
-
-	CC  = cl.exe
-	CXX = cl.exe
-	LD = link.exe
-
-	reg_query = $(call filter_out2,$(subst $2,,$(shell reg query "$2" -v "$1" 2>nul)))
-	fix_path = $(subst $(SPACE),\ ,$(subst \,/,$1))
-
-	ProgramFiles86w := $(shell cmd /c "echo %PROGRAMFILES(x86)%")
-	ProgramFiles86 := $(shell cygpath "$(ProgramFiles86w)")
-
-	WindowsSdkDir ?= $(call reg_query,InstallationFolder,HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0)
-	WindowsSdkDir ?= $(call reg_query,InstallationFolder,HKEY_CURRENT_USER\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0)
-	WindowsSdkDir ?= $(call reg_query,InstallationFolder,HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0)
-	WindowsSdkDir ?= $(call reg_query,InstallationFolder,HKEY_CURRENT_USER\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0)
-	WindowsSdkDir := $(WindowsSdkDir)
-
-	WindowsSDKVersion ?= $(firstword $(foreach folder,$(subst $(subst \,/,$(WindowsSdkDir)Include/),,$(wildcard $(call fix_path,$(WindowsSdkDir)Include\*))),$(if $(wildcard $(call fix_path,$(WindowsSdkDir)Include/$(folder)/um/Windows.h)),$(folder),)))$(BACKSLASH)
-	WindowsSDKVersion := $(WindowsSDKVersion)
-
-	VsInstallBuildTools = $(ProgramFiles86)/Microsoft Visual Studio/2017/BuildTools
-	VsInstallEnterprise = $(ProgramFiles86)/Microsoft Visual Studio/2017/Enterprise
-	VsInstallProfessional = $(ProgramFiles86)/Microsoft Visual Studio/2017/Professional
-	VsInstallCommunity = $(ProgramFiles86)/Microsoft Visual Studio/2017/Community
-
-	VsInstallRoot ?= $(shell if [ -d "$(VsInstallBuildTools)" ]; then echo "$(VsInstallBuildTools)"; fi)
-	ifeq ($(VsInstallRoot), )
-		VsInstallRoot = $(shell if [ -d "$(VsInstallEnterprise)" ]; then echo "$(VsInstallEnterprise)"; fi)
-	endif
-	ifeq ($(VsInstallRoot), )
-		VsInstallRoot = $(shell if [ -d "$(VsInstallProfessional)" ]; then echo "$(VsInstallProfessional)"; fi)
-	endif
-	ifeq ($(VsInstallRoot), )
-		VsInstallRoot = $(shell if [ -d "$(VsInstallCommunity)" ]; then echo "$(VsInstallCommunity)"; fi)
-	endif
-	VsInstallRoot := $(VsInstallRoot)
-
-	VcCompilerToolsVer := $(shell cat "$(VsInstallRoot)/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt" | grep -o '[0-9\.]*')
-	VcCompilerToolsDir := $(VsInstallRoot)/VC/Tools/MSVC/$(VcCompilerToolsVer)
-
-	WindowsSDKSharedIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\$(WindowsSDKVersion)\shared")
-	WindowsSDKUCRTIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\$(WindowsSDKVersion)\ucrt")
-	WindowsSDKUMIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\$(WindowsSDKVersion)\um")
-	WindowsSDKUCRTLibDir := $(shell cygpath -w "$(WindowsSdkDir)\Lib\$(WindowsSDKVersion)\ucrt\$(TargetArchMoniker)")
-	WindowsSDKUMLibDir := $(shell cygpath -w "$(WindowsSdkDir)\Lib\$(WindowsSDKVersion)\um\$(TargetArchMoniker)")
-
-	# For some reason the HostX86 compiler doesn't like compiling for x64
-	# ("no such file" opening a shared library), and vice-versa.
-	# Work around it for now by using the strictly x86 compiler for x86, and x64 for x64.
-	# NOTE: What about ARM?
-	ifneq (,$(findstring x64,$(TargetArchMoniker)))
-		VCCompilerToolsBinDir := $(VcCompilerToolsDir)\bin\HostX64
-	else
-		VCCompilerToolsBinDir := $(VcCompilerToolsDir)\bin\HostX86
-	endif
-
-	PATH := $(shell IFS=$$'\n'; cygpath "$(VCCompilerToolsBinDir)/$(TargetArchMoniker)"):$(PATH)
-	PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VsInstallRoot)/Common7/IDE")
-	INCLUDE := $(shell IFS=$$'\n'; cygpath -w "$(VcCompilerToolsDir)/include")
-	LIB := $(shell IFS=$$'\n'; cygpath -w "$(VcCompilerToolsDir)/lib/$(TargetArchMoniker)")
-
-	export INCLUDE := $(INCLUDE);$(WindowsSDKSharedIncludeDir);$(WindowsSDKUCRTIncludeDir);$(WindowsSDKUMIncludeDir)
-	export LIB := $(LIB);$(WindowsSDKUCRTLibDir);$(WindowsSDKUMLibDir)
-	TARGET := $(TARGET_NAME)_libretro.dll
-	PSS_STYLE :=2
-	LDFLAGS += -DLL
-
-# Windows MSVC 2010 x64
-else ifeq ($(platform), windows_msvc2010_x64)
-	CC  = cl.exe
-	CXX = cl.exe
-
-PATH := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/bin/amd64"):$(PATH)
-PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../IDE")
-INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/include")
-LIB := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/lib/amd64")
-BIN := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/bin")
-
-WindowsSdkDir := $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')lib/x64
-WindowsSdkDir ?= $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.1A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')lib/x64
-
-export INCLUDE := $(INCLUDE)
-export LIB := $(LIB);$(WindowsSdkDir)
-TARGET := $(TARGET_NAME)_libretro.dll
-PSS_STYLE :=2
-LDFLAGS += -DLL
-
-# Windows MSVC 2010 x86
-else ifeq ($(platform), windows_msvc2010_x86)
-	CC  = cl.exe
-	CXX = cl.exe
-
-PATH := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/bin"):$(PATH)
-PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../IDE")
-INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/include")
-LIB := $(shell IFS=$$'\n'; cygpath -w "$(VS100COMNTOOLS)../../VC/lib")
-BIN := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/bin")
-
-WindowsSdkDir := $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')lib
-WindowsSdkDir ?= $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.1A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')lib
-
-export INCLUDE := $(INCLUDE)
-export LIB := $(LIB);$(WindowsSdkDir)
-TARGET := $(TARGET_NAME)_libretro.dll
-PSS_STYLE :=2
-LDFLAGS += -DLL
-
-# Windows MSVC 2003 Xbox 1
-else ifeq ($(platform), xbox1_msvc2003)
-TARGET := $(TARGET_NAME)_libretro_xdk1.lib
-CC  = CL.exe
-CXX  = CL.exe
-LD   = lib.exe
-
-export INCLUDE := $(XDK)\xbox\include
-export LIB := $(XDK)\xbox\lib
-PATH := $(call unixcygpath,$(XDK)/xbox/bin/vc71):$(PATH)
-
-PSS_STYLE :=2
-CFLAGS   += -D_XBOX -D_XBOX1
-CXXFLAGS += -D_XBOX -D_XBOX1
-STATIC_LINKING=1
-
-# Windows MSVC 2010 Xbox 360
-else ifeq ($(platform), xbox360_msvc2010)
-TARGET := $(TARGET_NAME)_libretro_xdk360.lib
-CC  = cl.exe
-CXX  = cl.exe
-LD   = lib.exe
-
-export INCLUDE := $(XEDK)/include/xbox
-export LIB := $(XEDK)/lib/xbox
-PATH := $(call unixcygpath,$(XEDK)/bin/win32):$(PATH)
-
-PSS_STYLE :=2
-CFLAGS   += -D_XBOX -D_XBOX360
-CXXFLAGS += -D_XBOX -D_XBOX360
-ENDIANNESS_DEFINES += -DMSB_FIRST
-STATIC_LINKING=1
-
-# Windows MSVC 2005 x86
-else ifeq ($(platform), windows_msvc2005_x86)
-	CC  = cl.exe
-	CXX = cl.exe
-
-PATH := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/bin"):$(PATH)
-PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../IDE")
-INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/include")
-LIB := $(shell IFS=$$'\n'; cygpath -w "$(VS80COMNTOOLS)../../VC/lib")
-BIN := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/bin")
-
-WindowsSdkDir := $(INETSDK)
-
-export INCLUDE := $(INCLUDE);$(INETSDK)/Include;src/drivers/libretro/msvc/msvc-2005
-export LIB := $(LIB);$(WindowsSdkDir);$(INETSDK)/Lib
-TARGET := $(TARGET_NAME)_libretro.dll
-PSS_STYLE :=2
-LDFLAGS += -DLL
-CFLAGS += -D_CRT_SECURE_NO_DEPRECATE
-
-# Windows MSVC 2003 x86
-else ifeq ($(platform), windows_msvc2003_x86)
-	CC  = cl.exe
-	CXX = cl.exe
-
-PATH := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/bin"):$(PATH)
-PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../IDE")
-INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/include")
-LIB := $(shell IFS=$$'\n'; cygpath -w "$(VS71COMNTOOLS)../../Vc7/lib")
-BIN := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/bin")
-
-WindowsSdkDir := $(INETSDK)
-
-export INCLUDE := $(INCLUDE);$(INETSDK)/Include;src/drivers/libretro/msvc/msvc-2005
-export LIB := $(LIB);$(WindowsSdkDir);$(INETSDK)/Lib
-TARGET := $(TARGET_NAME)_libretro.dll
-PSS_STYLE :=2
-LDFLAGS += -DLL
-CFLAGS += -D_CRT_SECURE_NO_DEPRECATE
-
-# Windows
-else
-	TARGET := $(TARGET_NAME)_libretro.dll
-	CC = gcc
-	SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=$(CORE_DIR)/link.T
-   PSS_STYLE :=2
-endif
-
-ifeq ($(DEBUG), 1)
-	ifneq (,$(findstring msvc,$(platform)))
-		ifeq ($(STATIC_LINKING),1)
-			CFLAGS += -MTd
-			CXXFLAGS += -MTd
-		else
-			CFLAGS += -MDd
-			CXXFLAGS += -MDd
-		endif
-
-		CFLAGS += -Od -Zi -DDEBUG -D_DEBUG
-		CXXFLAGS += -Od -Zi -DDEBUG -D_DEBUG
-	else
-		CFLAGS += -O0 -g -DDEBUG
-		CXXFLAGS += -O0 -g -DDEBUG
-	endif
-else
-	ifneq (,$(findstring msvc,$(platform)))
-		ifeq ($(STATIC_LINKING),1)
-			CFLAGS += -MT
-			CXXFLAGS += -MT
-		else
-			CFLAGS += -MD
-			CXXFLAGS += -MD
-		endif
-
-		CFLAGS += -O2 -DNDEBUG
-		CXXFLAGS += -O2 -DNDEBUG
-	else
-		CFLAGS += -O2 -DNDEBUG
-		CXXFLAGS += -O2 -DNDEBUG
-	endif
-endif
-
-ifeq ($(EXTERNAL_ZLIB), 1)
-	CFLAGS += -DHAVE_EXTERNAL_ZLIB
-	CXXFLAGS += -DHAVE_EXTERNAL_ZLIB
-endif
-
-include Makefile.common
 
 OBJECTS := $(SOURCES_C:.c=.o) $(SOURCES_CXX:.cpp=.o)
+DEPFILES := $(OBJECTS:.o=.d)
 
-DEFINES := $(COREDEFINES) $(PLATFORM_DEFINES)
+# Platform-specific defines (to be assembled with COREDEFINES into final DEFINES)
+PLATFORM_DEFINES :=
 
-ifeq ($(STATIC_LINKING),1)
-	DEFINES += -DSTATIC_LINKING
+# ============================================================
+# Platform-Specific Configuration
+# ============================================================
+
+# ============ UNIX/LINUX (Default) ============
+ifeq ($(platform),unix)
+    TARGET := $(TARGET_NAME)_libretro.so
+    LDFLAGS += -shared -fPIC
+    CFLAGS += -fPIC
+    CXXFLAGS += -fPIC
+    # Legacy3D uses GLU's perspective helper. Unlike desktop OpenGL entry
+    # points supplied by the Libretro frontend, GLU is not guaranteed to be
+    # exported by the frontend process and must be an explicit dependency.
+    LIBS += -ldl -lm -lz -lGLU
+    INCFLAGS += -I/usr/include
 endif
 
-ifeq ($(platform), sncps3)
-WARNING_DEFINES =
-else ifneq (,$(findstring msvc,$(platform)))
-WARNING_DEFINES =
-LIBM :=
+# ============ macOS / osxcross ============
+ifeq ($(platform),osx)
+    TARGET := $(TARGET_NAME)_libretro.dylib
+    LDFLAGS += -dynamiclib -fPIC
+    CFLAGS += -fPIC
+    CXXFLAGS += -fPIC
+    LIBS += -lm -framework OpenGL -framework CoreFoundation
+    PLATFORM_DEFINES += -DGL_SILENCE_DEPRECATION
+
+    ifeq ($(system_platform),osx)
+        # Native macOS build (CI macOS runner or local Mac developer build).
+        # Build for the host arch so the CI x64 job → x86_64, arm64 job → arm64.
+        NATIVE_ARCH := $(shell uname -m)
+        ARCHFLAGS := -arch $(NATIVE_ARCH)
+        CFLAGS += $(ARCHFLAGS)
+        CXXFLAGS += $(ARCHFLAGS)
+        LDFLAGS += $(ARCHFLAGS)
+
+        # The imported ARM64 backend uses Apple's MAP_JIT/W^X API on native
+        # Apple Silicon. Keep Intel and osxcross universal builds on the
+        # interpreter unless their JIT slices are configured independently.
+        ifeq ($(NATIVE_ARCH),arm64)
+            PLATFORM_DEFINES += -DHAVE_PPC_JIT
+        endif
+    else
+        # Cross-compile from Linux via osxcross (universal x86_64 + arm64 dylib).
+        OSXCROSS_ROOT ?= /opt/osxcross
+        OSXCROSS_PATH := $(OSXCROSS_ROOT)/target/bin
+
+        ifeq ($(wildcard $(OSXCROSS_PATH)/o64-clang++),)
+            $(error osxcross not found at $(OSXCROSS_ROOT). Install: cd /tmp && git clone https://github.com/tpoechtrager/osxcross.git && cd osxcross && wget -nc https://github.com/rtrussell/osxcross-build/releases/download/12.0/MacOSX12.0.sdk.tar.xz -O tarballs/MacOSX12.0.sdk.tar.xz && ./build.sh)
+        endif
+
+        export PATH := $(OSXCROSS_PATH):$(PATH)
+        override CC  := o64-clang
+        override CXX := o64-clang++
+        override LD  := o64-clang++
+
+        ARCHFLAGS := -arch x86_64 -arch arm64
+        CFLAGS  += $(ARCHFLAGS)
+        CXXFLAGS += $(ARCHFLAGS)
+        LDFLAGS += $(ARCHFLAGS)
+
+        MACOSX_SDK ?= /opt/osxcross/target/SDK/MacOSX12.0.sdk
+        CFLAGS   += -isysroot $(MACOSX_SDK)
+        CXXFLAGS += -isysroot $(MACOSX_SDK)
+        LDFLAGS  += -isysroot $(MACOSX_SDK)
+
+        LDFLAGS += -static-libstdc++
+    endif
+endif
+
+# ============ ANDROID ============
+ifeq ($(platform),android)
+    TARGET := $(TARGET_NAME)_libretro_android.so
+    fpic := -fPIC
+    SHARED := -shared
+    PLATFORM_DEFINES += -DANDROID -D__LIBRETRO__ -DPSS_STYLE=1 -D_FILE_OFFSET_BITS=64
+    PLATFORM_DEFINES += -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE
+    PLATFORM_DEFINES += -DEGL_EGLEXT_PROTOTYPES
+    LIBS += -lGLESv3 -llog -lz
+    
+    # Prepend Android shim headers to resolve <GL/glew.h> to our shim
+    INCFLAGS := -I$(CORE_DIR)/Src/OSD/Android/include $(INCFLAGS)
+    
+    # --- NDK Detection ---
+    # Check common locations if NDK_ROOT is not already set
+    ifeq ($(NDK_ROOT),)
+        NDK_ROOT := $(shell ls -d ~/Android/Sdk/ndk/28.2.13676358 2>/dev/null)
+    endif
+    
+    # Performance Flags from Mupen64Plus
+    HAVE_NEON := 0
+    ifeq ($(arch),arm)
+        HAVE_NEON := 1
+    endif
+    ifeq ($(arch),arm64)
+        HAVE_NEON := 1
+    endif
+    
+    # LTO Control - Disable for Android due to PIC relocation issues with NDK clang
+    HAVE_LTCG := 0
+    
+    # If NDK is found, use its Clang toolchain
+    ifneq ($(NDK_ROOT),)
+        # Default to aarch64 (64-bit ARM) if no 'arch' is specified
+        ifeq ($(arch),arm)
+            ARCH_TRIPLE := arm-linux-androideabi
+            CLANG_TRIPLE := armv7a-linux-androideabi24
+            PLATFORM_DEFINES += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+        else ifeq ($(arch),x86)
+            ARCH_TRIPLE := i686-linux-android
+            CLANG_TRIPLE := i686-linux-android24
+        else ifeq ($(arch),x86_64)
+            ARCH_TRIPLE := x86_64-linux-android
+            CLANG_TRIPLE := x86_64-linux-android24
+        else
+            # Default to arm64 (aarch64)
+            ARCH_TRIPLE := aarch64-linux-android
+            CLANG_TRIPLE := aarch64-linux-android24
+            PLATFORM_DEFINES += -DHAVE_PPC_JIT
+        endif
+        
+        TOOLCHAIN := $(NDK_ROOT)/toolchains/llvm/prebuilt/linux-x86_64/bin
+        CC  := $(TOOLCHAIN)/$(CLANG_TRIPLE)-clang
+        CXX := $(TOOLCHAIN)/$(CLANG_TRIPLE)-clang++
+        LD  := $(CXX)
+        
+        # Android Clang usually needs some extra flags
+        CFLAGS   += -ffunction-sections -fdata-sections
+        CXXFLAGS += -ffunction-sections -fdata-sections
+        LDFLAGS  += $(SHARED) -Wl,-soname,$(TARGET) -Wl,--no-undefined
+        
+        # Link C++ library statically to avoid dlopen issues on device
+        LDFLAGS  += -static-libstdc++
+    else
+        # Fallback to generic names if NDK not found
+        CC  = arm-linux-androideabi-gcc
+        CXX = arm-linux-androideabi-g++
+        LD  := $(CXX)
+    endif
+    
+    ifeq ($(HAVE_NEON),1)
+        PLATFORM_DEFINES += -DHAVE_NEON -D__ARM_NEON__ -ftree-vectorize
+    endif
+    
+    OBJOUT  = -o
+    LINKOUT = -o
+    LIBM    := -lm
+    WARNING_DEFINES := -Wno-write-strings
+    
+    # Ensure CXXFLAGS is appended
+    CXXFLAGS += -std=c++17
+    
+    ifeq ($(DEBUG),1)
+        CFLAGS   += -O0 -g -DDEBUG
+        CXXFLAGS += -O0 -g -DDEBUG
+    else
+        CFLAGS   += -O3 -DNDEBUG
+        CXXFLAGS += -O3 -DNDEBUG
+        
+        # General Performance Optimizations
+        CFLAGS   += -ffast-math -funsafe-math-optimizations -fomit-frame-pointer
+        CXXFLAGS += -ffast-math -funsafe-math-optimizations -fomit-frame-pointer
+        
+        # Visibility Optimizations
+        CFLAGS   += -fvisibility=hidden
+        CXXFLAGS += -fvisibility=hidden -fvisibility-inlines-hidden
+        
+        # LTO (Link Time Optimization)
+        ifeq ($(HAVE_LTCG),1)
+            CFLAGS   += -flto
+            CXXFLAGS += -flto
+            LDFLAGS  += -flto
+        endif
+    endif
+endif
+
+# ============ WINDOWS / MinGW ============
+ifeq ($(platform),win)
+    TARGET := $(TARGET_NAME)_libretro.dll
+    LDFLAGS += -shared
+    CFLAGS += -D_WIN32 -DWIN32
+    CXXFLAGS += -D_WIN32 -DWIN32
+    
+    ifeq ($(system_platform),win)
+        # Native Windows build with MinGW
+        override CC := gcc
+        override CXX := g++
+    else
+        # Cross-compile to Windows (from Linux)
+        override CC := x86_64-w64-mingw32-gcc
+        override CXX := x86_64-w64-mingw32-g++
+        override AR := x86_64-w64-mingw32-ar
+    endif
+    
+    # Static-link MinGW runtimes and zlib so the DLL is self-contained — no
+    # libgcc_s_seh-1.dll / libstdc++-6.dll / zlib1.dll required on the user's system.
+    LDFLAGS += -static-libgcc -static-libstdc++
+    LIBS += -lm -Wl,-Bstatic -lz -Wl,-Bdynamic -lopengl32 -lglu32 -lgdi32
+endif
+
+# ============ Raspberry Pi 64-bit ============
+ifeq ($(platform),rpi64)
+    CC  = aarch64-linux-gnu-gcc
+    CXX = aarch64-linux-gnu-g++
+    LD  = aarch64-linux-gnu-g++
+    
+    TARGET := $(TARGET_NAME)_libretro_aarch64.so
+    fpic   := -fPIC
+    SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T -Wl,-no-undefined
+    
+    # 1. ARCHITECTURE & FEATURE FLAGS
+    PLATFORM_DEFINES += -DARM -D__aarch64__ -DLSB_FIRST -DGL_GLEXT_PROTOTYPES -DHAVE_PPC_JIT
+    PLATFORM_DEFINES += -fomit-frame-pointer -ffast-math -funsafe-math-optimizations
+    # Prevent system header redeclaration
+    PLATFORM_DEFINES += -DGLES -Dgles -DHAVE_OPENGLES=1 -DHAVE_OPENGLES3=1 -DCORE_GLES -D__glext_h_ -D__GLEXT_H_
+
+    # 2. CPU TUNING
+    # platform=rpi64 always matches above, so the specific board must be
+    # selected via board=rpi5 / board=rpi4 (e.g. make platform=rpi64 board=rpi5)
+    ifeq ($(board), rpi5)
+        PLATFORM_DEFINES += -mcpu=cortex-a76
+    else ifeq ($(board), rpi4)
+        PLATFORM_DEFINES += -mcpu=cortex-a72
+    else
+        PLATFORM_DEFINES += -mcpu=cortex-a53
+    endif
+
+    # 3. LIBRARY & PATHS
+    LDFLAGS += $(SHARED) -L/usr/lib/aarch64-linux-gnu
+    LIBS := -lGLESv2 -lz -lm
+
+    # 4. CXXFLAGS
+    CXXFLAGS += -std=c++17
+endif
+
+# ============ aarch64 (Generic ARM64) ============
+ifeq ($(platform),aarch64)
+    CC  = aarch64-linux-gnu-gcc
+    CXX = aarch64-linux-gnu-g++
+    LD  = aarch64-linux-gnu-g++
+    
+    TARGET := $(TARGET_NAME)_libretro.so
+    fpic   := -fPIC
+    SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T -Wl,-no-undefined
+    
+    # 1. ARCHITECTURE & FEATURE FLAGS
+    PLATFORM_DEFINES += -DARM -D__aarch64__ -DLSB_FIRST -DGL_GLEXT_PROTOTYPES -DHAVE_PPC_JIT
+    PLATFORM_DEFINES += -fomit-frame-pointer -ffast-math -funsafe-math-optimizations
+    # Prevent system header redeclaration
+    PLATFORM_DEFINES += -DGLES -Dgles -DHAVE_OPENGLES=1 -DHAVE_OPENGLES3=1 -DCORE_GLES -D__glext_h_ -D__GLEXT_H_
+
+    # 2. LIBRARY & PATHS
+    LDFLAGS += $(SHARED) -L/usr/lib/aarch64-linux-gnu
+    LIBS := -lGLESv2 -lz -lm
+    
+    # 3. CXXFLAGS
+    CXXFLAGS += -std=c++17
+endif
+
+# ============ COMMON COMPILER FLAGS ============
+
+# C compiler defaults
+CC ?= gcc
+CXX ?= g++
+AR ?= ar
+
+# Assemble final DEFINES from COREDEFINES and PLATFORM_DEFINES (mirrors old build system)
+DEFINES := $(COREDEFINES) $(PLATFORM_DEFINES) $(RENDERER_DEFINES)
+OBJOUT  ?= -o
+LINKOUT ?= -o
+LIBM    ?= -lm
+WARNING_DEFINES ?= -Wno-write-strings
+
+# Base optimization and warning flags
+CFLAGS := $(CFLAGS) -Wall -Wextra -O3 -ffast-math -DHAVE_ZLIB $(fpic)
+CXXFLAGS := $(CXXFLAGS) -Wall -Wextra -std=c++17 -O3 -ffast-math -DHAVE_ZLIB $(fpic)
+
+# Include path flags and final defines assembly
+CFLAGS += $(INCFLAGS) $(DEFINES)
+CXXFLAGS += $(INCFLAGS) $(DEFINES)
+
+# Debug settings
+ifeq ($(DEBUG),1)
+    CFLAGS := $(filter-out -O3,$(CFLAGS)) -g -O0 -DDEBUG
+    CXXFLAGS := $(filter-out -O3,$(CXXFLAGS)) -g -O0 -DDEBUG
+    LDFLAGS += -g
+endif
+
+# External zlib
+ifeq ($(EXTERNAL_ZLIB),1)
+    INCFLAGS += $(shell pkg-config --cflags zlib)
+    LIBS += $(shell pkg-config --libs zlib)
 else
-WARNING_DEFINES = -Wno-write-strings
+    LIBS += -lz
 endif
 
-CFLAGS   += $(COREDEFINES) $(fpic) $(WARNING_DEFINES) $(DEFINES) $(ENDIANNESS_DEFINES)
-CXXFLAGS += $(COREDEFINES) $(fpic) $(WARNING_DEFINES) $(DEFINES) $(ENDIANNESS_DEFINES)
-LDFLAGS  += $(LIBM)
+# ============================================================
+# Build Rules
+# ============================================================
 
-ifeq ($(platform), psp1)
-	INCFLAGS += -I$(shell psp-config --pspsdk-path)/include
-endif
-
-
-ifneq (,$(findstring msvc,$(platform)))
-	OBJOUT = -Fo
-	LINKOUT = -out:
-ifeq ($(STATIC_LINKING),1)
-	LD ?= lib.exe
-	STATIC_LINKING=0
-else
-	LD = link.exe
-endif
-else
-	OBJOUT   = -o
-	LINKOUT  = -o 
-	LD = $(CXX)
-endif
-
-ifeq ($(platform), theos_ios)
-COMMON_FLAGS := -DIOS $(COMMON_DEFINES) $(INCFLAGS) -I$(THEOS_INCLUDE_PATH) -Wno-error
-$(LIBRARY_NAME)_CFLAGS += $(COMMON_FLAGS) $(CFLAGS)
-$(LIBRARY_NAME)_CXXFLAGS += $(COMMON_FLAGS) $(CXXFLAGS)
-${LIBRARY_NAME}_FILES = $(SOURCES_C)
-include $(THEOS_MAKE_PATH)/library.mk
-else
+.PHONY: all clean info
+$(info PLATFORM_DEFINES ARE: $(PLATFORM_DEFINES))
 all: $(TARGET)
+
+# Track included headers so incremental builds rebuild every object whose ABI
+# may have changed. This is especially important for shared core option types.
+-include $(DEPFILES)
+
+$(MUSASHI_GEN_DIR):
+	mkdir -p $@
+
+$(MUSASHI_GENERATOR): $(MUSASHI_DIR)/m68kmake.c $(MUSASHI_DIR)/m68k_in.c | $(MUSASHI_GEN_DIR)
+	$(CC) $(CFLAGS) $(MUSASHI_DIR)/m68kmake.c -o $@
+
+$(MUSASHI_GEN_DIR)/.generated: $(MUSASHI_GENERATOR) $(MUSASHI_DIR)/m68k_in.c $(MUSASHI_DIR)/m68k.h $(MUSASHI_DIR)/m68kconf.h
+	$(MUSASHI_GENERATOR) $(MUSASHI_GEN_DIR) $(MUSASHI_DIR)/m68k_in.c
+	touch $@
+
+$(MUSASHI_GENERATED): $(MUSASHI_GEN_DIR)/.generated
+
+$(MUSASHI_DIR)/m68kcpu.o: $(MUSASHI_GEN_DIR)/m68kops.h
+
 $(TARGET): $(OBJECTS)
-ifeq ($(STATIC_LINKING),1)
-ifneq (,$(findstring msvc,$(platform)))
-	$(LD) $(LINKOUT)$@ $(OBJECTS)
-else
-	$(AR) rcs $@ $(OBJECTS)
-endif
-else
-	$(LD) $(LINKOUT)$@ $(SHARED) $(OBJECTS) $(LDFLAGS) $(LIBS)
+	@echo "Linking $(TARGET)..."
+	$(CXX) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $@
+	@echo "Build complete: $@"
+
+# Special handling for ppc.o: strip -ffast-math to avoid FENV_ACCESS pragma conflicts
+# ppc_ops.c contains #pragma STDC FENV_ACCESS ON which requires precise FP semantics
+# For Android DEBUG builds, also ensure -fPIC is applied to prevent relocation errors
+$(CORE_DIR)/Src/CPU/PowerPC/ppc.o: CXXFLAGS := $(filter-out -ffast-math -funsafe-math-optimizations,$(CXXFLAGS))
+$(CORE_DIR)/Src/CPU/PowerPC/ppc.o: CXXFLAGS += -Wno-unused-parameter
+
+# Both 3D renderers explicitly sanitize NaN/Inf fog values used by Star Wars
+# Trilogy. Fast-math assumes these values cannot exist and removes the checks.
+IEEE_FP_RENDERER_OBJECTS := $(CORE_DIR)/Src/Graphics/New3D/New3D.o \
+                            $(CORE_DIR)/Src/Graphics/Legacy3D/Legacy3D.o
+$(IEEE_FP_RENDERER_OBJECTS): CXXFLAGS := $(filter-out -ffast-math -funsafe-math-optimizations,$(CXXFLAGS))
+
+ifeq ($(platform),android)
+  ifeq ($(DEBUG),1)
+    $(CORE_DIR)/Src/CPU/PowerPC/ppc.o: CXXFLAGS += -fPIC
+  endif
 endif
 
-%.o: %.cpp
-	$(CXX) -c $(OBJOUT)$@ $< $(CXXFLAGS) $(INCFLAGS)
+# These vendored/generated sources intentionally expose platform-dependent
+# parameters and legacy implementation details that are unused by this core.
+# Keep their known warning noise local instead of weakening warnings globally.
+MUSASHI_OBJECTS := $(MUSASHI_DIR)/m68kcpu.o \
+                   $(MUSASHI_GEN_DIR)/m68kops.o \
+                   $(MUSASHI_GEN_DIR)/m68kopac.o \
+                   $(MUSASHI_GEN_DIR)/m68kopdm.o \
+                   $(MUSASHI_GEN_DIR)/m68kopnz.o
+LIBRETRO_COMMON_WARNING_OBJECTS := $(LIBRETRO_COMM_DIR)/file/file_path.o \
+                                   $(LIBRETRO_COMM_DIR)/file/retro_dirent.o \
+                                   $(LIBRETRO_COMM_DIR)/vfs/vfs_implementation.o \
+                                   $(LIBRETRO_COMM_DIR)/string/stdstring.o
+
+$(MUSASHI_OBJECTS): CFLAGS += -Wno-unused-parameter
+$(DEPS_DIR)/ugui/ugui.o: CFLAGS += -Wno-sign-compare -Wno-bitwise-op-parentheses -Wno-unused-but-set-variable
+$(LIBRETRO_COMMON_WARNING_OBJECTS): CFLAGS += -Wno-unused-parameter -Wno-sign-compare
 
 %.o: %.c
-	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS) $(INCFLAGS)
+	$(CC) $(CFLAGS) -MMD -MP -c -o $@ $<
 
-clean-objs:
-	rm -f $(OBJECTS)
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -MMD -MP -c -o $@ $<
 
 clean:
-	rm -f $(OBJECTS)
-	rm -f $(TARGET)
+	@echo "Cleaning..."
+	@rm -f $(OBJECTS) $(DEPFILES) $(TARGET)
+	@rm -rf $(MUSASHI_GEN_DIR)
+	@echo "Clean complete"
 
-.PHONY: clean clean-objs
-endif
-
-print-%:
-	@echo '$*=$($*)'
+info:
+	@echo "Platform: $(platform)"
+	@echo "Target: $(TARGET)"
+	@echo "CC: $(CC)"
+	@echo "CXX: $(CXX)"
+	@echo "CFLAGS: $(CFLAGS)"
+	@echo "CXXFLAGS: $(CXXFLAGS)"
+	@echo "LDFLAGS: $(LDFLAGS)"
+	@echo "LIBS: $(LIBS)"

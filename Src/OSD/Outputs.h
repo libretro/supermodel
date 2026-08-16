@@ -29,6 +29,7 @@
 #define INCLUDED_OUTPUTS_H
 
 #include "Game.h"
+#include "Types.h"
 
 /*
  * EOutputs enumeration of all available outputs.
@@ -45,10 +46,15 @@ enum EOutputs
 	OutputLampView4,
 	OutputLampLeader,
 	OutputRawDrive,
-	OutputRawLamps
+	OutputRawLamps,
+	OutputBill1,
+	OutputBill2,
+	OutputBill3,
+	OutputBill4,
+	OutputBill5
 };
 
-#define NUM_OUTPUTS 9
+#define NUM_OUTPUTS 14
 
 class COutputs
 {
@@ -117,6 +123,14 @@ public:
 	 * Sets the current value of the given output.
 	 */
 	void SetValue(EOutputs output, UINT8 value);
+
+	/* 
+	 * HasValue(EOutputs output)
+	 *
+	 * Returns if the value has been set at least once, 
+	 * meaning it is used by the game.
+	 */
+	bool HasValue(EOutputs output);
 
 protected:
 	/*

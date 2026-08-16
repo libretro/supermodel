@@ -1,301 +1,19 @@
 #include "R3DShader.h"
-#include "Graphics/Shader.h"
+#include "R3DShaderQuads.h"
+#include "R3DShaderTriangles.h"
+#include "R3DShaderCommon.h"
+
+// having 2 sets of shaders to maintain is really less than ideal
+// but hopefully not too many breaking changes at this point
 
 namespace New3D {
 
-static const char *vertexShaderR3D = R"glsl(
-
-#version 120
-
-// uniforms
-uniform float	modelScale;
-
-// attributes
-attribute vec4	inVertex;
-attribute vec3	inNormal;
-attribute vec2	inTexCoord;
-attribute vec4	inColour;
-attribute vec3	inFaceNormal;		// used to emulate r3d culling 
-attribute float	inFixedShade;
-
-// outputs to fragment shader
-varying vec3	fsViewVertex;
-varying vec3	fsViewNormal;		// per vertex normal vector
-varying vec2	fsTexCoord;
-varying vec4	fsColor;
-varying float	fsDiscard;			// can't have varying bool (glsl spec)
-varying float	fsFixedShade;
-
-float CalcBackFace(in vec3 viewVertex)
-{
-	vec3 vt = viewVertex - vec3(0.0);
-	vec3 vn = (mat3(gl_ModelViewMatrix) * inFaceNormal);
-
-	// dot product of face normal with view direction
-	return dot(vt, vn);
-}
-
-void main(void)
-{
-	fsViewVertex	= vec3(gl_ModelViewMatrix * inVertex);
-	fsViewNormal	= (mat3(gl_ModelViewMatrix) * inNormal) / modelScale;
-	fsDiscard		= CalcBackFace(fsViewVertex);
-	fsColor    		= inColour;
-	fsTexCoord		= inTexCoord;
-	fsFixedShade	= inFixedShade;
-	gl_Position		= gl_ModelViewProjectionMatrix * inVertex;
-}
-)glsl";
-
-static const char *fragmentShaderR3D = R"glsl(
-
-#version 120
-
-uniform sampler2D tex1;			// base tex
-uniform sampler2D tex2;			// micro tex (optional)
-
-// texturing
-uniform bool	textureEnabled;
-uniform bool	microTexture;
-uniform float	microTextureScale;
-uniform vec2	baseTexSize;
-uniform bool	textureInverted;
-uniform bool	textureAlpha;
-uniform bool	alphaTest;
-uniform bool	discardAlpha;
-
-// general
-uniform vec3	fogColour;
-uniform vec4	spotEllipse;		// spotlight ellipse position: .x=X position (screen coordinates), .y=Y position, .z=half-width, .w=half-height)
-uniform vec2	spotRange;			// spotlight Z range: .x=start (viewspace coordinates), .y=limit
-uniform vec3	spotColor;			// spotlight RGB color
-uniform vec3	spotFogColor;		// spotlight RGB color on fog
-uniform vec3	lighting[2];		// lighting state (lighting[0] = sun direction, lighting[1].x,y = diffuse, ambient intensities from 0-1.0)
-uniform bool	lightEnabled;		// lighting enabled (1.0) or luminous (0.0), drawn at full intensity
-uniform bool	sunClamp;			// not used by daytona and la machine guns
-uniform bool	intensityClamp;		// some games such as daytona and 
-uniform bool	specularEnabled;	// specular enabled
-uniform float	specularValue;		// specular coefficient
-uniform float	shininess;			// specular shininess
-uniform float	fogIntensity;
-uniform float	fogDensity;
-uniform float	fogStart;
-uniform float	fogAttenuation;
-uniform float	fogAmbient;
-uniform bool	fixedShading;
-uniform int		hardwareStep;
-
-//interpolated inputs from vertex shader
-varying float	fsFogFactor;
-varying vec3	fsViewVertex;
-varying vec3	fsViewNormal;		// per vertex normal vector
-varying vec4	fsColor;
-varying vec2	fsTexCoord;
-varying float	fsDiscard;
-varying float	fsFixedShade;
-
-vec4 GetTextureValue()
-{
-	vec4 tex1Data = texture2D( tex1, fsTexCoord.st);
-
-	if(textureInverted) {
-		tex1Data.rgb = vec3(1.0) - vec3(tex1Data.rgb);
-	}
-
-	if (microTexture) {
-		vec2 scale    = (baseTexSize / 128.0) * microTextureScale;
-		vec4 tex2Data = texture2D( tex2, fsTexCoord.st * scale);
-		tex1Data = (tex1Data+tex2Data)/2.0;
-	}
-
-	if (alphaTest) {
-		if (tex1Data.a < (8.0/16.0)) {
-			discard;
-		}
-	}
-
-	if(discardAlpha && textureAlpha) {
-		if (tex1Data.a < 1.0) {
-			discard;
-		}
-	}
-
-	if (textureAlpha == false) {
-		tex1Data.a = 1.0;
-	}
-
-	return tex1Data;
-}
-
-void Step15Luminous(inout vec4 colour)
-{
-	// luminous polys seem to behave very differently on step 1.5 hardware
-	// when fixed shading is enabled the colour is modulated by the vp ambient + fixed shade value
-	// when disabled it appears to be multiplied by 1.5, presumably to allow a higher range
-	if(hardwareStep==0x15) {
-		if(!lightEnabled && textureEnabled) {
-			if(fixedShading) {
-				colour.rgb *= 1.0 + fsFixedShade + lighting[1].y;
-			}
-			else {
-				colour.rgb *= vec3(1.5);
-			}
-		}
-	}
-}
-
-float CalcFog()
-{
-	float z		= -fsViewVertex.z;
-	float fog	= fogIntensity * clamp(fogStart + z * fogDensity, 0.0, 1.0);
-
-	return fog;
-}
-
-void main()
-{
-	vec4 tex1Data;
-	vec4 colData;
-	vec4 finalData;
-	vec4 fogData;
-
-	if(fsDiscard>=0) {
-		discard;		//emulate back face culling here
-	}
-
-	fogData = vec4(fogColour.rgb * fogAmbient, CalcFog());
-	tex1Data = vec4(1.0, 1.0, 1.0, 1.0);
-
-	if(textureEnabled) {
-		tex1Data = GetTextureValue();
-	}
-
-	colData = fsColor;
-	Step15Luminous(colData);			// no-op for step 2.0+	
-	finalData = tex1Data * colData;
-
-	if (finalData.a < (1.0/16.0)) {		// basically chuck out any totally transparent pixels value = 1/16 the smallest transparency level h/w supports
-		discard;
-	}
-
-	float ellipse;
-	ellipse = length((gl_FragCoord.xy - spotEllipse.xy) / spotEllipse.zw);
-	ellipse = pow(ellipse, 2.0);  // decay rate = square of distance from center
-	ellipse = 1.0 - ellipse;      // invert
-	ellipse = max(0.0, ellipse);  // clamp
-
-	// Compute spotlight and apply lighting
-	float enable, absExtent, d, inv_r, range;
-
-	// start of spotlight
-	enable = step(spotRange.x, -fsViewVertex.z);
-
-	if (spotRange.y == 0.0) {
-		range = 0.0;
-	}
-	else {
-		absExtent = abs(spotRange.y);
-
-		d = spotRange.x + absExtent + fsViewVertex.z;
-		d = min(d, 0.0);
-
-		// slope of decay function
-		inv_r = 1.0 / (1.0 + absExtent);
-
-		// inverse-linear falloff
-		// Reference: https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
-		// y = 1 / (d/r + 1)^2
-		range = 1.0 / pow(d * inv_r - 1.0, 2.0);
-		range *= enable;
-	}
-
-	float lobeEffect = range * ellipse;
-	float lobeFogEffect = enable * ellipse;
-
-	if (lightEnabled) {
-		vec3   lightIntensity;
-		vec3   sunVector;     // sun lighting vector (as reflecting away from vertex)
-		float  sunFactor;     // sun light projection along vertex normal (0.0 to 1.0)
-
-		// Sun angle
-		sunVector = lighting[0];
-
-		// Compute diffuse factor for sunlight
-		if(fixedShading) {
-			sunFactor = fsFixedShade;
-		}
-		else {
-			sunFactor = dot(sunVector, fsViewNormal);
-		}
-
-		// Clamp ceil, fix for upscaled models without "modelScale" defined
-		sunFactor = clamp(sunFactor,-1.0,1.0);
-
-		// Optional clamping, value is allowed to be negative
-		if(sunClamp) {
-			sunFactor = max(sunFactor,0.0);
-		}
-
-		// Total light intensity: sum of all components 
-		lightIntensity = vec3(sunFactor*lighting[1].x + lighting[1].y);   // diffuse + ambient
-
-		lightIntensity.rgb += spotColor*lobeEffect;
-
-		// Upper clamp is optional, step 1.5+ games will drive brightness beyond 100%
-		if(intensityClamp) {
-			lightIntensity = min(lightIntensity,1.0);
-		}
-
-		finalData.rgb *= lightIntensity;
-
-		// for now assume fixed shading doesn't work with specular
-		if (specularEnabled) {
-
-			float exponent, NdotL, specularFactor;
-			vec4 biasIndex, expIndex, multIndex;
-
-			// Always clamp floor to zero, we don't want deep black areas
-			NdotL = max(0.0,sunFactor);
-
-			expIndex = vec4(8.0, 16.0, 32.0, 64.0);
-			multIndex = vec4(2.0, 2.0, 3.0, 4.0);
-			biasIndex = vec4(0.95, 0.95, 1.05, 1.0);
-			exponent = expIndex[int(shininess)] / biasIndex[int(shininess)];
-
-			specularFactor = pow(NdotL, exponent);
-			specularFactor *= multIndex[int(shininess)];
-			specularFactor *= biasIndex[int(shininess)];
-			
-			specularFactor *= specularValue;
-			specularFactor *= lighting[1].x;
-
-			if (colData.a < 1.0) {
-				/// Specular hi-light affects translucent polygons alpha channel ///
-				finalData.a = max(finalData.a, specularFactor);
-			}
-
-			finalData.rgb += vec3(specularFactor);
-		}
-	}
-
-	// Final clamp: we need it for proper shading in dimmed light and dark ambients
-	finalData.rgb = min(finalData.rgb, vec3(1.0));
-
-	// Spotlight on fog
-	vec3 lSpotFogColor = spotFogColor * fogAttenuation * fogColour.rgb * lobeFogEffect;
-
-	 // Fog & spotlight applied
-	finalData.rgb = mix(finalData.rgb, fogData.rgb + lSpotFogColor, fogData.a);
-
-	gl_FragColor = finalData;
-}
-)glsl";
-
 R3DShader::R3DShader(const Util::Config::Node &config)
-  : m_config(config)
+	: m_config(config)
 {
 	m_shaderProgram		= 0;
 	m_vertexShader		= 0;
+	m_geoShader			= 0;
 	m_fragmentShader	= 0;
 
 	Start();	// reset attributes
@@ -310,83 +28,167 @@ void R3DShader::Start()
 	m_lightEnabled		= false;
 	m_specularEnabled	= false;
 	m_layered			= false;
+	m_noLosReturn		= false;
 	m_textureInverted	= false;
 	m_fixedShading		= false;
+	m_smoothShading		= false;
+	m_translatorMap		= false;
 	m_modelScale		= 1.0f;
+	m_nodeAlpha			= 1.0f;
 	m_shininess			= 0;
 	m_specularValue		= 0;
-	m_microTexScale		= 0;
+	m_microTexMinLOD	= 0;
+	m_fogIntensity		= 0.0f;
+	m_microTexID		= -1;
+	m_texturePage		= -1;
 
-	m_baseTexSize[0] = 0;
-	m_baseTexSize[1] = 0;
+	m_baseTexInfo[0]	= -1;
+	m_baseTexInfo[1]	= -1;
+	m_baseTexInfo[2]	= -1;
+	m_baseTexInfo[3]	= -1;
 
-	m_dirtyMesh		= true;			// dirty means all the above are dirty, ie first run
-	m_dirtyModel	= true;
+	m_baseTexType		= -1;
+
+	m_transX			= -1;
+	m_transY			= -1;
+	m_transPage			= -1;
+
+	m_texWrapMode[0]	= 0;
+	m_texWrapMode[1]	= 0;
+
+	m_dirtyMesh			= true;			// dirty means all the above are dirty, ie first run
+	m_dirtyModel		= true;
 }
 
 bool R3DShader::LoadShader(const char* vertexShader, const char* fragmentShader)
 {
-	const char* vShader;
-	const char* fShader;
-	bool success;
+	bool quads = m_config["QuadRendering"].ValueAs<bool>();
 
-	if (vertexShader) {
-		vShader = vertexShader;
-	}
-	else {
-		vShader = vertexShaderR3D;
-	}
+	const char* vShader = vertexShaderR3D;
+	const char* gShader = "";
+	const char* fShader = fragmentShaderR3D;
 
-	if (fragmentShader) {
-		fShader = fragmentShader;
-	}
-	else {
-		fShader = fragmentShaderR3D;
+	if (quads) {
+		vShader = vertexShaderR3DQuads;
+		gShader = geometryShaderR3DQuads;
+		fShader = fragmentShaderR3DQuads;
 	}
 
-	success = LoadShaderProgram(&m_shaderProgram, &m_vertexShader, &m_fragmentShader, m_config["VertexShader"].ValueAs<std::string>(), m_config["FragmentShader"].ValueAs<std::string>(), vShader, fShader);
+	m_shaderProgram		= glCreateProgram();
+	m_vertexShader		= glCreateShader(GL_VERTEX_SHADER);
+	m_fragmentShader	= glCreateShader(GL_FRAGMENT_SHADER);
 
-	m_locTexture1		= glGetUniformLocation(m_shaderProgram, "tex1");
-	m_locTexture2		= glGetUniformLocation(m_shaderProgram, "tex2");
-	m_locTexture1Enabled= glGetUniformLocation(m_shaderProgram, "textureEnabled");
-	m_locTexture2Enabled= glGetUniformLocation(m_shaderProgram, "microTexture");
-	m_locTextureAlpha	= glGetUniformLocation(m_shaderProgram, "textureAlpha");
-	m_locAlphaTest		= glGetUniformLocation(m_shaderProgram, "alphaTest");
-	m_locMicroTexScale	= glGetUniformLocation(m_shaderProgram, "microTextureScale");
-	m_locBaseTexSize	= glGetUniformLocation(m_shaderProgram, "baseTexSize");
-	m_locTextureInverted= glGetUniformLocation(m_shaderProgram, "textureInverted");
+	const char* shaderArray[] = { fShader, fragmentShaderR3DCommon };
 
-	m_locFogIntensity	= glGetUniformLocation(m_shaderProgram, "fogIntensity");
-	m_locFogDensity		= glGetUniformLocation(m_shaderProgram, "fogDensity");
-	m_locFogStart		= glGetUniformLocation(m_shaderProgram, "fogStart");
-	m_locFogColour		= glGetUniformLocation(m_shaderProgram, "fogColour");
-	m_locFogAttenuation	= glGetUniformLocation(m_shaderProgram, "fogAttenuation");
-	m_locFogAmbient		= glGetUniformLocation(m_shaderProgram, "fogAmbient");
+	glShaderSource(m_vertexShader, 1, (const GLchar **)&vShader, nullptr);
+	glShaderSource(m_fragmentShader, (GLsizei)std::size(shaderArray), shaderArray, nullptr);
 
-	m_locLighting		= glGetUniformLocation(m_shaderProgram, "lighting");
-	m_locLightEnabled	= glGetUniformLocation(m_shaderProgram, "lightEnabled");
-	m_locSunClamp		= glGetUniformLocation(m_shaderProgram, "sunClamp");
-	m_locIntensityClamp = glGetUniformLocation(m_shaderProgram, "intensityClamp");
-	m_locShininess		= glGetUniformLocation(m_shaderProgram, "shininess");
-	m_locSpecularValue	= glGetUniformLocation(m_shaderProgram, "specularValue");
-	m_locSpecularEnabled= glGetUniformLocation(m_shaderProgram, "specularEnabled");
-	m_locFixedShading	= glGetUniformLocation(m_shaderProgram, "fixedShading");
+	glCompileShader(m_vertexShader);
+	glCompileShader(m_fragmentShader);
 
-	m_locSpotEllipse	= glGetUniformLocation(m_shaderProgram, "spotEllipse");
-	m_locSpotRange		= glGetUniformLocation(m_shaderProgram, "spotRange");
-	m_locSpotColor		= glGetUniformLocation(m_shaderProgram, "spotColor");
-	m_locSpotFogColor	= glGetUniformLocation(m_shaderProgram, "spotFogColor");
-	m_locModelScale		= glGetUniformLocation(m_shaderProgram, "modelScale");
+	if (quads) {
+		m_geoShader = glCreateShader(GL_GEOMETRY_SHADER);
+		glShaderSource(m_geoShader, 1, (const GLchar **)&gShader, nullptr);
+		glCompileShader(m_geoShader);
+		glAttachShader(m_shaderProgram, m_geoShader);
+		PrintShaderResult(m_geoShader);
+	}
 
-	m_locHardwareStep	= glGetUniformLocation(m_shaderProgram, "hardwareStep");
-	m_locDiscardAlpha	= glGetUniformLocation(m_shaderProgram, "discardAlpha");
-	
-	return success;
+	PrintShaderResult(m_vertexShader);
+	PrintShaderResult(m_fragmentShader);
+
+	glAttachShader(m_shaderProgram, m_vertexShader);
+	glAttachShader(m_shaderProgram, m_fragmentShader);
+	glLinkProgram(m_shaderProgram);
+
+	PrintProgramResult(m_shaderProgram);
+
+	m_locTextureBank[0]		= glGetUniformLocation(m_shaderProgram, "textureBank[0]");
+	m_locTextureBank[1]		= glGetUniformLocation(m_shaderProgram, "textureBank[1]");
+	m_locTexturePage		= glGetUniformLocation(m_shaderProgram, "texturePage");
+	m_locTexture1Enabled	= glGetUniformLocation(m_shaderProgram, "textureEnabled");
+	m_locTexture2Enabled	= glGetUniformLocation(m_shaderProgram, "microTexture");
+	m_locTextureAlpha		= glGetUniformLocation(m_shaderProgram, "textureAlpha");
+	m_locAlphaTest			= glGetUniformLocation(m_shaderProgram, "alphaTest");
+	m_locMicroTexMinLOD		= glGetUniformLocation(m_shaderProgram, "microTextureMinLOD");
+	m_locMicroTexID			= glGetUniformLocation(m_shaderProgram, "microTextureID");
+	m_locBaseTexInfo		= glGetUniformLocation(m_shaderProgram, "baseTexInfo");
+	m_locBaseTexType		= glGetUniformLocation(m_shaderProgram, "baseTexType");
+	m_locTextureInverted	= glGetUniformLocation(m_shaderProgram, "textureInverted");
+	m_locTexWrapMode		= glGetUniformLocation(m_shaderProgram, "textureWrapMode");
+	m_locColourLayer		= glGetUniformLocation(m_shaderProgram, "colourLayer");
+	m_locPolyAlpha			= glGetUniformLocation(m_shaderProgram, "polyAlpha");
+
+	m_locFogIntensity		= glGetUniformLocation(m_shaderProgram, "fogIntensity");
+	m_locFogDensity			= glGetUniformLocation(m_shaderProgram, "fogDensity");
+	m_locFogStart			= glGetUniformLocation(m_shaderProgram, "fogStart");
+	m_locFogColour			= glGetUniformLocation(m_shaderProgram, "fogColour");
+	m_locFogAttenuation		= glGetUniformLocation(m_shaderProgram, "fogAttenuation");
+	m_locFogAmbient			= glGetUniformLocation(m_shaderProgram, "fogAmbient");
+
+	m_locLighting			= glGetUniformLocation(m_shaderProgram, "lighting");
+	m_locLightEnabled		= glGetUniformLocation(m_shaderProgram, "lightEnabled");
+	m_locSunClamp			= glGetUniformLocation(m_shaderProgram, "sunClamp");
+	m_locIntensityClamp		= glGetUniformLocation(m_shaderProgram, "intensityClamp");
+	m_locShininess			= glGetUniformLocation(m_shaderProgram, "shininess");
+	m_locSpecularValue		= glGetUniformLocation(m_shaderProgram, "specularValue");
+	m_locSpecularEnabled	= glGetUniformLocation(m_shaderProgram, "specularEnabled");
+	m_locFixedShading		= glGetUniformLocation(m_shaderProgram, "fixedShading");
+	m_locSmoothShading		= glGetUniformLocation(m_shaderProgram, "smoothShading");
+	m_locTranslatorMap		= glGetUniformLocation(m_shaderProgram, "translatorMap");
+
+	m_locSpotEllipse		= glGetUniformLocation(m_shaderProgram, "spotEllipse");
+	m_locSpotRange			= glGetUniformLocation(m_shaderProgram, "spotRange");
+	m_locSpotColor			= glGetUniformLocation(m_shaderProgram, "spotColor");
+	m_locSpotFogColor		= glGetUniformLocation(m_shaderProgram, "spotFogColor");
+	m_locModelScale			= glGetUniformLocation(m_shaderProgram, "modelScale");
+	m_locNodeAlpha			= glGetUniformLocation(m_shaderProgram, "nodeAlpha");
+
+	m_locProjMat			= glGetUniformLocation(m_shaderProgram, "projMat");
+	m_locModelMat			= glGetUniformLocation(m_shaderProgram, "modelMat");
+
+	m_locHardwareStep		= glGetUniformLocation(m_shaderProgram, "hardwareStep");
+	m_locDiscardAlpha		= glGetUniformLocation(m_shaderProgram, "discardAlpha");
+
+	m_locCota				= glGetUniformLocation(m_shaderProgram, "cota");
+
+	return true;
 }
 
-GLint R3DShader::GetVertexAttribPos(const char* attrib)
+void R3DShader::UnloadShader()
 {
-	return glGetAttribLocation(m_shaderProgram, attrib);	// probably should cache this but only called 1x per frame anyway
+	// make sure no shader is bound
+	glUseProgram(0);
+
+	if (m_vertexShader) {
+		glDeleteShader(m_vertexShader);
+		m_vertexShader = 0;
+	}
+
+	if (m_geoShader) {
+		glDeleteShader(m_geoShader);
+		m_geoShader = 0;
+	}
+
+	if (m_fragmentShader) {
+		glDeleteShader(m_fragmentShader);
+		m_fragmentShader = 0;
+	}
+
+	if (m_shaderProgram) {
+		glDeleteProgram(m_shaderProgram);
+		m_shaderProgram = 0;
+	}
+}
+
+GLint R3DShader::GetVertexAttribPos(const std::string& attrib)
+{
+	if (m_vertexLocCache.count(attrib)==0) {
+		auto pos = glGetAttribLocation(m_shaderProgram, attrib.c_str());
+		m_vertexLocCache[attrib] = pos;
+	}
+
+	return m_vertexLocCache[attrib];
 }
 
 void R3DShader::SetShader(bool enable)
@@ -408,8 +210,8 @@ void R3DShader::SetMeshUniforms(const Mesh* m)
 	}
 
 	if (m_dirtyMesh) {
-		glUniform1i(m_locTexture1, 0);
-		glUniform1i(m_locTexture2, 1);
+		glUniform1i(m_locTextureBank[0], 0);
+		glUniform1i(m_locTextureBank[1], 1);
 	}
 
 	if (m_dirtyMesh || m->textured != m_textured1) {
@@ -422,15 +224,34 @@ void R3DShader::SetMeshUniforms(const Mesh* m)
 		m_textured2 = m->microTexture;
 	}
 
-	if (m_dirtyMesh || m->microTextureScale != m_microTexScale) {
-		glUniform1f(m_locMicroTexScale, m->microTextureScale);
-		m_microTexScale = m->microTextureScale;
+	if (m_dirtyMesh || (m->page ^ m_transPage) != m_texturePage) {
+		glUniform1i(m_locTexturePage, m->page ^ m_transPage);
+		m_texturePage = (m->page ^ m_transPage);
 	}
 
-	if (m_dirtyMesh || m->microTexture && (m_baseTexSize[0] != m->width || m_baseTexSize[1] != m->height)) {
-		m_baseTexSize[0] = (float)m->width;
-		m_baseTexSize[1] = (float)m->height;
-		glUniform2fv(m_locBaseTexSize, 1, m_baseTexSize);
+	if (m_dirtyMesh || m->microTextureMinLOD != m_microTexMinLOD) {
+		glUniform1f(m_locMicroTexMinLOD, m->microTextureMinLOD);
+		m_microTexMinLOD = m->microTextureMinLOD;
+	}
+
+	if (m_dirtyMesh || m->microTextureID != m_microTexID) {
+		glUniform1i(m_locMicroTexID, m->microTextureID);
+		m_microTexID = m->microTextureID;
+	}
+
+	if (m_dirtyMesh || (m_baseTexInfo[0] != m->x || m_baseTexInfo[1] != m->y) || m_baseTexInfo[2] != m->width || m_baseTexInfo[3] != m->height) {
+
+		m_baseTexInfo[0] = m->x;
+		m_baseTexInfo[1] = m->y;
+		m_baseTexInfo[2] = m->width;
+		m_baseTexInfo[3] = m->height;
+
+		glUniform4i(m_locBaseTexInfo, (m->x + m_transX), (m->y + m_transY), m->width, m->height);
+	}
+
+	if (m_dirtyMesh || m_baseTexType != m->format) {
+		m_baseTexType = m->format;
+		glUniform1i(m_locBaseTexType,  m_baseTexType);
 	}
 
 	if (m_dirtyMesh || m->inverted != m_textureInverted) {
@@ -478,13 +299,46 @@ void R3DShader::SetMeshUniforms(const Mesh* m)
 		m_fixedShading = m->fixedShading;
 	}
 
+	if (m_dirtyMesh || m->smoothShading != m_smoothShading) {
+		glUniform1i(m_locSmoothShading, m->smoothShading);
+		m_smoothShading = m->smoothShading;
+	}
+
+	if (m_dirtyMesh || m->translatorMap != m_translatorMap) {
+		glUniform1i(m_locTranslatorMap, m->translatorMap);
+		m_translatorMap = m->translatorMap;
+	}
+
+	if (m_dirtyMesh || m->polyAlpha != m_polyAlpha) {
+		glUniform1i(m_locPolyAlpha, m->polyAlpha);
+		m_polyAlpha = m->polyAlpha;
+	}
+
+	if (m_dirtyMesh || m->wrapModeU != m_texWrapMode[0] || m->wrapModeV != m_texWrapMode[1]) {
+		m_texWrapMode[0] = m->wrapModeU;
+		m_texWrapMode[1] = m->wrapModeV;
+		glUniform2iv(m_locTexWrapMode, 1, m_texWrapMode);
+	}
+
+	if (m_dirtyMesh || m->noLosReturn != m_noLosReturn) {
+		m_noLosReturn = m->noLosReturn;
+		glStencilFunc(GL_ALWAYS, m_noLosReturn << 7, 0b10000000);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilMask(0b10000000);
+	}
+
 	if (m_dirtyMesh || m->layered != m_layered) {
 		m_layered = m->layered;
+		// i think it should just disable z write, but the polys I think must be written first
 		if (m_layered) {
-			glEnable(GL_STENCIL_TEST);
+			glStencilFunc(GL_EQUAL, 0, 0b01111111);			// basically stencil test passes if the value is zero
+			glStencilOp(GL_KEEP, GL_KEEP, GL_INCR); // Increment only when both stencil and depth tests pass.
+			glStencilMask(0b01111111);
 		}
 		else {
-			glDisable(GL_STENCIL_TEST);
+			glStencilFunc(GL_ALWAYS, m_noLosReturn << 7, 0b10000000);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+			glStencilMask(0b10000000);
 		}
 	}
 
@@ -492,23 +346,27 @@ void R3DShader::SetMeshUniforms(const Mesh* m)
 }
 
 void R3DShader::SetViewportUniforms(const Viewport *vp)
-{	
+{
 	//didn't bother caching these, they don't get frequently called anyway
-	glUniform1f	(m_locFogDensity, vp->fogParams[3]);
-	glUniform1f	(m_locFogStart, vp->fogParams[4]);
-	glUniform3fv(m_locFogColour, 1, vp->fogParams);
-	glUniform1f	(m_locFogAttenuation, vp->fogParams[5]);
-	glUniform1f	(m_locFogAmbient, vp->fogParams[6]);
+	glUniform1f(m_locFogDensity, vp->fogDensity);
+	glUniform1f(m_locFogStart, vp->fogStart);
+	glUniform3fv(m_locFogColour, 1, vp->fogColour);
+	glUniform1f(m_locFogAttenuation, vp->fogAttenuation);
+	glUniform1f(m_locFogAmbient, vp->fogAmbient);
 
 	glUniform3fv(m_locLighting, 2, vp->lightingParams);
-	glUniform1i (m_locSunClamp, vp->sunClamp);
-	glUniform1i (m_locIntensityClamp, vp->intensityClamp);
+	glUniform1i(m_locSunClamp, vp->sunClamp);
+	glUniform1i(m_locIntensityClamp, vp->intensityClamp);
 	glUniform4fv(m_locSpotEllipse, 1, vp->spotEllipse);
 	glUniform2fv(m_locSpotRange, 1, vp->spotRange);
 	glUniform3fv(m_locSpotColor, 1, vp->spotColor);
 	glUniform3fv(m_locSpotFogColor, 1, vp->spotFogColor);
 
-	glUniform1i (m_locHardwareStep, vp->hardwareStep);
+	glUniformMatrix4fv(m_locProjMat, 1, GL_FALSE, vp->projectionMatrix);
+
+	glUniform1i(m_locHardwareStep, vp->hardwareStep);
+
+	glUniform1f(m_locCota, vp->cota);
 }
 
 void R3DShader::SetModelStates(const Model* model)
@@ -518,12 +376,72 @@ void R3DShader::SetModelStates(const Model* model)
 		m_modelScale = model->scale;
 	}
 
+	if (m_dirtyModel || model->alpha != m_nodeAlpha) {
+		glUniform1f(m_locNodeAlpha, model->alpha);
+		m_nodeAlpha = model->alpha;
+	}
+
+	m_transX = model->textureOffsetX;
+	m_transY = model->textureOffsetY;
+	m_transPage = model->page;
+
+	// reset texture values
+	for (auto& i : m_baseTexInfo) { i = -1; }
+
+	glUniformMatrix4fv(m_locModelMat, 1, GL_FALSE, model->modelMat);
+
 	m_dirtyModel = false;
 }
 
 void R3DShader::DiscardAlpha(bool discard)
 {
 	glUniform1i(m_locDiscardAlpha, discard);
+}
+
+void R3DShader::SetLayer(Layer layer)
+{
+	glUniform1i(m_locColourLayer, (GLint)layer);
+}
+
+void R3DShader::PrintShaderResult(GLuint shader)
+{
+	//===========
+	GLint result;
+	GLint length;
+	//===========
+
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+
+	if (result == GL_FALSE) {
+
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+
+		if (length > 0) {
+			std::vector<char> msg(length);
+			glGetShaderInfoLog(shader, length, NULL, msg.data());
+			printf("%s\n", msg.data());
+		}
+	}
+}
+
+void R3DShader::PrintProgramResult(GLuint program)
+{
+	//===========
+	GLint result;
+	//===========
+
+	glGetProgramiv(program, GL_LINK_STATUS, &result);
+
+	if (result == GL_FALSE) {
+
+		GLint maxLength = 0;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+		//The maxLength includes the NULL character
+		std::vector<GLchar> infoLog(maxLength);
+		glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
+		printf("%s\n", infoLog.data());
+	}
 }
 
 } // New3D

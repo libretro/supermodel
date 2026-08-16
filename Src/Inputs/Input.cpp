@@ -1,7 +1,7 @@
 /**
  ** Supermodel
  ** A Sega Model 3 Arcade Emulator.
- ** Copyright 2011 Bart Trzynadlowski, Nik Henson
+ ** Copyright 2003-2026 The Supermodel Team
  **
  ** This file is part of Supermodel.
  **
@@ -26,11 +26,14 @@
   * from this.
   */
 
+#include "Input.h"
+
 #include "Supermodel.h"
+#include "InputSystem.h"
 
 CInput::CInput(const char *inputId, const char *inputLabel, unsigned inputFlags, unsigned inputGameFlags, const char *defaultMapping, UINT16 initValue) : 
-	id(inputId), label(inputLabel), flags(inputFlags), gameFlags(inputGameFlags), m_defaultMapping(defaultMapping), value(initValue), prevValue(initValue),
-	m_system(NULL), m_source(NULL)
+	m_defaultMapping(defaultMapping), m_system(NULL), m_source(NULL),
+	id(inputId), label(inputLabel), flags(inputFlags), gameFlags(inputGameFlags), value(initValue), prevValue(initValue)
 {
 	ResetToDefaultMapping();
 }
@@ -72,11 +75,16 @@ void CInput::CreateSource()
 	}
 }
 
-void CInput::Initialize(CInputSystem *system)
+void CInput::Initialize(std::shared_ptr<CInputSystem> system)
 {
 	m_system = system;
 
 	CreateSource();
+}
+
+std::shared_ptr<CInputSystem> CInput::GetInputSystem()
+{
+	return m_system;
 }
 
 const char* CInput::GetInputGroup()
@@ -88,7 +96,7 @@ const char* CInput::GetInputGroup()
 		case Game::INPUT_JOYSTICK1:       // Fall through to below
 		case Game::INPUT_JOYSTICK2:       return "4-Way Joysticks";
 		case Game::INPUT_FIGHTING:        return "Fighting Game Buttons";
-		case Game::INPUT_SPIKEOUT:		 return "Spikeout Buttons";
+		case Game::INPUT_SPIKEOUT:        return "Spikeout Buttons";
 		case Game::INPUT_SOCCER:          return "Virtua Striker Buttons";
 		case Game::INPUT_VEHICLE:         return "Racing Game Steering Controls";
 		case Game::INPUT_SHIFT4:          return "Racing Game Gear 4-Way Shift";
@@ -105,8 +113,8 @@ const char* CInput::GetInputGroup()
 		case Game::INPUT_ANALOG_GUN2:     return "Analog Guns";
 		case Game::INPUT_SKI:             return "Ski Controls";
 		case Game::INPUT_MAGTRUCK:        return "Magical Truck Controls";
-	  case Game::INPUT_FISHING:         return "Fishing Controls";
-		default:                         return "Misc";
+		case Game::INPUT_FISHING:         return "Fishing Controls";
+		default:                          return "Misc";
 	}
 }
 
@@ -135,9 +143,8 @@ void CInput::AppendMapping(const char *mapping)
 	else
 	{
 		// Otherwise, append to mapping string and recreate source from new mapping string
-		int size = MAX_MAPPING_LENGTH - strlen(m_mapping);
-		strncat(m_mapping, ",", size--);
-		strncat(m_mapping, mapping, size);
+		size_t currentLen = strlen(m_mapping);
+		snprintf(m_mapping + currentLen, MAX_MAPPING_LENGTH + 1 - currentLen, ",%s", mapping);
 		CreateSource();
 	}
 }
@@ -197,7 +204,7 @@ bool CInput::Configure(bool append, const char *escapeMapping)
 	return true;
 }
 
-bool CInput::Changed()
+bool CInput::Changed() const
 {
 	return value != prevValue;
 }

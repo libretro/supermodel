@@ -1,0 +1,2802 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE datafile PUBLIC "-//Logiqx//DTD ROM Management Datafile//EN" "http://www.logiqx.com/Dats/datafile.dtd">
+
+<datafile>
+  <header>
+    <name>Supermodel - Sega Model 3 Games</name>
+    <description>Supermodel v0.3a-libretro Sega Model 3 Games</description>
+    <category>Standard DatFile</category>
+    <version>0.3a-libretro</version>
+    <author>The Supermodel Team</author>
+    <homepage>https://github.com/trzy/Supermodel</homepage>
+    <url>https://github.com/trzy/Supermodel</url>
+    <clrmamepro forcenodump='ignore'/>
+  </header>
+  <game name='bassdx' sourcefile='Games.xml'>
+    <description>Sega Bass Fishing (USA, Deluxe)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20786.20' crc='b7c7cffb'/>
+    <rom name='epr-20785.19' crc='f390076d'/>
+    <rom name='epr-20784.18' crc='be8047d9'/>
+    <rom name='epr-20783.17' crc='3ad976f9'/>
+    <rom name='mpr-20259.4' crc='40052562'/>
+    <rom name='mpr-20258.3' crc='7b78b071'/>
+    <rom name='mpr-20257.2' crc='025bc06d'/>
+    <rom name='mpr-20256.1' crc='115302ac'/>
+    <rom name='mpr-20263.8' crc='1cf4cba9'/>
+    <rom name='mpr-20262.7' crc='52b0674d'/>
+    <rom name='mpr-20261.6' crc='b1e9d44a'/>
+    <rom name='mpr-20260.5' crc='c56b4c10'/>
+    <rom name='mpr-20267.12' crc='48989191'/>
+    <rom name='mpr-20266.11' crc='abd2db85'/>
+    <rom name='mpr-20265.10' crc='28f76e3e'/>
+    <rom name='mpr-20264.9' crc='8d995196'/>
+    <rom name='mpr-20270.26' crc='df68a7a7'/>
+    <rom name='mpr-20271.27' crc='4b01c3a4'/>
+    <rom name='mpr-20272.28' crc='a658da23'/>
+    <rom name='mpr-20273.29' crc='577e9ffa'/>
+    <rom name='mpr-20274.30' crc='7c7056ae'/>
+    <rom name='mpr-20275.31' crc='e739f77a'/>
+    <rom name='mpr-20276.32' crc='cbf966c0'/>
+    <rom name='mpr-20277.33' crc='9c75200b'/>
+    <rom name='mpr-20278.34' crc='db3991ba'/>
+    <rom name='mpr-20279.35' crc='995a11b8'/>
+    <rom name='mpr-20280.36' crc='c2c8f9f5'/>
+    <rom name='mpr-20281.37' crc='da84b967'/>
+    <rom name='mpr-20282.38' crc='1869ff49'/>
+    <rom name='mpr-20283.39' crc='7d8fb469'/>
+    <rom name='mpr-20284.40' crc='5c7f3a6f'/>
+    <rom name='mpr-20285.41' crc='4aadc573'/>
+    <rom name='epr-20313.21' crc='863a7857'/>
+    <rom name='mpr-20268.22' crc='3631e93e'/>
+    <rom name='mpr-20269.24' crc='105a3181'/>
+  </game>
+  <game name='getbassdx' sourcefile='Games.xml' cloneof='bassdx' romof='bassdx'>
+    <description>Get Bass: Sega Bass Fishing (Japan, Deluxe)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20837.20' crc='66fc2084'/>
+    <rom name='epr-20836.19' crc='f8e8ef57'/>
+    <rom name='epr-20835.18' crc='f8f19bb2'/>
+    <rom name='epr-20834.17' crc='17f466a6'/>
+    <rom name='mpr-20259.4' crc='40052562' merge='mpr-20259.4'/>
+    <rom name='mpr-20258.3' crc='7b78b071' merge='mpr-20258.3'/>
+    <rom name='mpr-20257.2' crc='025bc06d' merge='mpr-20257.2'/>
+    <rom name='mpr-20256.1' crc='115302ac' merge='mpr-20256.1'/>
+    <rom name='mpr-20263.8' crc='1cf4cba9' merge='mpr-20263.8'/>
+    <rom name='mpr-20262.7' crc='52b0674d' merge='mpr-20262.7'/>
+    <rom name='mpr-20261.6' crc='b1e9d44a' merge='mpr-20261.6'/>
+    <rom name='mpr-20260.5' crc='c56b4c10' merge='mpr-20260.5'/>
+    <rom name='mpr-20267.12' crc='48989191' merge='mpr-20267.12'/>
+    <rom name='mpr-20266.11' crc='abd2db85' merge='mpr-20266.11'/>
+    <rom name='mpr-20265.10' crc='28f76e3e' merge='mpr-20265.10'/>
+    <rom name='mpr-20264.9' crc='8d995196' merge='mpr-20264.9'/>
+    <rom name='mpr-20270.26' crc='df68a7a7' merge='mpr-20270.26'/>
+    <rom name='mpr-20271.27' crc='4b01c3a4' merge='mpr-20271.27'/>
+    <rom name='mpr-20272.28' crc='a658da23' merge='mpr-20272.28'/>
+    <rom name='mpr-20273.29' crc='577e9ffa' merge='mpr-20273.29'/>
+    <rom name='mpr-20274.30' crc='7c7056ae' merge='mpr-20274.30'/>
+    <rom name='mpr-20275.31' crc='e739f77a' merge='mpr-20275.31'/>
+    <rom name='mpr-20276.32' crc='cbf966c0' merge='mpr-20276.32'/>
+    <rom name='mpr-20277.33' crc='9c75200b' merge='mpr-20277.33'/>
+    <rom name='mpr-20278.34' crc='db3991ba' merge='mpr-20278.34'/>
+    <rom name='mpr-20279.35' crc='995a11b8' merge='mpr-20279.35'/>
+    <rom name='mpr-20280.36' crc='c2c8f9f5' merge='mpr-20280.36'/>
+    <rom name='mpr-20281.37' crc='da84b967' merge='mpr-20281.37'/>
+    <rom name='mpr-20282.38' crc='1869ff49' merge='mpr-20282.38'/>
+    <rom name='mpr-20283.39' crc='7d8fb469' merge='mpr-20283.39'/>
+    <rom name='mpr-20284.40' crc='5c7f3a6f' merge='mpr-20284.40'/>
+    <rom name='mpr-20285.41' crc='4aadc573' merge='mpr-20285.41'/>
+    <rom name='epr-20313.21' crc='863a7857' merge='epr-20313.21'/>
+    <rom name='mpr-20268.22' crc='3631e93e' merge='mpr-20268.22'/>
+    <rom name='mpr-20269.24' crc='105a3181' merge='mpr-20269.24'/>
+  </game>
+  <game name='getbassur' sourcefile='Games.xml' cloneof='bassdx' romof='bassdx'>
+    <description>Get Bass: Sega Bass Fishing (Japan, Upright)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20646.20' crc='d740ae06'/>
+    <rom name='epr-20645.19' crc='8eefa2b0'/>
+    <rom name='epr-20644.18' crc='c28db2b6'/>
+    <rom name='epr-20643.17' crc='daf02716'/>
+    <rom name='mpr-20259.4' crc='40052562' merge='mpr-20259.4'/>
+    <rom name='mpr-20258.3' crc='7b78b071' merge='mpr-20258.3'/>
+    <rom name='mpr-20257.2' crc='025bc06d' merge='mpr-20257.2'/>
+    <rom name='mpr-20256.1' crc='115302ac' merge='mpr-20256.1'/>
+    <rom name='mpr-20263.8' crc='1cf4cba9' merge='mpr-20263.8'/>
+    <rom name='mpr-20262.7' crc='52b0674d' merge='mpr-20262.7'/>
+    <rom name='mpr-20261.6' crc='b1e9d44a' merge='mpr-20261.6'/>
+    <rom name='mpr-20260.5' crc='c56b4c10' merge='mpr-20260.5'/>
+    <rom name='mpr-20267.12' crc='48989191' merge='mpr-20267.12'/>
+    <rom name='mpr-20266.11' crc='abd2db85' merge='mpr-20266.11'/>
+    <rom name='mpr-20265.10' crc='28f76e3e' merge='mpr-20265.10'/>
+    <rom name='mpr-20264.9' crc='8d995196' merge='mpr-20264.9'/>
+    <rom name='mpr-20270.26' crc='df68a7a7' merge='mpr-20270.26'/>
+    <rom name='mpr-20271.27' crc='4b01c3a4' merge='mpr-20271.27'/>
+    <rom name='mpr-20272.28' crc='a658da23' merge='mpr-20272.28'/>
+    <rom name='mpr-20273.29' crc='577e9ffa' merge='mpr-20273.29'/>
+    <rom name='mpr-20274.30' crc='7c7056ae' merge='mpr-20274.30'/>
+    <rom name='mpr-20275.31' crc='e739f77a' merge='mpr-20275.31'/>
+    <rom name='mpr-20276.32' crc='cbf966c0' merge='mpr-20276.32'/>
+    <rom name='mpr-20277.33' crc='9c75200b' merge='mpr-20277.33'/>
+    <rom name='mpr-20278.34' crc='db3991ba' merge='mpr-20278.34'/>
+    <rom name='mpr-20279.35' crc='995a11b8' merge='mpr-20279.35'/>
+    <rom name='mpr-20280.36' crc='c2c8f9f5' merge='mpr-20280.36'/>
+    <rom name='mpr-20281.37' crc='da84b967' merge='mpr-20281.37'/>
+    <rom name='mpr-20282.38' crc='1869ff49' merge='mpr-20282.38'/>
+    <rom name='mpr-20283.39' crc='7d8fb469' merge='mpr-20283.39'/>
+    <rom name='mpr-20284.40' crc='5c7f3a6f' merge='mpr-20284.40'/>
+    <rom name='mpr-20285.41' crc='4aadc573' merge='mpr-20285.41'/>
+    <rom name='epr-20313.21' crc='863a7857' merge='epr-20313.21'/>
+    <rom name='mpr-20268.22' crc='3631e93e' merge='mpr-20268.22'/>
+    <rom name='mpr-20269.24' crc='105a3181' merge='mpr-20269.24'/>
+  </game>
+  <game name='getbass' sourcefile='Games.xml' cloneof='bassdx' romof='bassdx'>
+    <description>Get Bass: Sega Bass Fishing (Japan, Standard)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20312.20' crc='9d8b8b58'/>
+    <rom name='epr-20311.19' crc='f721050d'/>
+    <rom name='epr-20310.18' crc='4efcddc9'/>
+    <rom name='epr-20309.17' crc='a42e1033'/>
+    <rom name='mpr-20259.4' crc='40052562' merge='mpr-20259.4'/>
+    <rom name='mpr-20258.3' crc='7b78b071' merge='mpr-20258.3'/>
+    <rom name='mpr-20257.2' crc='025bc06d' merge='mpr-20257.2'/>
+    <rom name='mpr-20256.1' crc='115302ac' merge='mpr-20256.1'/>
+    <rom name='mpr-20263.8' crc='1cf4cba9' merge='mpr-20263.8'/>
+    <rom name='mpr-20262.7' crc='52b0674d' merge='mpr-20262.7'/>
+    <rom name='mpr-20261.6' crc='b1e9d44a' merge='mpr-20261.6'/>
+    <rom name='mpr-20260.5' crc='c56b4c10' merge='mpr-20260.5'/>
+    <rom name='mpr-20267.12' crc='48989191' merge='mpr-20267.12'/>
+    <rom name='mpr-20266.11' crc='abd2db85' merge='mpr-20266.11'/>
+    <rom name='mpr-20265.10' crc='28f76e3e' merge='mpr-20265.10'/>
+    <rom name='mpr-20264.9' crc='8d995196' merge='mpr-20264.9'/>
+    <rom name='mpr-20270.26' crc='df68a7a7' merge='mpr-20270.26'/>
+    <rom name='mpr-20271.27' crc='4b01c3a4' merge='mpr-20271.27'/>
+    <rom name='mpr-20272.28' crc='a658da23' merge='mpr-20272.28'/>
+    <rom name='mpr-20273.29' crc='577e9ffa' merge='mpr-20273.29'/>
+    <rom name='mpr-20274.30' crc='7c7056ae' merge='mpr-20274.30'/>
+    <rom name='mpr-20275.31' crc='e739f77a' merge='mpr-20275.31'/>
+    <rom name='mpr-20276.32' crc='cbf966c0' merge='mpr-20276.32'/>
+    <rom name='mpr-20277.33' crc='9c75200b' merge='mpr-20277.33'/>
+    <rom name='mpr-20278.34' crc='db3991ba' merge='mpr-20278.34'/>
+    <rom name='mpr-20279.35' crc='995a11b8' merge='mpr-20279.35'/>
+    <rom name='mpr-20280.36' crc='c2c8f9f5' merge='mpr-20280.36'/>
+    <rom name='mpr-20281.37' crc='da84b967' merge='mpr-20281.37'/>
+    <rom name='mpr-20282.38' crc='1869ff49' merge='mpr-20282.38'/>
+    <rom name='mpr-20283.39' crc='7d8fb469' merge='mpr-20283.39'/>
+    <rom name='mpr-20284.40' crc='5c7f3a6f' merge='mpr-20284.40'/>
+    <rom name='mpr-20285.41' crc='4aadc573' merge='mpr-20285.41'/>
+    <rom name='epr-20313.21' crc='863a7857' merge='epr-20313.21'/>
+    <rom name='mpr-20268.22' crc='3631e93e' merge='mpr-20268.22'/>
+    <rom name='mpr-20269.24' crc='105a3181' merge='mpr-20269.24'/>
+  </game>
+  <game name='daytona2' sourcefile='Games.xml'>
+    <description>Daytona USA 2 - Battle on the Edge (Japan, Revision A)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20864a.20' crc='5250f3a8'/>
+    <rom name='epr-20863a.19' crc='1deb4686'/>
+    <rom name='epr-20862a.18' crc='e1b2ca61'/>
+    <rom name='epr-20861a.17' crc='89ba8e78'/>
+    <rom name='mpr-20848.4' crc='5b6c8b7d'/>
+    <rom name='mpr-20847.3' crc='eda966ee'/>
+    <rom name='mpr-20846.2' crc='f44c5c7a'/>
+    <rom name='mpr-20845.1' crc='6037712c'/>
+    <rom name='mpr-20852.8' crc='d606ad38'/>
+    <rom name='mpr-20851.7' crc='6e7a64b7'/>
+    <rom name='mpr-20850.6' crc='cb73758a'/>
+    <rom name='mpr-20849.5' crc='50dee4af'/>
+    <rom name='mpr-20856.12' crc='0367a242'/>
+    <rom name='mpr-20855.11' crc='f1ff0794'/>
+    <rom name='mpr-20854.10' crc='68d94cdf'/>
+    <rom name='mpr-20853.9' crc='3245ee68'/>
+    <rom name='mpr-20860.16' crc='e5ce2939'/>
+    <rom name='mpr-20859.15' crc='e14f5c46'/>
+    <rom name='mpr-20858.14' crc='407fbad5'/>
+    <rom name='mpr-20857.13' crc='1eab9c62'/>
+    <rom name='mpr-20870.26' crc='7c9e573d'/>
+    <rom name='mpr-20871.27' crc='47a1b789'/>
+    <rom name='mpr-20872.28' crc='2f55b423'/>
+    <rom name='mpr-20873.29' crc='c9000e48'/>
+    <rom name='mpr-20874.30' crc='26a9cca2'/>
+    <rom name='mpr-20875.31' crc='bfefd21e'/>
+    <rom name='mpr-20876.32' crc='fa701b87'/>
+    <rom name='mpr-20877.33' crc='2cd072f1'/>
+    <rom name='mpr-20878.34' crc='e6d5bc01'/>
+    <rom name='mpr-20879.35' crc='f1d727ec'/>
+    <rom name='mpr-20880.36' crc='8b370602'/>
+    <rom name='mpr-20881.37' crc='397322e7'/>
+    <rom name='mpr-20882.38' crc='9185be51'/>
+    <rom name='mpr-20883.39' crc='d1e39e83'/>
+    <rom name='mpr-20884.40' crc='63c4639a'/>
+    <rom name='mpr-20885.41' crc='61c292ca'/>
+    <rom name='epr-20865.21' crc='b70c2699'/>
+    <rom name='mpr-20866.22' crc='91f40c1c'/>
+    <rom name='mpr-20868.24' crc='fa0c7ec0'/>
+    <rom name='mpr-20867.23' crc='a579c884'/>
+    <rom name='mpr-20869.25' crc='1f338832'/>
+    <rom name='epr-20886.ic2' crc='65b05f98'/>
+    <rom name='mpr-20887.ic18' crc='a0757684'/>
+    <rom name='mpr-20888.ic20' crc='b495fe65'/>
+    <rom name='mpr-20889.ic22' crc='18eec79e'/>
+    <rom name='mpr-20890.ic24' crc='aac96fa2'/>
+    <rom name='epr-20985.bin' crc='b139481d'/>
+  </game>
+  <game name='dayto2pe' sourcefile='Games.xml' cloneof='daytona2' romof='daytona2'>
+    <description>Daytona USA 2 - Power Edition (Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21181.20' crc='bf0007ed'/>
+    <rom name='epr-21180.19' crc='6e7b98ed'/>
+    <rom name='epr-21179.18' crc='d5ffb4d6'/>
+    <rom name='epr-21178.17' crc='230bf8ac'/>
+    <rom name='mpr-21185.4' crc='b6d5d2a1'/>
+    <rom name='mpr-21184.3' crc='25616403'/>
+    <rom name='mpr-21183.2' crc='b4b44805'/>
+    <rom name='mpr-21182.1' crc='ba8e667f'/>
+    <rom name='mpr-21189.8' crc='cb439c45'/>
+    <rom name='mpr-21188.7' crc='753fc2a5'/>
+    <rom name='mpr-21187.6' crc='3bd14ee6'/>
+    <rom name='mpr-21186.5' crc='a6128662'/>
+    <rom name='mpr-21193.12' crc='4638fef4'/>
+    <rom name='mpr-21192.11' crc='60cbb1fa'/>
+    <rom name='mpr-21191.10' crc='a2bdcfe0'/>
+    <rom name='mpr-21190.9' crc='984d56eb'/>
+    <rom name='mpr-21197.16' crc='04015247'/>
+    <rom name='mpr-21196.15' crc='0ab46db5'/>
+    <rom name='mpr-21195.14' crc='7f39761c'/>
+    <rom name='mpr-21194.13' crc='12c7a414'/>
+    <rom name='mpr-21198.26' crc='42ec9ed4'/>
+    <rom name='mpr-21199.27' crc='fa28088c'/>
+    <rom name='mpr-21200.28' crc='fbb5aa1d'/>
+    <rom name='mpr-21201.29' crc='e6b13469'/>
+    <rom name='mpr-21202.30' crc='e6b4c2be'/>
+    <rom name='mpr-21203.31' crc='32d08d33'/>
+    <rom name='mpr-21204.32' crc='ef18fe0a'/>
+    <rom name='mpr-21205.33' crc='4687bea6'/>
+    <rom name='mpr-21206.34' crc='ec2d6884'/>
+    <rom name='mpr-21207.35' crc='eeaa510b'/>
+    <rom name='mpr-21208.36' crc='b222fef0'/>
+    <rom name='mpr-21209.37' crc='170a28ce'/>
+    <rom name='mpr-21210.38' crc='460cefe0'/>
+    <rom name='mpr-21211.39' crc='c84759ce'/>
+    <rom name='mpr-21212.40' crc='6f8a75e0'/>
+    <rom name='mpr-21213.41' crc='de75bec6'/>
+    <rom name='epr-21325.21' crc='004ad6ad'/>
+    <rom name='mpr-21285.22' crc='7cdca6ac'/>
+    <rom name='mpr-21287.24' crc='06b66f17'/>
+    <rom name='mpr-21286.23' crc='749dfef0'/>
+    <rom name='mpr-21288.25' crc='14bee38e'/>
+    <rom name='epr-20886.ic2' crc='65b05f98' merge='epr-20886.ic2'/>
+    <rom name='mpr-20887.ic18' crc='a0757684' merge='mpr-20887.ic18'/>
+    <rom name='mpr-20888.ic20' crc='b495fe65' merge='mpr-20888.ic20'/>
+    <rom name='mpr-20889.ic22' crc='18eec79e' merge='mpr-20889.ic22'/>
+    <rom name='mpr-20890.ic24' crc='aac96fa2' merge='mpr-20890.ic24'/>
+    <rom name='epr-20985.bin' crc='b139481d' merge='epr-20985.bin'/>
+  </game>
+  <game name='dirtdvls' sourcefile='Games.xml'>
+    <description>Dirt Devils (Export, Revision A)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21065a.20' crc='3223db1a'/>
+    <rom name='epr-21064a.19' crc='2a01f9ad'/>
+    <rom name='epr-21063a.18' crc='6ab7eb32'/>
+    <rom name='epr-21062a.17' crc='64b55254'/>
+    <rom name='mpr-21026.4' crc='f4937e3f'/>
+    <rom name='mpr-21025.3' crc='6591c66e'/>
+    <rom name='mpr-21024.2' crc='ede859b0'/>
+    <rom name='mpr-21023.1' crc='932a3724'/>
+    <rom name='mpr-21030.8' crc='f8e51bec'/>
+    <rom name='mpr-21029.7' crc='89867d8a'/>
+    <rom name='mpr-21028.6' crc='db11f50a'/>
+    <rom name='mpr-21027.5' crc='74e1496a'/>
+    <rom name='mpr-21034.26' crc='acba5ca6'/>
+    <rom name='mpr-21035.27' crc='618b7d6a'/>
+    <rom name='mpr-21036.28' crc='0e665bb2'/>
+    <rom name='mpr-21037.29' crc='90b98493'/>
+    <rom name='mpr-21038.30' crc='9b59d2c2'/>
+    <rom name='mpr-21039.31' crc='61407b07'/>
+    <rom name='mpr-21040.32' crc='b550c229'/>
+    <rom name='mpr-21041.33' crc='8f1ac988'/>
+    <rom name='mpr-21042.34' crc='1dab621d'/>
+    <rom name='mpr-21043.35' crc='707015c8'/>
+    <rom name='mpr-21044.36' crc='776f9580'/>
+    <rom name='mpr-21045.37' crc='a28ad02f'/>
+    <rom name='mpr-21046.38' crc='05c995ae'/>
+    <rom name='mpr-21047.39' crc='06b7826f'/>
+    <rom name='mpr-21048.40' crc='96849974'/>
+    <rom name='mpr-21049.41' crc='91e8161a'/>
+    <rom name='epr-21066.21' crc='f7ed2582'/>
+    <rom name='mpr-21031.22' crc='32f6b23a'/>
+    <rom name='mpr-21033.24' crc='253d3c70'/>
+    <rom name='mpr-21032.23' crc='3d3ff407'/>
+    <rom name='epr-19338a.bin' crc='c9fac464'/>
+  </game>
+  <game name='dirtdvlsu' sourcefile='Games.xml' cloneof='dirtdvls' romof='dirtdvls'>
+    <description>Dirt Devils (USA, Revision A)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21057a.20' crc='36065989'/>
+    <rom name='epr-21056a.19' crc='b7c18b60'/>
+    <rom name='epr-21055a.18' crc='539b3d7f'/>
+    <rom name='epr-21054a.17' crc='e9717fc6'/>
+    <rom name='mpr-21026.4' crc='f4937e3f' merge='mpr-21026.4'/>
+    <rom name='mpr-21025.3' crc='6591c66e' merge='mpr-21025.3'/>
+    <rom name='mpr-21024.2' crc='ede859b0' merge='mpr-21024.2'/>
+    <rom name='mpr-21023.1' crc='932a3724' merge='mpr-21023.1'/>
+    <rom name='mpr-21030.8' crc='f8e51bec' merge='mpr-21030.8'/>
+    <rom name='mpr-21029.7' crc='89867d8a' merge='mpr-21029.7'/>
+    <rom name='mpr-21028.6' crc='db11f50a' merge='mpr-21028.6'/>
+    <rom name='mpr-21027.5' crc='74e1496a' merge='mpr-21027.5'/>
+    <rom name='mpr-21034.26' crc='acba5ca6' merge='mpr-21034.26'/>
+    <rom name='mpr-21035.27' crc='618b7d6a' merge='mpr-21035.27'/>
+    <rom name='mpr-21036.28' crc='0e665bb2' merge='mpr-21036.28'/>
+    <rom name='mpr-21037.29' crc='90b98493' merge='mpr-21037.29'/>
+    <rom name='mpr-21038.30' crc='9b59d2c2' merge='mpr-21038.30'/>
+    <rom name='mpr-21039.31' crc='61407b07' merge='mpr-21039.31'/>
+    <rom name='mpr-21040.32' crc='b550c229' merge='mpr-21040.32'/>
+    <rom name='mpr-21041.33' crc='8f1ac988' merge='mpr-21041.33'/>
+    <rom name='mpr-21042.34' crc='1dab621d' merge='mpr-21042.34'/>
+    <rom name='mpr-21043.35' crc='707015c8' merge='mpr-21043.35'/>
+    <rom name='mpr-21044.36' crc='776f9580' merge='mpr-21044.36'/>
+    <rom name='mpr-21045.37' crc='a28ad02f' merge='mpr-21045.37'/>
+    <rom name='mpr-21046.38' crc='05c995ae' merge='mpr-21046.38'/>
+    <rom name='mpr-21047.39' crc='06b7826f' merge='mpr-21047.39'/>
+    <rom name='mpr-21048.40' crc='96849974' merge='mpr-21048.40'/>
+    <rom name='mpr-21049.41' crc='91e8161a' merge='mpr-21049.41'/>
+    <rom name='epr-21066.21' crc='f7ed2582' merge='epr-21066.21'/>
+    <rom name='mpr-21031.22' crc='32f6b23a' merge='mpr-21031.22'/>
+    <rom name='mpr-21033.24' crc='253d3c70' merge='mpr-21033.24'/>
+    <rom name='mpr-21032.23' crc='3d3ff407' merge='mpr-21032.23'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='dirtdvlsau' sourcefile='Games.xml' cloneof='dirtdvls' romof='dirtdvls'>
+    <description>Dirt Devils (Australia, Revision A)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21061a.20' crc='755ca612'/>
+    <rom name='epr-21060a.19' crc='5ebe2816'/>
+    <rom name='epr-21059a.18' crc='f31a2aa4'/>
+    <rom name='epr-21058a.17' crc='4d7fdc8d'/>
+    <rom name='mpr-21026.4' crc='f4937e3f' merge='mpr-21026.4'/>
+    <rom name='mpr-21025.3' crc='6591c66e' merge='mpr-21025.3'/>
+    <rom name='mpr-21024.2' crc='ede859b0' merge='mpr-21024.2'/>
+    <rom name='mpr-21023.1' crc='932a3724' merge='mpr-21023.1'/>
+    <rom name='mpr-21030.8' crc='f8e51bec' merge='mpr-21030.8'/>
+    <rom name='mpr-21029.7' crc='89867d8a' merge='mpr-21029.7'/>
+    <rom name='mpr-21028.6' crc='db11f50a' merge='mpr-21028.6'/>
+    <rom name='mpr-21027.5' crc='74e1496a' merge='mpr-21027.5'/>
+    <rom name='mpr-21034.26' crc='acba5ca6' merge='mpr-21034.26'/>
+    <rom name='mpr-21035.27' crc='618b7d6a' merge='mpr-21035.27'/>
+    <rom name='mpr-21036.28' crc='0e665bb2' merge='mpr-21036.28'/>
+    <rom name='mpr-21037.29' crc='90b98493' merge='mpr-21037.29'/>
+    <rom name='mpr-21038.30' crc='9b59d2c2' merge='mpr-21038.30'/>
+    <rom name='mpr-21039.31' crc='61407b07' merge='mpr-21039.31'/>
+    <rom name='mpr-21040.32' crc='b550c229' merge='mpr-21040.32'/>
+    <rom name='mpr-21041.33' crc='8f1ac988' merge='mpr-21041.33'/>
+    <rom name='mpr-21042.34' crc='1dab621d' merge='mpr-21042.34'/>
+    <rom name='mpr-21043.35' crc='707015c8' merge='mpr-21043.35'/>
+    <rom name='mpr-21044.36' crc='776f9580' merge='mpr-21044.36'/>
+    <rom name='mpr-21045.37' crc='a28ad02f' merge='mpr-21045.37'/>
+    <rom name='mpr-21046.38' crc='05c995ae' merge='mpr-21046.38'/>
+    <rom name='mpr-21047.39' crc='06b7826f' merge='mpr-21047.39'/>
+    <rom name='mpr-21048.40' crc='96849974' merge='mpr-21048.40'/>
+    <rom name='mpr-21049.41' crc='91e8161a' merge='mpr-21049.41'/>
+    <rom name='epr-21066.21' crc='f7ed2582' merge='epr-21066.21'/>
+    <rom name='mpr-21031.22' crc='32f6b23a' merge='mpr-21031.22'/>
+    <rom name='mpr-21033.24' crc='253d3c70' merge='mpr-21033.24'/>
+    <rom name='mpr-21032.23' crc='3d3ff407' merge='mpr-21032.23'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='dirtdvlsj' sourcefile='Games.xml' cloneof='dirtdvls' romof='dirtdvls'>
+    <description>Dirt Devils (Japan, Revision A)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21053a.20' crc='ade1826f'/>
+    <rom name='epr-21052a.19' crc='c37e5adb'/>
+    <rom name='epr-21051a.18' crc='84f72aa2'/>
+    <rom name='epr-21050a.17' crc='37204fe6'/>
+    <rom name='mpr-21026.4' crc='f4937e3f' merge='mpr-21026.4'/>
+    <rom name='mpr-21025.3' crc='6591c66e' merge='mpr-21025.3'/>
+    <rom name='mpr-21024.2' crc='ede859b0' merge='mpr-21024.2'/>
+    <rom name='mpr-21023.1' crc='932a3724' merge='mpr-21023.1'/>
+    <rom name='mpr-21030.8' crc='f8e51bec' merge='mpr-21030.8'/>
+    <rom name='mpr-21029.7' crc='89867d8a' merge='mpr-21029.7'/>
+    <rom name='mpr-21028.6' crc='db11f50a' merge='mpr-21028.6'/>
+    <rom name='mpr-21027.5' crc='74e1496a' merge='mpr-21027.5'/>
+    <rom name='mpr-21034.26' crc='acba5ca6' merge='mpr-21034.26'/>
+    <rom name='mpr-21035.27' crc='618b7d6a' merge='mpr-21035.27'/>
+    <rom name='mpr-21036.28' crc='0e665bb2' merge='mpr-21036.28'/>
+    <rom name='mpr-21037.29' crc='90b98493' merge='mpr-21037.29'/>
+    <rom name='mpr-21038.30' crc='9b59d2c2' merge='mpr-21038.30'/>
+    <rom name='mpr-21039.31' crc='61407b07' merge='mpr-21039.31'/>
+    <rom name='mpr-21040.32' crc='b550c229' merge='mpr-21040.32'/>
+    <rom name='mpr-21041.33' crc='8f1ac988' merge='mpr-21041.33'/>
+    <rom name='mpr-21042.34' crc='1dab621d' merge='mpr-21042.34'/>
+    <rom name='mpr-21043.35' crc='707015c8' merge='mpr-21043.35'/>
+    <rom name='mpr-21044.36' crc='776f9580' merge='mpr-21044.36'/>
+    <rom name='mpr-21045.37' crc='a28ad02f' merge='mpr-21045.37'/>
+    <rom name='mpr-21046.38' crc='05c995ae' merge='mpr-21046.38'/>
+    <rom name='mpr-21047.39' crc='06b7826f' merge='mpr-21047.39'/>
+    <rom name='mpr-21048.40' crc='96849974' merge='mpr-21048.40'/>
+    <rom name='mpr-21049.41' crc='91e8161a' merge='mpr-21049.41'/>
+    <rom name='epr-21066.21' crc='f7ed2582' merge='epr-21066.21'/>
+    <rom name='mpr-21031.22' crc='32f6b23a' merge='mpr-21031.22'/>
+    <rom name='mpr-21033.24' crc='253d3c70' merge='mpr-21033.24'/>
+    <rom name='mpr-21032.23' crc='3d3ff407' merge='mpr-21032.23'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='dirtdvlsg' sourcefile='Games.xml' cloneof='dirtdvls' romof='dirtdvls'>
+    <description>Dirt Devils (Export, Ver. G?)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='ic20.20' crc='345829b5'/>
+    <rom name='ic19.19' crc='01b2a2dc'/>
+    <rom name='ic18.18' crc='ee859e65'/>
+    <rom name='ic17.17' crc='ec16bcdf'/>
+    <rom name='mpr-21026.4' crc='f4937e3f' merge='mpr-21026.4'/>
+    <rom name='mpr-21025.3' crc='6591c66e' merge='mpr-21025.3'/>
+    <rom name='mpr-21024.2' crc='ede859b0' merge='mpr-21024.2'/>
+    <rom name='mpr-21023.1' crc='932a3724' merge='mpr-21023.1'/>
+    <rom name='mpr-21030.8' crc='f8e51bec' merge='mpr-21030.8'/>
+    <rom name='mpr-21029.7' crc='89867d8a' merge='mpr-21029.7'/>
+    <rom name='mpr-21028.6' crc='db11f50a' merge='mpr-21028.6'/>
+    <rom name='mpr-21027.5' crc='74e1496a' merge='mpr-21027.5'/>
+    <rom name='mpr-21034.26' crc='acba5ca6' merge='mpr-21034.26'/>
+    <rom name='mpr-21035.27' crc='618b7d6a' merge='mpr-21035.27'/>
+    <rom name='mpr-21036.28' crc='0e665bb2' merge='mpr-21036.28'/>
+    <rom name='mpr-21037.29' crc='90b98493' merge='mpr-21037.29'/>
+    <rom name='mpr-21038.30' crc='9b59d2c2' merge='mpr-21038.30'/>
+    <rom name='mpr-21039.31' crc='61407b07' merge='mpr-21039.31'/>
+    <rom name='mpr-21040.32' crc='b550c229' merge='mpr-21040.32'/>
+    <rom name='mpr-21041.33' crc='8f1ac988' merge='mpr-21041.33'/>
+    <rom name='mpr-21042.34' crc='1dab621d' merge='mpr-21042.34'/>
+    <rom name='mpr-21043.35' crc='707015c8' merge='mpr-21043.35'/>
+    <rom name='mpr-21044.36' crc='776f9580' merge='mpr-21044.36'/>
+    <rom name='mpr-21045.37' crc='a28ad02f' merge='mpr-21045.37'/>
+    <rom name='mpr-21046.38' crc='05c995ae' merge='mpr-21046.38'/>
+    <rom name='mpr-21047.39' crc='06b7826f' merge='mpr-21047.39'/>
+    <rom name='mpr-21048.40' crc='96849974' merge='mpr-21048.40'/>
+    <rom name='mpr-21049.41' crc='91e8161a' merge='mpr-21049.41'/>
+    <rom name='epr-21066.21' crc='f7ed2582' merge='epr-21066.21'/>
+    <rom name='mpr-21031.22' crc='32f6b23a' merge='mpr-21031.22'/>
+    <rom name='mpr-21033.24' crc='253d3c70' merge='mpr-21033.24'/>
+    <rom name='mpr-21032.23' crc='3d3ff407' merge='mpr-21032.23'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='eca' sourcefile='Games.xml'>
+    <description>Emergency Call Ambulance (Export)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-22906.20' crc='7f6426fc'/>
+    <rom name='epr-22905.19' crc='9755dd8c'/>
+    <rom name='epr-22904.18' crc='0ff828a8'/>
+    <rom name='epr-22903.17' crc='53882217'/>
+    <rom name='mpr-22873.4' crc='dd406330'/>
+    <rom name='mpr-22872.3' crc='4fde63a1'/>
+    <rom name='mpr-22871.2' crc='cf5bb5b5'/>
+    <rom name='mpr-22870.1' crc='52054043'/>
+    <rom name='mpr-22877.8' crc='e53b8764'/>
+    <rom name='mpr-22876.7' crc='a7561249'/>
+    <rom name='mpr-22875.6' crc='1bb5c018'/>
+    <rom name='mpr-22874.5' crc='5e990497'/>
+    <rom name='epr-22885.16' crc='3525b46d'/>
+    <rom name='epr-22884.15' crc='254c3b63'/>
+    <rom name='epr-22883.14' crc='86d90148'/>
+    <rom name='epr-22882.13' crc='b161416f'/>
+    <rom name='mpr-22854.26' crc='97a23d16'/>
+    <rom name='mpr-22855.27' crc='7249cdc9'/>
+    <rom name='mpr-22856.28' crc='9c0d1d1b'/>
+    <rom name='mpr-22857.29' crc='44e6ce2b'/>
+    <rom name='mpr-22858.30' crc='0af40aae'/>
+    <rom name='mpr-22859.31' crc='c64f0158'/>
+    <rom name='mpr-22860.32' crc='053af14b'/>
+    <rom name='mpr-22861.33' crc='d26343da'/>
+    <rom name='mpr-22862.34' crc='38347c14'/>
+    <rom name='mpr-22863.35' crc='28b558e6'/>
+    <rom name='mpr-22864.36' crc='31ed02f6'/>
+    <rom name='mpr-22865.37' crc='3e3a211a'/>
+    <rom name='mpr-22866.38' crc='a863a3c8'/>
+    <rom name='mpr-22867.39' crc='1ce6c7b2'/>
+    <rom name='mpr-22868.40' crc='2db40cf8'/>
+    <rom name='mpr-22869.41' crc='c6d62634'/>
+    <rom name='epr-22886.21' crc='374ec1c6'/>
+    <rom name='mpr-22887.22' crc='7d04a867'/>
+    <rom name='mpr-22889.24' crc='4f9ba45d'/>
+    <rom name='mpr-22888.23' crc='018fcf22'/>
+    <rom name='mpr-22890.25' crc='b638bd7c'/>
+    <rom name='epr-19338a.bin' crc='c9fac464'/>
+  </game>
+  <game name='ecap' sourcefile='Games.xml' cloneof='eca' romof='eca'>
+    <description>Emergency Call Ambulance (US location test?)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='qq.ic20' crc='b12fe61c'/>
+    <rom name='qq.ic19' crc='a646c7e5'/>
+    <rom name='qq.ic18' crc='17b0bb2c'/>
+    <rom name='qq.ic17' crc='420b5eb8'/>
+    <rom name='mpr-22873.4' crc='dd406330' merge='mpr-22873.4'/>
+    <rom name='mpr-22872.3' crc='4fde63a1' merge='mpr-22872.3'/>
+    <rom name='mpr-22871.2' crc='cf5bb5b5' merge='mpr-22871.2'/>
+    <rom name='mpr-22870.1' crc='52054043' merge='mpr-22870.1'/>
+    <rom name='mpr-22877.8' crc='e53b8764' merge='mpr-22877.8'/>
+    <rom name='mpr-22876.7' crc='a7561249' merge='mpr-22876.7'/>
+    <rom name='mpr-22875.6' crc='1bb5c018' merge='mpr-22875.6'/>
+    <rom name='mpr-22874.5' crc='5e990497' merge='mpr-22874.5'/>
+    <rom name='qq.ic16' crc='3634f178'/>
+    <rom name='qq.ic15' crc='91c5a2a1'/>
+    <rom name='qq.ic14' crc='b41db79b'/>
+    <rom name='qq.ic13' crc='bf3aca1b'/>
+    <rom name='mpr-22854.26' crc='97a23d16' merge='mpr-22854.26'/>
+    <rom name='mpr-22855.27' crc='7249cdc9' merge='mpr-22855.27'/>
+    <rom name='mpr-22856.28' crc='9c0d1d1b' merge='mpr-22856.28'/>
+    <rom name='mpr-22857.29' crc='44e6ce2b' merge='mpr-22857.29'/>
+    <rom name='mpr-22858.30' crc='0af40aae' merge='mpr-22858.30'/>
+    <rom name='mpr-22859.31' crc='c64f0158' merge='mpr-22859.31'/>
+    <rom name='mpr-22860.32' crc='053af14b' merge='mpr-22860.32'/>
+    <rom name='mpr-22861.33' crc='d26343da' merge='mpr-22861.33'/>
+    <rom name='mpr-22862.34' crc='38347c14' merge='mpr-22862.34'/>
+    <rom name='mpr-22863.35' crc='28b558e6' merge='mpr-22863.35'/>
+    <rom name='mpr-22864.36' crc='31ed02f6' merge='mpr-22864.36'/>
+    <rom name='mpr-22865.37' crc='3e3a211a' merge='mpr-22865.37'/>
+    <rom name='mpr-22866.38' crc='a863a3c8' merge='mpr-22866.38'/>
+    <rom name='mpr-22867.39' crc='1ce6c7b2' merge='mpr-22867.39'/>
+    <rom name='mpr-22868.40' crc='2db40cf8' merge='mpr-22868.40'/>
+    <rom name='mpr-22869.41' crc='c6d62634' merge='mpr-22869.41'/>
+    <rom name='qq.ic21' crc='0c55ca5f'/>
+    <rom name='mpr-22887.22' crc='7d04a867' merge='mpr-22887.22'/>
+    <rom name='mpr-22889.24' crc='4f9ba45d' merge='mpr-22889.24'/>
+    <rom name='mpr-22888.23' crc='018fcf22' merge='mpr-22888.23'/>
+    <rom name='mpr-22890.25' crc='b638bd7c' merge='mpr-22890.25'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='ecau' sourcefile='Games.xml' cloneof='eca' romof='eca'>
+    <description>Emergency Call Ambulance (USA)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-22898.20' crc='efb96701'/>
+    <rom name='epr-22905.19' crc='9755dd8c' merge='epr-22905.19'/>
+    <rom name='epr-22904.18' crc='0ff828a8' merge='epr-22904.18'/>
+    <rom name='epr-22895.17' crc='07df16a0'/>
+    <rom name='mpr-22873.4' crc='dd406330' merge='mpr-22873.4'/>
+    <rom name='mpr-22872.3' crc='4fde63a1' merge='mpr-22872.3'/>
+    <rom name='mpr-22871.2' crc='cf5bb5b5' merge='mpr-22871.2'/>
+    <rom name='mpr-22870.1' crc='52054043' merge='mpr-22870.1'/>
+    <rom name='mpr-22877.8' crc='e53b8764' merge='mpr-22877.8'/>
+    <rom name='mpr-22876.7' crc='a7561249' merge='mpr-22876.7'/>
+    <rom name='mpr-22875.6' crc='1bb5c018' merge='mpr-22875.6'/>
+    <rom name='mpr-22874.5' crc='5e990497' merge='mpr-22874.5'/>
+    <rom name='epr-22885.16' crc='3525b46d' merge='epr-22885.16'/>
+    <rom name='epr-22884.15' crc='254c3b63' merge='epr-22884.15'/>
+    <rom name='epr-22883.14' crc='86d90148' merge='epr-22883.14'/>
+    <rom name='epr-22882.13' crc='b161416f' merge='epr-22882.13'/>
+    <rom name='mpr-22854.26' crc='97a23d16' merge='mpr-22854.26'/>
+    <rom name='mpr-22855.27' crc='7249cdc9' merge='mpr-22855.27'/>
+    <rom name='mpr-22856.28' crc='9c0d1d1b' merge='mpr-22856.28'/>
+    <rom name='mpr-22857.29' crc='44e6ce2b' merge='mpr-22857.29'/>
+    <rom name='mpr-22858.30' crc='0af40aae' merge='mpr-22858.30'/>
+    <rom name='mpr-22859.31' crc='c64f0158' merge='mpr-22859.31'/>
+    <rom name='mpr-22860.32' crc='053af14b' merge='mpr-22860.32'/>
+    <rom name='mpr-22861.33' crc='d26343da' merge='mpr-22861.33'/>
+    <rom name='mpr-22862.34' crc='38347c14' merge='mpr-22862.34'/>
+    <rom name='mpr-22863.35' crc='28b558e6' merge='mpr-22863.35'/>
+    <rom name='mpr-22864.36' crc='31ed02f6' merge='mpr-22864.36'/>
+    <rom name='mpr-22865.37' crc='3e3a211a' merge='mpr-22865.37'/>
+    <rom name='mpr-22866.38' crc='a863a3c8' merge='mpr-22866.38'/>
+    <rom name='mpr-22867.39' crc='1ce6c7b2' merge='mpr-22867.39'/>
+    <rom name='mpr-22868.40' crc='2db40cf8' merge='mpr-22868.40'/>
+    <rom name='mpr-22869.41' crc='c6d62634' merge='mpr-22869.41'/>
+    <rom name='epr-22886.21' crc='374ec1c6' merge='epr-22886.21'/>
+    <rom name='mpr-22887.22' crc='7d04a867' merge='mpr-22887.22'/>
+    <rom name='mpr-22889.24' crc='4f9ba45d' merge='mpr-22889.24'/>
+    <rom name='mpr-22888.23' crc='018fcf22' merge='mpr-22888.23'/>
+    <rom name='mpr-22890.25' crc='b638bd7c' merge='mpr-22890.25'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='ecaj' sourcefile='Games.xml' cloneof='eca' romof='eca'>
+    <description>Emergency Call Ambulance (Japan)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-22894.20' crc='cde48c5d'/>
+    <rom name='epr-22905.19' crc='9755dd8c' merge='epr-22905.19'/>
+    <rom name='epr-22904.18' crc='0ff828a8' merge='epr-22904.18'/>
+    <rom name='epr-22891.17' crc='823a251c'/>
+    <rom name='mpr-22873.4' crc='dd406330' merge='mpr-22873.4'/>
+    <rom name='mpr-22872.3' crc='4fde63a1' merge='mpr-22872.3'/>
+    <rom name='mpr-22871.2' crc='cf5bb5b5' merge='mpr-22871.2'/>
+    <rom name='mpr-22870.1' crc='52054043' merge='mpr-22870.1'/>
+    <rom name='mpr-22877.8' crc='e53b8764' merge='mpr-22877.8'/>
+    <rom name='mpr-22876.7' crc='a7561249' merge='mpr-22876.7'/>
+    <rom name='mpr-22875.6' crc='1bb5c018' merge='mpr-22875.6'/>
+    <rom name='mpr-22874.5' crc='5e990497' merge='mpr-22874.5'/>
+    <rom name='epr-22885.16' crc='3525b46d' merge='epr-22885.16'/>
+    <rom name='epr-22884.15' crc='254c3b63' merge='epr-22884.15'/>
+    <rom name='epr-22883.14' crc='86d90148' merge='epr-22883.14'/>
+    <rom name='epr-22882.13' crc='b161416f' merge='epr-22882.13'/>
+    <rom name='mpr-22854.26' crc='97a23d16' merge='mpr-22854.26'/>
+    <rom name='mpr-22855.27' crc='7249cdc9' merge='mpr-22855.27'/>
+    <rom name='mpr-22856.28' crc='9c0d1d1b' merge='mpr-22856.28'/>
+    <rom name='mpr-22857.29' crc='44e6ce2b' merge='mpr-22857.29'/>
+    <rom name='mpr-22858.30' crc='0af40aae' merge='mpr-22858.30'/>
+    <rom name='mpr-22859.31' crc='c64f0158' merge='mpr-22859.31'/>
+    <rom name='mpr-22860.32' crc='053af14b' merge='mpr-22860.32'/>
+    <rom name='mpr-22861.33' crc='d26343da' merge='mpr-22861.33'/>
+    <rom name='mpr-22862.34' crc='38347c14' merge='mpr-22862.34'/>
+    <rom name='mpr-22863.35' crc='28b558e6' merge='mpr-22863.35'/>
+    <rom name='mpr-22864.36' crc='31ed02f6' merge='mpr-22864.36'/>
+    <rom name='mpr-22865.37' crc='3e3a211a' merge='mpr-22865.37'/>
+    <rom name='mpr-22866.38' crc='a863a3c8' merge='mpr-22866.38'/>
+    <rom name='mpr-22867.39' crc='1ce6c7b2' merge='mpr-22867.39'/>
+    <rom name='mpr-22868.40' crc='2db40cf8' merge='mpr-22868.40'/>
+    <rom name='mpr-22869.41' crc='c6d62634' merge='mpr-22869.41'/>
+    <rom name='epr-22886.21' crc='374ec1c6' merge='epr-22886.21'/>
+    <rom name='mpr-22887.22' crc='7d04a867' merge='mpr-22887.22'/>
+    <rom name='mpr-22889.24' crc='4f9ba45d' merge='mpr-22889.24'/>
+    <rom name='mpr-22888.23' crc='018fcf22' merge='mpr-22888.23'/>
+    <rom name='mpr-22890.25' crc='b638bd7c' merge='mpr-22890.25'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='fvipers2' sourcefile='Games.xml'>
+    <description>Fighting Vipers 2 (Japan, Revision A)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20599a.20' crc='9df02ab9'/>
+    <rom name='epr-20598a.19' crc='87bd070f'/>
+    <rom name='epr-20597a.18' crc='6fcee322'/>
+    <rom name='epr-20596a.17' crc='969ab801'/>
+    <rom name='mpr-20563.4' crc='999848ac'/>
+    <rom name='mpr-20562.3' crc='96e4942e'/>
+    <rom name='mpr-20561.2' crc='38a0f112'/>
+    <rom name='mpr-20560.1' crc='b0f6584d'/>
+    <rom name='mpr-20567.8' crc='80f4eba7'/>
+    <rom name='mpr-20566.7' crc='2901883b'/>
+    <rom name='mpr-20565.6' crc='d6bbe638'/>
+    <rom name='mpr-20564.5' crc='be69fca0'/>
+    <rom name='mpr-20571.12' crc='40b459af'/>
+    <rom name='mpr-20570.11' crc='2c0d91fc'/>
+    <rom name='mpr-20569.10' crc='136c014f'/>
+    <rom name='mpr-20568.9' crc='ff23cf1c'/>
+    <rom name='mpr-20575.16' crc='ebc99d8a'/>
+    <rom name='mpr-20574.15' crc='68567771'/>
+    <rom name='mpr-20573.14' crc='e0dee793'/>
+    <rom name='mpr-20572.13' crc='d4a41a0b'/>
+    <rom name='mpr-20580.26' crc='6d42775e'/>
+    <rom name='mpr-20581.27' crc='ac9eec04'/>
+    <rom name='mpr-20582.28' crc='b202f7bd'/>
+    <rom name='mpr-20583.29' crc='0d6d508a'/>
+    <rom name='mpr-20584.30' crc='eccf4de6'/>
+    <rom name='mpr-20585.31' crc='b383f4e5'/>
+    <rom name='mpr-20586.32' crc='e7cd5dfb'/>
+    <rom name='mpr-20587.33' crc='e2b2abe1'/>
+    <rom name='mpr-20588.34' crc='84f4162d'/>
+    <rom name='mpr-20589.35' crc='4e653d02'/>
+    <rom name='mpr-20590.36' crc='527049be'/>
+    <rom name='mpr-20591.37' crc='3be20243'/>
+    <rom name='mpr-20592.38' crc='d7985b28'/>
+    <rom name='mpr-20593.39' crc='e670c4d3'/>
+    <rom name='mpr-20594.40' crc='35578240'/>
+    <rom name='mpr-20595.41' crc='1d4a2cad'/>
+    <rom name='epr-20600a.21' crc='f0e7db7e'/>
+    <rom name='mpr-20576' crc='1eeb540b'/>
+    <rom name='mpr-20578' crc='d222f2d4'/>
+    <rom name='mpr-20577' crc='3b236187'/>
+    <rom name='mpr-20579' crc='08788436'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80'/>
+  </game>
+  <game name='fvipers2o' sourcefile='Games.xml' cloneof='fvipers2' romof='fvipers2'>
+    <description>Fighting Vipers 2 (Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20599.20' crc='69a0009d'/>
+    <rom name='epr-20598.19' crc='71ec5183'/>
+    <rom name='epr-20597.18' crc='4279de19'/>
+    <rom name='epr-20596.17' crc='a311b4af'/>
+    <rom name='mpr-20563.4' crc='999848ac' merge='mpr-20563.4'/>
+    <rom name='mpr-20562.3' crc='96e4942e' merge='mpr-20562.3'/>
+    <rom name='mpr-20561.2' crc='38a0f112' merge='mpr-20561.2'/>
+    <rom name='mpr-20560.1' crc='b0f6584d' merge='mpr-20560.1'/>
+    <rom name='mpr-20567.8' crc='80f4eba7' merge='mpr-20567.8'/>
+    <rom name='mpr-20566.7' crc='2901883b' merge='mpr-20566.7'/>
+    <rom name='mpr-20565.6' crc='d6bbe638' merge='mpr-20565.6'/>
+    <rom name='mpr-20564.5' crc='be69fca0' merge='mpr-20564.5'/>
+    <rom name='mpr-20571.12' crc='40b459af' merge='mpr-20571.12'/>
+    <rom name='mpr-20570.11' crc='2c0d91fc' merge='mpr-20570.11'/>
+    <rom name='mpr-20569.10' crc='136c014f' merge='mpr-20569.10'/>
+    <rom name='mpr-20568.9' crc='ff23cf1c' merge='mpr-20568.9'/>
+    <rom name='mpr-20575.16' crc='ebc99d8a' merge='mpr-20575.16'/>
+    <rom name='mpr-20574.15' crc='68567771' merge='mpr-20574.15'/>
+    <rom name='mpr-20573.14' crc='e0dee793' merge='mpr-20573.14'/>
+    <rom name='mpr-20572.13' crc='d4a41a0b' merge='mpr-20572.13'/>
+    <rom name='mpr-20580.26' crc='6d42775e' merge='mpr-20580.26'/>
+    <rom name='mpr-20581.27' crc='ac9eec04' merge='mpr-20581.27'/>
+    <rom name='mpr-20582.28' crc='b202f7bd' merge='mpr-20582.28'/>
+    <rom name='mpr-20583.29' crc='0d6d508a' merge='mpr-20583.29'/>
+    <rom name='mpr-20584.30' crc='eccf4de6' merge='mpr-20584.30'/>
+    <rom name='mpr-20585.31' crc='b383f4e5' merge='mpr-20585.31'/>
+    <rom name='mpr-20586.32' crc='e7cd5dfb' merge='mpr-20586.32'/>
+    <rom name='mpr-20587.33' crc='e2b2abe1' merge='mpr-20587.33'/>
+    <rom name='mpr-20588.34' crc='84f4162d' merge='mpr-20588.34'/>
+    <rom name='mpr-20589.35' crc='4e653d02' merge='mpr-20589.35'/>
+    <rom name='mpr-20590.36' crc='527049be' merge='mpr-20590.36'/>
+    <rom name='mpr-20591.37' crc='3be20243' merge='mpr-20591.37'/>
+    <rom name='mpr-20592.38' crc='d7985b28' merge='mpr-20592.38'/>
+    <rom name='mpr-20593.39' crc='e670c4d3' merge='mpr-20593.39'/>
+    <rom name='mpr-20594.40' crc='35578240' merge='mpr-20594.40'/>
+    <rom name='mpr-20595.41' crc='1d4a2cad' merge='mpr-20595.41'/>
+    <rom name='epr-20600a.21' crc='f0e7db7e' merge='epr-20600a.21'/>
+    <rom name='mpr-20576' crc='1eeb540b' merge='mpr-20576'/>
+    <rom name='mpr-20578' crc='d222f2d4' merge='mpr-20578'/>
+    <rom name='mpr-20577' crc='3b236187' merge='mpr-20577'/>
+    <rom name='mpr-20579' crc='08788436' merge='mpr-20579'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='harley' sourcefile='Games.xml'>
+    <description>Harley-Davidson and L.A. Riders (Export, Revision B)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20396b.20' crc='9623dea7'/>
+    <rom name='epr-20395b.19' crc='88f71d76'/>
+    <rom name='epr-20394b.18' crc='b4312135'/>
+    <rom name='epr-20393b.17' crc='7d712105'/>
+    <rom name='mpr-20364.4' crc='a2a68ef2'/>
+    <rom name='mpr-20363.3' crc='3e3cc6ff'/>
+    <rom name='mpr-20362.2' crc='f7e60dfd'/>
+    <rom name='mpr-20361.1' crc='ddb66c2f'/>
+    <rom name='mpr-20368.8' crc='100c9846'/>
+    <rom name='mpr-20367.7' crc='6c3f9748'/>
+    <rom name='mpr-20366.6' crc='45e3850e'/>
+    <rom name='mpr-20365.5' crc='7dd50361'/>
+    <rom name='epr-20412.16' crc='0d51bb34'/>
+    <rom name='epr-20411.15' crc='848daaf7'/>
+    <rom name='epr-20410.14' crc='98b126f2'/>
+    <rom name='epr-20409.13' crc='58caaa75'/>
+    <rom name='mpr-20377.26' crc='4d2887e5'/>
+    <rom name='mpr-20378.27' crc='5ad7c0ec'/>
+    <rom name='mpr-20379.28' crc='1e51c9f0'/>
+    <rom name='mpr-20380.29' crc='e10d35ae'/>
+    <rom name='mpr-20381.30' crc='76cd36a2'/>
+    <rom name='mpr-20382.31' crc='f089ae37'/>
+    <rom name='mpr-20383.32' crc='9e96d3be'/>
+    <rom name='mpr-20384.33' crc='5bdfbb52'/>
+    <rom name='mpr-20385.34' crc='12db1729'/>
+    <rom name='mpr-20386.35' crc='db2ccaf8'/>
+    <rom name='mpr-20387.36' crc='c5dde91b'/>
+    <rom name='mpr-20388.37' crc='aeaa862e'/>
+    <rom name='mpr-20389.38' crc='49bb6593'/>
+    <rom name='mpr-20390.39' crc='1d4a8efe'/>
+    <rom name='mpr-20391.40' crc='5dc452dc'/>
+    <rom name='mpr-20392.41' crc='892208cb'/>
+    <rom name='epr-20397.21' crc='5b20b54a'/>
+    <rom name='mpr-20373.22' crc='c684e8a3'/>
+    <rom name='mpr-20375.24' crc='906ace86'/>
+    <rom name='mpr-20374.23' crc='fcf6ea21'/>
+    <rom name='mpr-20376.25' crc='deeed366'/>
+  </game>
+  <game name='harleya' sourcefile='Games.xml' cloneof='harley' romof='harley'>
+    <description>Harley-Davidson and L.A. Riders (Export, Revision A)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20396a.20' crc='16b0106b'/>
+    <rom name='epr-20395a.19' crc='761f4976'/>
+    <rom name='epr-20394a.18' crc='ce29e2b6'/>
+    <rom name='epr-20393a.17' crc='b5646556'/>
+    <rom name='mpr-20364.4' crc='a2a68ef2' merge='mpr-20364.4'/>
+    <rom name='mpr-20363.3' crc='3e3cc6ff' merge='mpr-20363.3'/>
+    <rom name='mpr-20362.2' crc='f7e60dfd' merge='mpr-20362.2'/>
+    <rom name='mpr-20361.1' crc='ddb66c2f' merge='mpr-20361.1'/>
+    <rom name='mpr-20368.8' crc='100c9846' merge='mpr-20368.8'/>
+    <rom name='mpr-20367.7' crc='6c3f9748' merge='mpr-20367.7'/>
+    <rom name='mpr-20366.6' crc='45e3850e' merge='mpr-20366.6'/>
+    <rom name='mpr-20365.5' crc='7dd50361' merge='mpr-20365.5'/>
+    <rom name='epr-20412.16' crc='0d51bb34' merge='epr-20412.16'/>
+    <rom name='epr-20411.15' crc='848daaf7' merge='epr-20411.15'/>
+    <rom name='epr-20410.14' crc='98b126f2' merge='epr-20410.14'/>
+    <rom name='epr-20409.13' crc='58caaa75' merge='epr-20409.13'/>
+    <rom name='mpr-20377.26' crc='4d2887e5' merge='mpr-20377.26'/>
+    <rom name='mpr-20378.27' crc='5ad7c0ec' merge='mpr-20378.27'/>
+    <rom name='mpr-20379.28' crc='1e51c9f0' merge='mpr-20379.28'/>
+    <rom name='mpr-20380.29' crc='e10d35ae' merge='mpr-20380.29'/>
+    <rom name='mpr-20381.30' crc='76cd36a2' merge='mpr-20381.30'/>
+    <rom name='mpr-20382.31' crc='f089ae37' merge='mpr-20382.31'/>
+    <rom name='mpr-20383.32' crc='9e96d3be' merge='mpr-20383.32'/>
+    <rom name='mpr-20384.33' crc='5bdfbb52' merge='mpr-20384.33'/>
+    <rom name='mpr-20385.34' crc='12db1729' merge='mpr-20385.34'/>
+    <rom name='mpr-20386.35' crc='db2ccaf8' merge='mpr-20386.35'/>
+    <rom name='mpr-20387.36' crc='c5dde91b' merge='mpr-20387.36'/>
+    <rom name='mpr-20388.37' crc='aeaa862e' merge='mpr-20388.37'/>
+    <rom name='mpr-20389.38' crc='49bb6593' merge='mpr-20389.38'/>
+    <rom name='mpr-20390.39' crc='1d4a8efe' merge='mpr-20390.39'/>
+    <rom name='mpr-20391.40' crc='5dc452dc' merge='mpr-20391.40'/>
+    <rom name='mpr-20392.41' crc='892208cb' merge='mpr-20392.41'/>
+    <rom name='epr-20397.21' crc='5b20b54a' merge='epr-20397.21'/>
+    <rom name='mpr-20373.22' crc='c684e8a3' merge='mpr-20373.22'/>
+    <rom name='mpr-20375.24' crc='906ace86' merge='mpr-20375.24'/>
+    <rom name='mpr-20374.23' crc='fcf6ea21' merge='mpr-20374.23'/>
+    <rom name='mpr-20376.25' crc='deeed366' merge='mpr-20376.25'/>
+  </game>
+  <game name='lamachin' sourcefile='Games.xml'>
+    <description>L.A. Machineguns: Rage of the Machines (Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21486.20' crc='64de433f'/>
+    <rom name='epr-21485.19' crc='f68f7703'/>
+    <rom name='epr-21484.18' crc='58102168'/>
+    <rom name='epr-21483.17' crc='940637c2'/>
+    <rom name='mpr-21454.4' crc='97ff94a7'/>
+    <rom name='mpr-21453.3' crc='082d98ab'/>
+    <rom name='mpr-21452.2' crc='01ac050c'/>
+    <rom name='mpr-21451.1' crc='42bdc56c'/>
+    <rom name='mpr-21458.8' crc='b748f5a1'/>
+    <rom name='mpr-21457.7' crc='2034dbd4'/>
+    <rom name='mpr-21456.6' crc='73a50547'/>
+    <rom name='mpr-21455.5' crc='0b4a3cc5'/>
+    <rom name='mpr-21462.12' crc='03d22ee8'/>
+    <rom name='mpr-21461.11' crc='33d8f0da'/>
+    <rom name='mpr-21460.10' crc='02268361'/>
+    <rom name='mpr-21459.9' crc='71a7b6b3'/>
+    <rom name='mpr-21467.26' crc='73635100'/>
+    <rom name='mpr-21468.27' crc='462e5c81'/>
+    <rom name='mpr-21469.28' crc='4ba3f192'/>
+    <rom name='mpr-21470.29' crc='670f0df5'/>
+    <rom name='mpr-21471.30' crc='1f07e6e3'/>
+    <rom name='mpr-21472.31' crc='e6dc64a3'/>
+    <rom name='mpr-21473.32' crc='d1c9b54a'/>
+    <rom name='mpr-21474.33' crc='aa2f19ae'/>
+    <rom name='mpr-21475.34' crc='bae9b381'/>
+    <rom name='mpr-21476.35' crc='3833df51'/>
+    <rom name='mpr-21477.36' crc='46032c35'/>
+    <rom name='mpr-21478.37' crc='35ef75b8'/>
+    <rom name='mpr-21479.38' crc='783e8ece'/>
+    <rom name='mpr-21480.39' crc='c947bcb8'/>
+    <rom name='mpr-21481.40' crc='6ce566ac'/>
+    <rom name='mpr-21482.41' crc='e995f554'/>
+    <rom name='epr-21487.21' crc='c2942448'/>
+    <rom name='mpr-21463.22' crc='0e6d6c0e'/>
+    <rom name='mpr-21465.24' crc='1a62d925'/>
+    <rom name='mpr-21464.23' crc='8230c1de'/>
+    <rom name='mpr-21466.25' crc='ca20359e'/>
+  </game>
+  <game name='lemans24' sourcefile='Games.xml'>
+    <description>Le Mans 24 (Japan, Revision B)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19890b.20' crc='9c16c3cc'/>
+    <rom name='epr-19889b.19' crc='d1f7e44c'/>
+    <rom name='epr-19888b.18' crc='800d763d'/>
+    <rom name='epr-19887b.17' crc='2842bb87'/>
+    <rom name='mpr-19860.04' crc='19a1ddc7'/>
+    <rom name='mpr-19859.03' crc='15906869'/>
+    <rom name='mpr-19858.02' crc='993fa656'/>
+    <rom name='mpr-19857.01' crc='82c9fcfc'/>
+    <rom name='mpr-19864.08' crc='c7baab2b'/>
+    <rom name='mpr-19863.07' crc='2b2619d0'/>
+    <rom name='mpr-19862.06' crc='b0f69ae4'/>
+    <rom name='mpr-19861.05' crc='6ddf21b3'/>
+    <rom name='mpr-19868.12' crc='3c43d64f'/>
+    <rom name='mpr-19867.11' crc='ae610fc5'/>
+    <rom name='mpr-19866.10' crc='ede5fc78'/>
+    <rom name='mpr-19865.09' crc='b2749d2b'/>
+    <rom name='mpr-19871.26' crc='5168e02b'/>
+    <rom name='mpr-19872.27' crc='9e65fc06'/>
+    <rom name='mpr-19873.28' crc='0b15d7ab'/>
+    <rom name='mpr-19874.29' crc='6a28ec89'/>
+    <rom name='mpr-19875.30' crc='a03e1173'/>
+    <rom name='mpr-19876.31' crc='c93bb036'/>
+    <rom name='mpr-19877.32' crc='b1e3df56'/>
+    <rom name='mpr-19878.33' crc='a2acc111'/>
+    <rom name='mpr-19879.34' crc='90c1553f'/>
+    <rom name='mpr-19880.35' crc='42504e63'/>
+    <rom name='mpr-19881.36' crc='d06985cf'/>
+    <rom name='mpr-19882.37' crc='a86f2e2f'/>
+    <rom name='mpr-19883.38' crc='12895d6e'/>
+    <rom name='mpr-19884.39' crc='711eebfb'/>
+    <rom name='mpr-19885.40' crc='d1ae5473'/>
+    <rom name='mpr-19886.41' crc='278aae0b'/>
+    <rom name='epr-19891.21' crc='c3ecd448'/>
+    <rom name='mpr-19869.22' crc='ea1ef1cc'/>
+    <rom name='mpr-19870.24' crc='49c70296'/>
+    <rom name='epr-18261.ic9' crc='0c7fac58'/>
+  </game>
+  <game name='lostwsga' sourcefile='Games.xml'>
+    <description>The Lost World (Japan, Revision A)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19936a.20' crc='2f1ca664'/>
+    <rom name='epr-19937a.19' crc='9dbf5712'/>
+    <rom name='epr-19938a.18' crc='38afe27a'/>
+    <rom name='epr-19939a.17' crc='8788b939'/>
+    <rom name='mpr-19921.4' crc='9af3227f'/>
+    <rom name='mpr-19920.3' crc='8df33574'/>
+    <rom name='mpr-19919.2' crc='ff119949'/>
+    <rom name='mpr-19918.1' crc='95b690e9'/>
+    <rom name='mpr-19925.8' crc='cfa4bb49'/>
+    <rom name='mpr-19924.7' crc='4ee3ddc5'/>
+    <rom name='mpr-19923.6' crc='ed515cb2'/>
+    <rom name='mpr-19922.5' crc='4dfd7fc6'/>
+    <rom name='mpr-19929.12' crc='16491f63'/>
+    <rom name='mpr-19928.11' crc='9afd5d4a'/>
+    <rom name='mpr-19927.10' crc='0c96ef11'/>
+    <rom name='mpr-19926.9' crc='05a232e0'/>
+    <rom name='mpr-19933.16' crc='8e2acd3b'/>
+    <rom name='mpr-19932.15' crc='04389385'/>
+    <rom name='mpr-19931.14' crc='448a5007'/>
+    <rom name='mpr-19930.13' crc='b598c2f2'/>
+    <rom name='mpr-19902.26' crc='178bd471'/>
+    <rom name='mpr-19903.27' crc='fe575871'/>
+    <rom name='mpr-19904.28' crc='57971d7d'/>
+    <rom name='mpr-19905.29' crc='6fa122ee'/>
+    <rom name='mpr-19906.30' crc='a5b16dd9'/>
+    <rom name='mpr-19907.31' crc='84a425cd'/>
+    <rom name='mpr-19908.32' crc='7702aa7c'/>
+    <rom name='mpr-19909.33' crc='8fca65f9'/>
+    <rom name='mpr-19910.34' crc='1ef585e2'/>
+    <rom name='mpr-19911.35' crc='ca26a48d'/>
+    <rom name='mpr-19912.36' crc='ffe000e0'/>
+    <rom name='mpr-19913.37' crc='c003049e'/>
+    <rom name='mpr-19914.38' crc='3c21a953'/>
+    <rom name='mpr-19915.39' crc='fd0f2a2b'/>
+    <rom name='mpr-19916.40' crc='10b0c52e'/>
+    <rom name='mpr-19917.41' crc='3035833b'/>
+    <rom name='epr-19940.21' crc='b06ffe5f'/>
+    <rom name='mpr-19934.22' crc='c7d8e194'/>
+    <rom name='mpr-19935.24' crc='91c1b618'/>
+  </game>
+  <game name='lostwsgp' sourcefile='Games.xml' cloneof='lostwsga' romof='lostwsga'>
+    <description>The Lost World (Location Test)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='ic20.20' crc='50a5fd1d'/>
+    <rom name='ic19.19' crc='acf71d38'/>
+    <rom name='ic18.18' crc='a62df14c'/>
+    <rom name='ic17.17' crc='9e94afdb'/>
+    <rom name='mpr-19921.4' crc='9af3227f' merge='mpr-19921.4'/>
+    <rom name='mpr-19920.3' crc='8df33574' merge='mpr-19920.3'/>
+    <rom name='mpr-19919.2' crc='ff119949' merge='mpr-19919.2'/>
+    <rom name='mpr-19918.1' crc='95b690e9' merge='mpr-19918.1'/>
+    <rom name='mpr-19925.8' crc='cfa4bb49' merge='mpr-19925.8'/>
+    <rom name='mpr-19924.7' crc='4ee3ddc5' merge='mpr-19924.7'/>
+    <rom name='mpr-19923.6' crc='ed515cb2' merge='mpr-19923.6'/>
+    <rom name='mpr-19922.5' crc='4dfd7fc6' merge='mpr-19922.5'/>
+    <rom name='mpr-19929.12' crc='16491f63' merge='mpr-19929.12'/>
+    <rom name='mpr-19928.11' crc='9afd5d4a' merge='mpr-19928.11'/>
+    <rom name='mpr-19927.10' crc='0c96ef11' merge='mpr-19927.10'/>
+    <rom name='mpr-19926.9' crc='05a232e0' merge='mpr-19926.9'/>
+    <rom name='mpr-19933.16' crc='8e2acd3b' merge='mpr-19933.16'/>
+    <rom name='mpr-19932.15' crc='04389385' merge='mpr-19932.15'/>
+    <rom name='mpr-19931.14' crc='448a5007' merge='mpr-19931.14'/>
+    <rom name='mpr-19930.13' crc='b598c2f2' merge='mpr-19930.13'/>
+    <rom name='mpr-19902.26' crc='178bd471' merge='mpr-19902.26'/>
+    <rom name='mpr-19903.27' crc='fe575871' merge='mpr-19903.27'/>
+    <rom name='mpr-19904.28' crc='57971d7d' merge='mpr-19904.28'/>
+    <rom name='mpr-19905.29' crc='6fa122ee' merge='mpr-19905.29'/>
+    <rom name='mpr-19906.30' crc='a5b16dd9' merge='mpr-19906.30'/>
+    <rom name='mpr-19907.31' crc='84a425cd' merge='mpr-19907.31'/>
+    <rom name='mpr-19908.32' crc='7702aa7c' merge='mpr-19908.32'/>
+    <rom name='mpr-19909.33' crc='8fca65f9' merge='mpr-19909.33'/>
+    <rom name='mpr-19910.34' crc='1ef585e2' merge='mpr-19910.34'/>
+    <rom name='mpr-19911.35' crc='ca26a48d' merge='mpr-19911.35'/>
+    <rom name='mpr-19912.36' crc='ffe000e0' merge='mpr-19912.36'/>
+    <rom name='mpr-19913.37' crc='c003049e' merge='mpr-19913.37'/>
+    <rom name='mpr-19914.38' crc='3c21a953' merge='mpr-19914.38'/>
+    <rom name='mpr-19915.39' crc='fd0f2a2b' merge='mpr-19915.39'/>
+    <rom name='mpr-19916.40' crc='10b0c52e' merge='mpr-19916.40'/>
+    <rom name='mpr-19917.41' crc='3035833b' merge='mpr-19917.41'/>
+    <rom name='ic21.21' crc='78af6bee'/>
+    <rom name='mpr-19934.22' crc='c7d8e194' merge='mpr-19934.22'/>
+    <rom name='mpr-19935.24' crc='91c1b618' merge='mpr-19935.24'/>
+  </game>
+  <game name='magtruck' sourcefile='Games.xml'>
+    <description>Magical Truck Adventure (Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21434.20' crc='18f8626a'/>
+    <rom name='epr-21436.19' crc='22bcbca3'/>
+    <rom name='epr-21433.18' crc='b3b124fa'/>
+    <rom name='epr-21435.17' crc='9b169446'/>
+    <rom name='mpr-21426.4' crc='ce77e26e'/>
+    <rom name='mpr-21425.3' crc='ad235849'/>
+    <rom name='mpr-21424.2' crc='25358fdf'/>
+    <rom name='mpr-21423.1' crc='4ee0060a'/>
+    <rom name='mpr-21407.26' crc='3ffb416c'/>
+    <rom name='mpr-21408.27' crc='3e00a7ef'/>
+    <rom name='mpr-21409.28' crc='a4673bbf'/>
+    <rom name='mpr-21410.29' crc='c9f43b4a'/>
+    <rom name='mpr-21411.30' crc='f14957c7'/>
+    <rom name='mpr-21412.31' crc='ec24091f'/>
+    <rom name='mpr-21413.32' crc='ea9049e0'/>
+    <rom name='mpr-21414.33' crc='79bc5ffd'/>
+    <rom name='mpr-21415.34' crc='f96fe7a2'/>
+    <rom name='mpr-21416.35' crc='84a08b3e'/>
+    <rom name='mpr-21417.36' crc='6094975c'/>
+    <rom name='mpr-21418.37' crc='7bb868ba'/>
+    <rom name='mpr-21419.38' crc='be7325c2'/>
+    <rom name='mpr-21420.39' crc='8b577e7b'/>
+    <rom name='mpr-21421.40' crc='71e4e9fc'/>
+    <rom name='mpr-21422.41' crc='feca77a5'/>
+    <rom name='epr-21438.21' crc='6815af9e'/>
+    <rom name='mpr-21427.22' crc='884566f6'/>
+    <rom name='mpr-21428.24' crc='162d1e43'/>
+    <rom name='mpr-21431.23' crc='0ef8f7bb'/>
+    <rom name='mpr-21432.25' crc='59c0f6df'/>
+  </game>
+  <game name='mgtrkbad' sourcefile='Games.xml' cloneof='magtruck' romof='magtruck'>
+    <description>Magical Truck Adventure (Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21434.20' crc='e028d7ca'/>
+    <rom name='epr-21436.19' crc='22bcbca3' merge='epr-21436.19'/>
+    <rom name='epr-21433.18' crc='60aa9d76'/>
+    <rom name='epr-21435.17' crc='9b169446' merge='epr-21435.17'/>
+    <rom name='mpr-21426.4' crc='ce77e26e' merge='mpr-21426.4'/>
+    <rom name='mpr-21425.3' crc='ad235849' merge='mpr-21425.3'/>
+    <rom name='mpr-21424.2' crc='25358fdf' merge='mpr-21424.2'/>
+    <rom name='mpr-21423.1' crc='4ee0060a' merge='mpr-21423.1'/>
+    <rom name='mpr-21407.26' crc='3ffb416c' merge='mpr-21407.26'/>
+    <rom name='mpr-21408.27' crc='3e00a7ef' merge='mpr-21408.27'/>
+    <rom name='mpr-21409.28' crc='a4673bbf' merge='mpr-21409.28'/>
+    <rom name='mpr-21410.29' crc='c9f43b4a' merge='mpr-21410.29'/>
+    <rom name='mpr-21411.30' crc='f14957c7' merge='mpr-21411.30'/>
+    <rom name='mpr-21412.31' crc='ec24091f' merge='mpr-21412.31'/>
+    <rom name='mpr-21413.32' crc='ea9049e0' merge='mpr-21413.32'/>
+    <rom name='mpr-21414.33' crc='79bc5ffd' merge='mpr-21414.33'/>
+    <rom name='mpr-21415.34' crc='f96fe7a2' merge='mpr-21415.34'/>
+    <rom name='mpr-21416.35' crc='84a08b3e' merge='mpr-21416.35'/>
+    <rom name='mpr-21417.36' crc='6094975c' merge='mpr-21417.36'/>
+    <rom name='mpr-21418.37' crc='7bb868ba' merge='mpr-21418.37'/>
+    <rom name='mpr-21419.38' crc='be7325c2' merge='mpr-21419.38'/>
+    <rom name='mpr-21420.39' crc='8b577e7b' merge='mpr-21420.39'/>
+    <rom name='mpr-21421.40' crc='71e4e9fc' merge='mpr-21421.40'/>
+    <rom name='mpr-21422.41' crc='feca77a5' merge='mpr-21422.41'/>
+    <rom name='epr-21438.21' crc='6815af9e' merge='epr-21438.21'/>
+    <rom name='mpr-21427.22' crc='884566f6' merge='mpr-21427.22'/>
+    <rom name='mpr-21428.24' crc='162d1e43' merge='mpr-21428.24'/>
+    <rom name='mpr-21431.23' crc='0ef8f7bb' merge='mpr-21431.23'/>
+    <rom name='mpr-21432.25' crc='59c0f6df' merge='mpr-21432.25'/>
+  </game>
+  <game name='oceanhun' sourcefile='Games.xml'>
+    <description>The Ocean Hunter (Japan, Revision A)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21117a.20' crc='2ee5b67d'/>
+    <rom name='epr-21116a.19' crc='d2cd1f7e'/>
+    <rom name='epr-21115a.18' crc='ac735888'/>
+    <rom name='epr-21114a.17' crc='75024695'/>
+    <rom name='mpr-21085.8' crc='2b7224d3'/>
+    <rom name='mpr-21084.7' crc='c1c6b554'/>
+    <rom name='mpr-21083.6' crc='fdec6a23'/>
+    <rom name='mpr-21082.5' crc='5056ad33'/>
+    <rom name='mpr-21089.12' crc='2e8f88bd'/>
+    <rom name='mpr-21088.11' crc='7ed71c8c'/>
+    <rom name='mpr-21087.10' crc='cff28641'/>
+    <rom name='mpr-21086.9' crc='3f12e1d0'/>
+    <rom name='mpr-21093.16' crc='bdfbf357'/>
+    <rom name='mpr-21092.15' crc='5b1ced40'/>
+    <rom name='mpr-21091.14' crc='10671951'/>
+    <rom name='mpr-21090.13' crc='749d7979'/>
+    <rom name='mpr-21098.26' crc='91e71855'/>
+    <rom name='mpr-21099.27' crc='308a2768'/>
+    <rom name='mpr-21100.28' crc='5149b286'/>
+    <rom name='mpr-21101.29' crc='e9ed4250'/>
+    <rom name='mpr-21102.30' crc='06c6d4fc'/>
+    <rom name='mpr-21103.31' crc='17c4b27a'/>
+    <rom name='mpr-21104.32' crc='f6f80ffb'/>
+    <rom name='mpr-21105.33' crc='99bdb52b'/>
+    <rom name='mpr-21106.34' crc='ad2b7981'/>
+    <rom name='mpr-21107.35' crc='e108ff62'/>
+    <rom name='mpr-21108.36' crc='cddc7a6e'/>
+    <rom name='mpr-21109.37' crc='92d6141d'/>
+    <rom name='mpr-21110.38' crc='4d6e3148'/>
+    <rom name='mpr-21111.39' crc='0a046d7a'/>
+    <rom name='mpr-21112.40' crc='9afd9feb'/>
+    <rom name='mpr-21113.41' crc='864bf325'/>
+    <rom name='epr-21118.21' crc='598c00f0'/>
+    <rom name='mpr-21094.22' crc='c262b80a'/>
+    <rom name='mpr-21096.24' crc='0a0021a0'/>
+    <rom name='mpr-21095.23' crc='16d27a0a'/>
+    <rom name='mpr-21097.25' crc='0d8033fc'/>
+  </game>
+  <game name='oceanhuna' sourcefile='Games.xml' cloneof='oceanhun' romof='oceanhun'>
+    <description>The Ocean Hunter (Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21117.20' crc='58d985f1'/>
+    <rom name='epr-21116.19' crc='69e31e85'/>
+    <rom name='epr-21115.18' crc='0bb9c107'/>
+    <rom name='epr-21114.17' crc='3adfcb9d'/>
+    <rom name='mpr-21085.8' crc='2b7224d3' merge='mpr-21085.8'/>
+    <rom name='mpr-21084.7' crc='c1c6b554' merge='mpr-21084.7'/>
+    <rom name='mpr-21083.6' crc='fdec6a23' merge='mpr-21083.6'/>
+    <rom name='mpr-21082.5' crc='5056ad33' merge='mpr-21082.5'/>
+    <rom name='mpr-21089.12' crc='2e8f88bd' merge='mpr-21089.12'/>
+    <rom name='mpr-21088.11' crc='7ed71c8c' merge='mpr-21088.11'/>
+    <rom name='mpr-21087.10' crc='cff28641' merge='mpr-21087.10'/>
+    <rom name='mpr-21086.9' crc='3f12e1d0' merge='mpr-21086.9'/>
+    <rom name='mpr-21093.16' crc='bdfbf357' merge='mpr-21093.16'/>
+    <rom name='mpr-21092.15' crc='5b1ced40' merge='mpr-21092.15'/>
+    <rom name='mpr-21091.14' crc='10671951' merge='mpr-21091.14'/>
+    <rom name='mpr-21090.13' crc='749d7979' merge='mpr-21090.13'/>
+    <rom name='mpr-21098.26' crc='91e71855' merge='mpr-21098.26'/>
+    <rom name='mpr-21099.27' crc='308a2768' merge='mpr-21099.27'/>
+    <rom name='mpr-21100.28' crc='5149b286' merge='mpr-21100.28'/>
+    <rom name='mpr-21101.29' crc='e9ed4250' merge='mpr-21101.29'/>
+    <rom name='mpr-21102.30' crc='06c6d4fc' merge='mpr-21102.30'/>
+    <rom name='mpr-21103.31' crc='17c4b27a' merge='mpr-21103.31'/>
+    <rom name='mpr-21104.32' crc='f6f80ffb' merge='mpr-21104.32'/>
+    <rom name='mpr-21105.33' crc='99bdb52b' merge='mpr-21105.33'/>
+    <rom name='mpr-21106.34' crc='ad2b7981' merge='mpr-21106.34'/>
+    <rom name='mpr-21107.35' crc='e108ff62' merge='mpr-21107.35'/>
+    <rom name='mpr-21108.36' crc='cddc7a6e' merge='mpr-21108.36'/>
+    <rom name='mpr-21109.37' crc='92d6141d' merge='mpr-21109.37'/>
+    <rom name='mpr-21110.38' crc='4d6e3148' merge='mpr-21110.38'/>
+    <rom name='mpr-21111.39' crc='0a046d7a' merge='mpr-21111.39'/>
+    <rom name='mpr-21112.40' crc='9afd9feb' merge='mpr-21112.40'/>
+    <rom name='mpr-21113.41' crc='864bf325' merge='mpr-21113.41'/>
+    <rom name='epr-21118.21' crc='598c00f0' merge='epr-21118.21'/>
+    <rom name='mpr-21094.22' crc='c262b80a' merge='mpr-21094.22'/>
+    <rom name='mpr-21096.24' crc='0a0021a0' merge='mpr-21096.24'/>
+    <rom name='mpr-21095.23' crc='16d27a0a' merge='mpr-21095.23'/>
+    <rom name='mpr-21097.25' crc='0d8033fc' merge='mpr-21097.25'/>
+  </game>
+  <game name='scud' sourcefile='Games.xml'>
+    <description>Scud Race (Export, Twin/DX)</description>
+    <year>1996</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19691.20' crc='83523b89'/>
+    <rom name='epr-19690.19' crc='25f007fe'/>
+    <rom name='epr-19689.18' crc='cbce6d62'/>
+    <rom name='epr-19688.17' crc='a4c85103'/>
+    <rom name='mpr-19661.04' crc='8e3fd241'/>
+    <rom name='mpr-19660.03' crc='d999c935'/>
+    <rom name='mpr-19659.02' crc='c47e7002'/>
+    <rom name='mpr-19658.01' crc='d523235c'/>
+    <rom name='mpr-19665.08' crc='f97c78f9'/>
+    <rom name='mpr-19664.07' crc='b9d11294'/>
+    <rom name='mpr-19663.06' crc='f6af1ca4'/>
+    <rom name='mpr-19662.05' crc='3c700eff'/>
+    <rom name='mpr-19669.12' crc='cdc43c61'/>
+    <rom name='mpr-19668.11' crc='0b4dd8d5'/>
+    <rom name='mpr-19667.10' crc='a8676799'/>
+    <rom name='mpr-19666.09' crc='b53dc97f'/>
+    <rom name='mpr-19672.26' crc='588c29fd'/>
+    <rom name='mpr-19673.27' crc='156abaa9'/>
+    <rom name='mpr-19674.28' crc='c7b0f98c'/>
+    <rom name='mpr-19675.29' crc='ff113396'/>
+    <rom name='mpr-19676.30' crc='fd852ead'/>
+    <rom name='mpr-19677.31' crc='c6ac0347'/>
+    <rom name='mpr-19678.32' crc='b8819cfe'/>
+    <rom name='mpr-19679.33' crc='e126c3e3'/>
+    <rom name='mpr-19680.34' crc='00ea5cef'/>
+    <rom name='mpr-19681.35' crc='c949325f'/>
+    <rom name='mpr-19682.36' crc='ce5ca065'/>
+    <rom name='mpr-19683.37' crc='e5856419'/>
+    <rom name='mpr-19684.38' crc='56f6ec97'/>
+    <rom name='mpr-19685.39' crc='42b49304'/>
+    <rom name='mpr-19686.40' crc='84eed592'/>
+    <rom name='mpr-19687.41' crc='776ce694'/>
+    <rom name='epr-19692.21' crc='a94f5521'/>
+    <rom name='mpr-19670.22' crc='bd31cc06'/>
+    <rom name='mpr-19671.24' crc='8e8526ab'/>
+    <rom name='epr-19612.2' crc='13978fd4'/>
+    <rom name='mpr-19603.57' crc='b1b1765f'/>
+    <rom name='mpr-19604.58' crc='6ac85b49'/>
+    <rom name='mpr-19605.59' crc='bec891eb'/>
+    <rom name='mpr-19606.60' crc='adad46b2'/>
+    <rom name='epr-19338a.bin' crc='c9fac464'/>
+  </game>
+  <game name='scudau' sourcefile='Games.xml' cloneof='scud' romof='scud'>
+    <description>Scud Race (Australia, Twin/DX)</description>
+    <year>1996</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19734.20' crc='be897336'/>
+    <rom name='epr-19733.19' crc='6565e29a'/>
+    <rom name='epr-19732.18' crc='23e864bb'/>
+    <rom name='epr-19731.17' crc='3ee6447e'/>
+    <rom name='mpr-19661.04' crc='8e3fd241' merge='mpr-19661.04'/>
+    <rom name='mpr-19660.03' crc='d999c935' merge='mpr-19660.03'/>
+    <rom name='mpr-19659.02' crc='c47e7002' merge='mpr-19659.02'/>
+    <rom name='mpr-19658.01' crc='d523235c' merge='mpr-19658.01'/>
+    <rom name='mpr-19665.08' crc='f97c78f9' merge='mpr-19665.08'/>
+    <rom name='mpr-19664.07' crc='b9d11294' merge='mpr-19664.07'/>
+    <rom name='mpr-19663.06' crc='f6af1ca4' merge='mpr-19663.06'/>
+    <rom name='mpr-19662.05' crc='3c700eff' merge='mpr-19662.05'/>
+    <rom name='mpr-19669.12' crc='cdc43c61' merge='mpr-19669.12'/>
+    <rom name='mpr-19668.11' crc='0b4dd8d5' merge='mpr-19668.11'/>
+    <rom name='mpr-19667.10' crc='a8676799' merge='mpr-19667.10'/>
+    <rom name='mpr-19666.09' crc='b53dc97f' merge='mpr-19666.09'/>
+    <rom name='mpr-19672.26' crc='588c29fd' merge='mpr-19672.26'/>
+    <rom name='mpr-19673.27' crc='156abaa9' merge='mpr-19673.27'/>
+    <rom name='mpr-19674.28' crc='c7b0f98c' merge='mpr-19674.28'/>
+    <rom name='mpr-19675.29' crc='ff113396' merge='mpr-19675.29'/>
+    <rom name='mpr-19676.30' crc='fd852ead' merge='mpr-19676.30'/>
+    <rom name='mpr-19677.31' crc='c6ac0347' merge='mpr-19677.31'/>
+    <rom name='mpr-19678.32' crc='b8819cfe' merge='mpr-19678.32'/>
+    <rom name='mpr-19679.33' crc='e126c3e3' merge='mpr-19679.33'/>
+    <rom name='mpr-19680.34' crc='00ea5cef' merge='mpr-19680.34'/>
+    <rom name='mpr-19681.35' crc='c949325f' merge='mpr-19681.35'/>
+    <rom name='mpr-19682.36' crc='ce5ca065' merge='mpr-19682.36'/>
+    <rom name='mpr-19683.37' crc='e5856419' merge='mpr-19683.37'/>
+    <rom name='mpr-19684.38' crc='56f6ec97' merge='mpr-19684.38'/>
+    <rom name='mpr-19685.39' crc='42b49304' merge='mpr-19685.39'/>
+    <rom name='mpr-19686.40' crc='84eed592' merge='mpr-19686.40'/>
+    <rom name='mpr-19687.41' crc='776ce694' merge='mpr-19687.41'/>
+    <rom name='epr-19692.21' crc='a94f5521' merge='epr-19692.21'/>
+    <rom name='mpr-19670.22' crc='bd31cc06' merge='mpr-19670.22'/>
+    <rom name='mpr-19671.24' crc='8e8526ab' merge='mpr-19671.24'/>
+    <rom name='epr-19612.2' crc='13978fd4' merge='epr-19612.2'/>
+    <rom name='mpr-19603.57' crc='b1b1765f' merge='mpr-19603.57'/>
+    <rom name='mpr-19604.58' crc='6ac85b49' merge='mpr-19604.58'/>
+    <rom name='mpr-19605.59' crc='bec891eb' merge='mpr-19605.59'/>
+    <rom name='mpr-19606.60' crc='adad46b2' merge='mpr-19606.60'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='scuddx' sourcefile='Games.xml' cloneof='scud' romof='scud'>
+    <description>Scud Race (Export, Deluxe, Revision A)</description>
+    <year>1996</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19607a.20' crc='24301a12'/>
+    <rom name='epr-19608a.19' crc='1426160e'/>
+    <rom name='epr-19609a.18' crc='ec418b68'/>
+    <rom name='epr-19610a.17' crc='53f5cd94'/>
+    <rom name='mpr-19589.4' crc='5482238f'/>
+    <rom name='mpr-19590.3' crc='a5cd4718'/>
+    <rom name='mpr-19591.2' crc='48e1aaff'/>
+    <rom name='mpr-19592.1' crc='d9003b6f'/>
+    <rom name='mpr-19593.8' crc='21e48ff8'/>
+    <rom name='mpr-19594.7' crc='654c26b0'/>
+    <rom name='mpr-19595.6' crc='d06fd9d6'/>
+    <rom name='mpr-19596.5' crc='5672e3f4'/>
+    <rom name='mpr-19597.12' crc='4d0ffe60'/>
+    <rom name='mpr-19598.11' crc='a081592e'/>
+    <rom name='mpr-19599.10' crc='65c1d33c'/>
+    <rom name='mpr-19600.9' crc='a25da127'/>
+    <rom name='mpr-19574.26' crc='9be8f314'/>
+    <rom name='mpr-19573.27' crc='57b61d65'/>
+    <rom name='mpr-19576.28' crc='85f9b587'/>
+    <rom name='mpr-19575.29' crc='dab11c34'/>
+    <rom name='mpr-19578.30' crc='ae882c42'/>
+    <rom name='mpr-19577.31' crc='36a1fe5d'/>
+    <rom name='mpr-19580.32' crc='62503cee'/>
+    <rom name='mpr-19579.33' crc='af9698d0'/>
+    <rom name='mpr-19582.34' crc='c8b9cf1a'/>
+    <rom name='mpr-19581.35' crc='8863c2d7'/>
+    <rom name='mpr-19584.36' crc='256b056c'/>
+    <rom name='mpr-19583.37' crc='c22cb5aa'/>
+    <rom name='mpr-19586.38' crc='ac37163e'/>
+    <rom name='mpr-19585.39' crc='e2598012'/>
+    <rom name='mpr-19588.40' crc='42e20ae9'/>
+    <rom name='mpr-19587.41' crc='c288c910'/>
+    <rom name='epr-19611a.21' crc='9d4a34f6'/>
+    <rom name='mpr-19601.22' crc='ba350fcc'/>
+    <rom name='mpr-19602.24' crc='a92231c1'/>
+    <rom name='epr-19612.2' crc='13978fd4' merge='epr-19612.2'/>
+    <rom name='mpr-19603.57' crc='b1b1765f' merge='mpr-19603.57'/>
+    <rom name='mpr-19604.58' crc='6ac85b49' merge='mpr-19604.58'/>
+    <rom name='mpr-19605.59' crc='bec891eb' merge='mpr-19605.59'/>
+    <rom name='mpr-19606.60' crc='adad46b2' merge='mpr-19606.60'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='scuddxo' sourcefile='Games.xml' cloneof='scud' romof='scud'>
+    <description>Scud Race (Export, Deluxe)</description>
+    <year>1996</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19607.20' crc='365ce059'/>
+    <rom name='epr-19608.19' crc='56b46d26'/>
+    <rom name='epr-19609.18' crc='75d2675c'/>
+    <rom name='epr-19610.17' crc='3632870a'/>
+    <rom name='mpr-19589.4' crc='5482238f'/>
+    <rom name='mpr-19590.3' crc='a5cd4718'/>
+    <rom name='mpr-19591.2' crc='48e1aaff'/>
+    <rom name='mpr-19592.1' crc='d9003b6f'/>
+    <rom name='mpr-19593.8' crc='21e48ff8'/>
+    <rom name='mpr-19594.7' crc='654c26b0'/>
+    <rom name='mpr-19595.6' crc='d06fd9d6'/>
+    <rom name='mpr-19596.5' crc='5672e3f4'/>
+    <rom name='mpr-19597.12' crc='4d0ffe60'/>
+    <rom name='mpr-19598.11' crc='a081592e'/>
+    <rom name='mpr-19599.10' crc='65c1d33c'/>
+    <rom name='mpr-19600.9' crc='a25da127'/>
+    <rom name='mpr-19574.26' crc='9be8f314'/>
+    <rom name='mpr-19573.27' crc='57b61d65'/>
+    <rom name='mpr-19576.28' crc='85f9b587'/>
+    <rom name='mpr-19575.29' crc='dab11c34'/>
+    <rom name='mpr-19578.30' crc='ae882c42'/>
+    <rom name='mpr-19577.31' crc='36a1fe5d'/>
+    <rom name='mpr-19580.32' crc='62503cee'/>
+    <rom name='mpr-19579.33' crc='af9698d0'/>
+    <rom name='mpr-19582.34' crc='c8b9cf1a'/>
+    <rom name='mpr-19581.35' crc='8863c2d7'/>
+    <rom name='mpr-19584.36' crc='256b056c'/>
+    <rom name='mpr-19583.37' crc='c22cb5aa'/>
+    <rom name='mpr-19586.38' crc='ac37163e'/>
+    <rom name='mpr-19585.39' crc='e2598012'/>
+    <rom name='mpr-19588.40' crc='42e20ae9'/>
+    <rom name='mpr-19587.41' crc='c288c910'/>
+    <rom name='epr-19611.21' crc='8888bf36'/>
+    <rom name='mpr-19601.22' crc='ba350fcc'/>
+    <rom name='mpr-19602.24' crc='a92231c1'/>
+    <rom name='epr-19612.2' crc='13978fd4' merge='epr-19612.2'/>
+    <rom name='mpr-19603.57' crc='b1b1765f' merge='mpr-19603.57'/>
+    <rom name='mpr-19604.58' crc='6ac85b49' merge='mpr-19604.58'/>
+    <rom name='mpr-19605.59' crc='bec891eb' merge='mpr-19605.59'/>
+    <rom name='mpr-19606.60' crc='adad46b2' merge='mpr-19606.60'/>
+    <rom name='epr-19338a.bin' crc='c9fac464' merge='epr-19338a.bin'/>
+  </game>
+  <game name='scudplus' sourcefile='Games.xml' cloneof='scud' romof='scud'>
+    <description>Scud Race Plus (Export, Twin/DX, Revision A)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20095a.20' crc='58c7e393'/>
+    <rom name='epr-20094a.19' crc='dbf17a43'/>
+    <rom name='epr-20093a.18' crc='4ed2e35d'/>
+    <rom name='epr-20092a.17' crc='a94ec57e'/>
+    <rom name='mpr-19661.04' crc='8e3fd241' merge='mpr-19661.04'/>
+    <rom name='mpr-19660.03' crc='d999c935' merge='mpr-19660.03'/>
+    <rom name='mpr-19659.02' crc='c47e7002' merge='mpr-19659.02'/>
+    <rom name='mpr-19658.01' crc='d523235c' merge='mpr-19658.01'/>
+    <rom name='mpr-19665.08' crc='f97c78f9' merge='mpr-19665.08'/>
+    <rom name='mpr-19664.07' crc='b9d11294' merge='mpr-19664.07'/>
+    <rom name='mpr-19663.06' crc='f6af1ca4' merge='mpr-19663.06'/>
+    <rom name='mpr-19662.05' crc='3c700eff' merge='mpr-19662.05'/>
+    <rom name='mpr-19669.12' crc='cdc43c61' merge='mpr-19669.12'/>
+    <rom name='mpr-19668.11' crc='0b4dd8d5' merge='mpr-19668.11'/>
+    <rom name='mpr-19667.10' crc='a8676799' merge='mpr-19667.10'/>
+    <rom name='mpr-19666.09' crc='b53dc97f' merge='mpr-19666.09'/>
+    <rom name='mpr-19672.26' crc='588c29fd' merge='mpr-19672.26'/>
+    <rom name='mpr-19673.27' crc='156abaa9' merge='mpr-19673.27'/>
+    <rom name='mpr-19674.28' crc='c7b0f98c' merge='mpr-19674.28'/>
+    <rom name='mpr-19675.29' crc='ff113396' merge='mpr-19675.29'/>
+    <rom name='mpr-19676.30' crc='fd852ead' merge='mpr-19676.30'/>
+    <rom name='mpr-19677.31' crc='c6ac0347' merge='mpr-19677.31'/>
+    <rom name='mpr-19678.32' crc='b8819cfe' merge='mpr-19678.32'/>
+    <rom name='mpr-19679.33' crc='e126c3e3' merge='mpr-19679.33'/>
+    <rom name='mpr-19680.34' crc='00ea5cef' merge='mpr-19680.34'/>
+    <rom name='mpr-19681.35' crc='c949325f' merge='mpr-19681.35'/>
+    <rom name='mpr-19682.36' crc='ce5ca065' merge='mpr-19682.36'/>
+    <rom name='mpr-19683.37' crc='e5856419' merge='mpr-19683.37'/>
+    <rom name='mpr-19684.38' crc='56f6ec97' merge='mpr-19684.38'/>
+    <rom name='mpr-19685.39' crc='42b49304' merge='mpr-19685.39'/>
+    <rom name='mpr-19686.40' crc='84eed592' merge='mpr-19686.40'/>
+    <rom name='mpr-19687.41' crc='776ce694' merge='mpr-19687.41'/>
+    <rom name='epr-20096a.21' crc='0fef288b'/>
+    <rom name='mpr-19670.22' crc='bd31cc06' merge='mpr-19670.22'/>
+    <rom name='mpr-20101.24' crc='66d1e31f'/>
+    <rom name='epr-19612.2' crc='13978fd4' merge='epr-19612.2'/>
+    <rom name='mpr-19603.57' crc='b1b1765f' merge='mpr-19603.57'/>
+    <rom name='mpr-19604.58' crc='6ac85b49' merge='mpr-19604.58'/>
+    <rom name='mpr-19605.59' crc='bec891eb' merge='mpr-19605.59'/>
+    <rom name='mpr-19606.60' crc='adad46b2' merge='mpr-19606.60'/>
+    <rom name='epr-19338.bin' crc='dbf88de6'/>
+    <rom name='mpr-20100.16' crc='c99e2c01'/>
+    <rom name='mpr-20099.15' crc='fc9bd7d9'/>
+    <rom name='mpr-20098.14' crc='8355fa41'/>
+    <rom name='mpr-20097.13' crc='269a9dbe'/>
+  </game>
+  <game name='scudplusa' sourcefile='Games.xml' cloneof='scud' romof='scud'>
+    <description>Scud Race Plus (Export, Twin/DX)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20095.20' crc='44467bc1'/>
+    <rom name='epr-20094.19' crc='299b6257'/>
+    <rom name='epr-20093.18' crc='9a85c611'/>
+    <rom name='epr-20092.17' crc='6f9161c1'/>
+    <rom name='mpr-19661.04' crc='8e3fd241' merge='mpr-19661.04'/>
+    <rom name='mpr-19660.03' crc='d999c935' merge='mpr-19660.03'/>
+    <rom name='mpr-19659.02' crc='c47e7002' merge='mpr-19659.02'/>
+    <rom name='mpr-19658.01' crc='d523235c' merge='mpr-19658.01'/>
+    <rom name='mpr-19665.08' crc='f97c78f9' merge='mpr-19665.08'/>
+    <rom name='mpr-19664.07' crc='b9d11294' merge='mpr-19664.07'/>
+    <rom name='mpr-19663.06' crc='f6af1ca4' merge='mpr-19663.06'/>
+    <rom name='mpr-19662.05' crc='3c700eff' merge='mpr-19662.05'/>
+    <rom name='mpr-19669.12' crc='cdc43c61' merge='mpr-19669.12'/>
+    <rom name='mpr-19668.11' crc='0b4dd8d5' merge='mpr-19668.11'/>
+    <rom name='mpr-19667.10' crc='a8676799' merge='mpr-19667.10'/>
+    <rom name='mpr-19666.09' crc='b53dc97f' merge='mpr-19666.09'/>
+    <rom name='mpr-19672.26' crc='588c29fd' merge='mpr-19672.26'/>
+    <rom name='mpr-19673.27' crc='156abaa9' merge='mpr-19673.27'/>
+    <rom name='mpr-19674.28' crc='c7b0f98c' merge='mpr-19674.28'/>
+    <rom name='mpr-19675.29' crc='ff113396' merge='mpr-19675.29'/>
+    <rom name='mpr-19676.30' crc='fd852ead' merge='mpr-19676.30'/>
+    <rom name='mpr-19677.31' crc='c6ac0347' merge='mpr-19677.31'/>
+    <rom name='mpr-19678.32' crc='b8819cfe' merge='mpr-19678.32'/>
+    <rom name='mpr-19679.33' crc='e126c3e3' merge='mpr-19679.33'/>
+    <rom name='mpr-19680.34' crc='00ea5cef' merge='mpr-19680.34'/>
+    <rom name='mpr-19681.35' crc='c949325f' merge='mpr-19681.35'/>
+    <rom name='mpr-19682.36' crc='ce5ca065' merge='mpr-19682.36'/>
+    <rom name='mpr-19683.37' crc='e5856419' merge='mpr-19683.37'/>
+    <rom name='mpr-19684.38' crc='56f6ec97' merge='mpr-19684.38'/>
+    <rom name='mpr-19685.39' crc='42b49304' merge='mpr-19685.39'/>
+    <rom name='mpr-19686.40' crc='84eed592' merge='mpr-19686.40'/>
+    <rom name='mpr-19687.41' crc='776ce694' merge='mpr-19687.41'/>
+    <rom name='epr-20096a.21' crc='0fef288b'/>
+    <rom name='mpr-19670.22' crc='bd31cc06' merge='mpr-19670.22'/>
+    <rom name='mpr-20101.24' crc='66d1e31f'/>
+    <rom name='epr-19612.2' crc='13978fd4' merge='epr-19612.2'/>
+    <rom name='mpr-19603.57' crc='b1b1765f' merge='mpr-19603.57'/>
+    <rom name='mpr-19604.58' crc='6ac85b49' merge='mpr-19604.58'/>
+    <rom name='mpr-19605.59' crc='bec891eb' merge='mpr-19605.59'/>
+    <rom name='mpr-19606.60' crc='adad46b2' merge='mpr-19606.60'/>
+    <rom name='epr-19338.bin' crc='dbf88de6'/>
+    <rom name='mpr-20100.16' crc='c99e2c01'/>
+    <rom name='mpr-20099.15' crc='fc9bd7d9'/>
+    <rom name='mpr-20098.14' crc='8355fa41'/>
+    <rom name='mpr-20097.13' crc='269a9dbe'/>
+  </game>
+  <game name='skichamp' sourcefile='Games.xml'>
+    <description>Ski Champ (Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20355.20' crc='7a784e67'/>
+    <rom name='epr-20354.18' crc='aca62bf8'/>
+    <rom name='epr-20353.19' crc='badf5f04'/>
+    <rom name='epr-20352.17' crc='c92c2545'/>
+    <rom name='mpr-20321.4' crc='698a97ee'/>
+    <rom name='mpr-20320.3' crc='edc9a9e5'/>
+    <rom name='mpr-20319.2' crc='228047f3'/>
+    <rom name='mpr-20318.1' crc='b0cad2c8'/>
+    <rom name='mpr-20325.8' crc='cb0eb133'/>
+    <rom name='mpr-20324.7' crc='8f5848d0'/>
+    <rom name='mpr-20323.6' crc='075de2ae'/>
+    <rom name='mpr-20322.5' crc='2f69b205'/>
+    <rom name='mpr-20329.12' crc='0807ea33'/>
+    <rom name='mpr-20328.11' crc='5fa5e9f5'/>
+    <rom name='mpr-20327.10' crc='f55f51b2'/>
+    <rom name='mpr-20326.9' crc='b63e1cb4'/>
+    <rom name='mpr-20333.16' crc='76b8e0fa'/>
+    <rom name='mpr-20332.15' crc='500db1ee'/>
+    <rom name='mpr-20331.14' crc='c4c45fb1'/>
+    <rom name='mpr-20330.13' crc='fbc7bbd5'/>
+    <rom name='mpr-20336.26' crc='261e3d39'/>
+    <rom name='mpr-20337.27' crc='2c7e9eb8'/>
+    <rom name='mpr-20338.28' crc='0aa626df'/>
+    <rom name='mpr-20339.29' crc='7af05417'/>
+    <rom name='mpr-20340.30' crc='82ef4a21'/>
+    <rom name='mpr-20341.31' crc='9373096e'/>
+    <rom name='mpr-20342.32' crc='ef98cd37'/>
+    <rom name='mpr-20343.33' crc='9825a46b'/>
+    <rom name='mpr-20344.34' crc='acbbcd68'/>
+    <rom name='mpr-20345.35' crc='431e7585'/>
+    <rom name='mpr-20346.36' crc='4f87f2d2'/>
+    <rom name='mpr-20347.37' crc='389a2d98'/>
+    <rom name='mpr-20348.38' crc='8be8d4d2'/>
+    <rom name='mpr-20349.39' crc='a3240428'/>
+    <rom name='mpr-20350.40' crc='c48f9ace'/>
+    <rom name='mpr-20351.41' crc='1fbd3e10'/>
+    <rom name='epr-20356.21' crc='4e4015d0'/>
+    <rom name='mpr-20334.22' crc='de1d67cd'/>
+    <rom name='mpr-20335.24' crc='7300d0a2'/>
+  </game>
+  <game name='spikeofe' sourcefile='Games.xml'>
+    <description>Spikeout Final Edition (Export)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21656.20' crc='bd2aaf64'/>
+    <rom name='epr-21655.19' crc='68a9e417'/>
+    <rom name='epr-21654.18' crc='5be245a3'/>
+    <rom name='epr-21653.17' crc='f4bd9c3c'/>
+    <rom name='mpr-21616.4' crc='2900bdd8'/>
+    <rom name='mpr-21615.3' crc='7727a6fc'/>
+    <rom name='mpr-21614.2' crc='e21d619b'/>
+    <rom name='mpr-21613.1' crc='d039e608'/>
+    <rom name='mpr-21620.8' crc='476f027f'/>
+    <rom name='mpr-21619.7' crc='e1076f47'/>
+    <rom name='mpr-21618.6' crc='633530fa'/>
+    <rom name='mpr-21617.5' crc='a08c6790'/>
+    <rom name='mpr-21624.12' crc='a158b7da'/>
+    <rom name='mpr-21623.11' crc='d9301674'/>
+    <rom name='mpr-21622.10' crc='5f5a1563'/>
+    <rom name='mpr-21621.9' crc='551a444d'/>
+    <rom name='mpr-21628.16' crc='de3866ea'/>
+    <rom name='mpr-21627.15' crc='efe94608'/>
+    <rom name='mpr-21626.14' crc='1861652e'/>
+    <rom name='mpr-21625.13' crc='72a34707'/>
+    <rom name='mpr-21633.26' crc='735fb67d'/>
+    <rom name='mpr-21634.27' crc='876e6788'/>
+    <rom name='mpr-21635.28' crc='093534a8'/>
+    <rom name='mpr-21636.29' crc='2433f21c'/>
+    <rom name='mpr-21637.30' crc='edb8f2b8'/>
+    <rom name='mpr-21638.31' crc='3773a215'/>
+    <rom name='mpr-21639.32' crc='313d1872'/>
+    <rom name='mpr-21640.33' crc='271366be'/>
+    <rom name='mpr-21641.34' crc='782147e4'/>
+    <rom name='mpr-21642.35' crc='844732c9'/>
+    <rom name='mpr-21643.36' crc='9e922e9d'/>
+    <rom name='mpr-21644.37' crc='617aa65a'/>
+    <rom name='mpr-21645.38' crc='71396f52'/>
+    <rom name='mpr-21646.39' crc='90fd9c87'/>
+    <rom name='mpr-21647.40' crc='cf87991f'/>
+    <rom name='mpr-21648.41' crc='30f974a1'/>
+    <rom name='epr-21657.21' crc='7242e8fd'/>
+    <rom name='mpr-21629.22' crc='bc9701c4'/>
+    <rom name='mpr-21630.24' crc='9f2deadd'/>
+    <rom name='mpr-21631.23' crc='299036c5'/>
+    <rom name='mpr-21632.25' crc='ff162f0d'/>
+    <rom name='epr-21658.ic2' crc='50bad8cb'/>
+    <rom name='mpr-21649.ic18' crc='dac87f47'/>
+    <rom name='mpr-21650.ic20' crc='86d90123'/>
+    <rom name='mpr-21651.ic22' crc='81715565'/>
+    <rom name='mpr-21652.ic24' crc='e7c8c9bf'/>
+  </game>
+  <game name='spikeout' sourcefile='Games.xml'>
+    <description>Spikeout (Export, Revision C)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21217c.20' crc='ea8c30ce'/>
+    <rom name='epr-21216c.19' crc='867d3a0f'/>
+    <rom name='epr-21215c.18' crc='e2878221'/>
+    <rom name='epr-21214c.17' crc='8dc0a85c'/>
+    <rom name='mpr-21137.4' crc='3572d417'/>
+    <rom name='mpr-21136.3' crc='b730fe50'/>
+    <rom name='mpr-21135.2' crc='f3fa7c50'/>
+    <rom name='mpr-21134.1' crc='65399935'/>
+    <rom name='mpr-21141.8' crc='1d0763cb'/>
+    <rom name='mpr-21140.7' crc='1390746d'/>
+    <rom name='mpr-21139.6' crc='06d441f5'/>
+    <rom name='mpr-21138.5' crc='a9a2de2c'/>
+    <rom name='mpr-21145.12' crc='0e6a3ae3'/>
+    <rom name='mpr-21144.11' crc='d93d778c'/>
+    <rom name='mpr-21143.10' crc='ddcada10'/>
+    <rom name='mpr-21142.9' crc='da35cd51'/>
+    <rom name='mpr-21149.16' crc='9e4ebe58'/>
+    <rom name='mpr-21148.15' crc='56d980ad'/>
+    <rom name='mpr-21147.14' crc='a1f2b73f'/>
+    <rom name='mpr-21146.13' crc='85f55311'/>
+    <rom name='mpr-21154.26' crc='3b76f8e8'/>
+    <rom name='mpr-21155.27' crc='aca19901'/>
+    <rom name='mpr-21156.28' crc='5c9df226'/>
+    <rom name='mpr-21157.29' crc='f6fb1279'/>
+    <rom name='mpr-21158.30' crc='61707554'/>
+    <rom name='mpr-21159.31' crc='fcc791f5'/>
+    <rom name='mpr-21160.32' crc='b40a38d3'/>
+    <rom name='mpr-21161.33' crc='559063f0'/>
+    <rom name='mpr-21162.34' crc='acc4b2e4'/>
+    <rom name='mpr-21163.35' crc='653c54c7'/>
+    <rom name='mpr-21164.36' crc='902fd1e0'/>
+    <rom name='mpr-21165.37' crc='50b3be05'/>
+    <rom name='mpr-21166.38' crc='8f87a782'/>
+    <rom name='mpr-21167.39' crc='0f3994d0'/>
+    <rom name='mpr-21168.40' crc='c58be980'/>
+    <rom name='mpr-21169.41' crc='aa3b2cc0'/>
+    <rom name='epr-21218.21' crc='5821001a'/>
+    <rom name='mpr-21150.22' crc='125201ce'/>
+    <rom name='mpr-21152.24' crc='0afdee87'/>
+    <rom name='mpr-21151.23' crc='599527b9'/>
+    <rom name='mpr-21153.25' crc='4155f307'/>
+    <rom name='epr-21219.ic2' crc='4e042b21'/>
+    <rom name='mpr-21170.ic18' crc='f51f7ce3'/>
+    <rom name='mpr-21171.ic20' crc='8d3bd5b6'/>
+    <rom name='mpr-21172.ic22' crc='be221e27'/>
+    <rom name='mpr-21173.ic24' crc='ca7226d6'/>
+  </game>
+  <game name='srally2' sourcefile='Games.xml'>
+    <description>Sega Rally 2 (Export)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20635.20' crc='7937473f'/>
+    <rom name='epr-20634.19' crc='45a09245'/>
+    <rom name='epr-20633.18' crc='f5a24f24'/>
+    <rom name='epr-20632.17' crc='6829a801'/>
+    <rom name='mpr-20605.4' crc='00513401'/>
+    <rom name='mpr-20604.3' crc='99c5f396'/>
+    <rom name='mpr-20603.2' crc='ad0d8eb8'/>
+    <rom name='mpr-20602.1' crc='60cfa72a'/>
+    <rom name='mpr-20609.8' crc='c03cc0e5'/>
+    <rom name='mpr-20608.7' crc='0c9b0571'/>
+    <rom name='mpr-20607.6' crc='6da85aa3'/>
+    <rom name='mpr-20606.5' crc='072498fd'/>
+    <rom name='mpr-20613.12' crc='2938c0d9'/>
+    <rom name='mpr-20612.11' crc='721a44b6'/>
+    <rom name='mpr-20611.10' crc='5d9f8ba2'/>
+    <rom name='mpr-20610.9' crc='b6e0ff4e'/>
+    <rom name='mpr-20616.26' crc='e11dcf8b'/>
+    <rom name='mpr-20617.27' crc='96acef3f'/>
+    <rom name='mpr-20618.28' crc='6c281281'/>
+    <rom name='mpr-20619.29' crc='0fa65819'/>
+    <rom name='mpr-20620.30' crc='ee79585f'/>
+    <rom name='mpr-20621.31' crc='3a99148f'/>
+    <rom name='mpr-20622.32' crc='0618f056'/>
+    <rom name='mpr-20623.33' crc='ccf31b85'/>
+    <rom name='mpr-20624.34' crc='90f30936'/>
+    <rom name='mpr-20625.35' crc='04f804fa'/>
+    <rom name='mpr-20626.36' crc='2d6c97d6'/>
+    <rom name='mpr-20627.37' crc='a14ee871'/>
+    <rom name='mpr-20628.38' crc='bba829a3'/>
+    <rom name='mpr-20629.39' crc='ead2eb31'/>
+    <rom name='mpr-20630.40' crc='cc5881b8'/>
+    <rom name='mpr-20631.41' crc='5cb69ffd'/>
+    <rom name='epr-20636.21' crc='7139ebf8'/>
+    <rom name='mpr-20614.22' crc='a3930e4a'/>
+    <rom name='mpr-20615.24' crc='62e8a94a'/>
+    <rom name='epr-20641.2' crc='c9b82035'/>
+    <rom name='mpr-20637.57' crc='d66e8a02'/>
+    <rom name='mpr-20638.58' crc='d1513382'/>
+    <rom name='mpr-20639.59' crc='f6603b7b'/>
+    <rom name='mpr-20640.60' crc='9eea07b7'/>
+    <rom name='epr-20512.bin' crc='cf64350d'/>
+  </game>
+  <game name='srally2p' sourcefile='Games.xml' cloneof='srally2' romof='srally2'>
+    <description>Sega Rally 2 (Prototype)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='ic20.20' crc='5cc4fea1'/>
+    <rom name='ic19.19' crc='ef8c5fd0'/>
+    <rom name='ic18.18' crc='de4f06e9'/>
+    <rom name='ic17.17' crc='328796e5'/>
+    <rom name='mpr-20605.4' crc='00513401' merge='mpr-20605.4'/>
+    <rom name='mpr-20604.3' crc='99c5f396' merge='mpr-20604.3'/>
+    <rom name='mpr-20603.2' crc='ad0d8eb8' merge='mpr-20603.2'/>
+    <rom name='mpr-20602.1' crc='60cfa72a' merge='mpr-20602.1'/>
+    <rom name='mpr-20609.8' crc='c03cc0e5' merge='mpr-20609.8'/>
+    <rom name='mpr-20608.7' crc='0c9b0571' merge='mpr-20608.7'/>
+    <rom name='mpr-20607.6' crc='6da85aa3' merge='mpr-20607.6'/>
+    <rom name='mpr-20606.5' crc='072498fd' merge='mpr-20606.5'/>
+    <rom name='mpr-20613.12' crc='2938c0d9' merge='mpr-20613.12'/>
+    <rom name='mpr-20612.11' crc='721a44b6' merge='mpr-20612.11'/>
+    <rom name='mpr-20611.10' crc='5d9f8ba2' merge='mpr-20611.10'/>
+    <rom name='mpr-20610.9' crc='b6e0ff4e' merge='mpr-20610.9'/>
+    <rom name='mpr-20616.26' crc='e11dcf8b' merge='mpr-20616.26'/>
+    <rom name='mpr-20617.27' crc='96acef3f' merge='mpr-20617.27'/>
+    <rom name='mpr-20618.28' crc='6c281281' merge='mpr-20618.28'/>
+    <rom name='mpr-20619.29' crc='0fa65819' merge='mpr-20619.29'/>
+    <rom name='mpr-20620.30' crc='ee79585f' merge='mpr-20620.30'/>
+    <rom name='mpr-20621.31' crc='3a99148f' merge='mpr-20621.31'/>
+    <rom name='mpr-20622.32' crc='0618f056' merge='mpr-20622.32'/>
+    <rom name='mpr-20623.33' crc='ccf31b85' merge='mpr-20623.33'/>
+    <rom name='mpr-20624.34' crc='90f30936' merge='mpr-20624.34'/>
+    <rom name='mpr-20625.35' crc='04f804fa' merge='mpr-20625.35'/>
+    <rom name='mpr-20626.36' crc='2d6c97d6' merge='mpr-20626.36'/>
+    <rom name='mpr-20627.37' crc='a14ee871' merge='mpr-20627.37'/>
+    <rom name='mpr-20628.38' crc='bba829a3' merge='mpr-20628.38'/>
+    <rom name='mpr-20629.39' crc='ead2eb31' merge='mpr-20629.39'/>
+    <rom name='mpr-20630.40' crc='cc5881b8' merge='mpr-20630.40'/>
+    <rom name='mpr-20631.41' crc='5cb69ffd' merge='mpr-20631.41'/>
+    <rom name='ic21.21' crc='82a4eb2e'/>
+    <rom name='mpr-20614.22' crc='a3930e4a' merge='mpr-20614.22'/>
+    <rom name='mpr-20615.24' crc='62e8a94a' merge='mpr-20615.24'/>
+    <rom name='ic2.2' crc='61c3f8bc'/>
+    <rom name='mpr-20637.57' crc='d66e8a02' merge='mpr-20637.57'/>
+    <rom name='mpr-20638.58' crc='d1513382' merge='mpr-20638.58'/>
+    <rom name='mpr-20639.59' crc='f6603b7b' merge='mpr-20639.59'/>
+    <rom name='mpr-20640.60' crc='9eea07b7' merge='mpr-20640.60'/>
+    <rom name='epr-20512.bin' crc='cf64350d' merge='epr-20512.bin'/>
+  </game>
+  <game name='srally2pa' sourcefile='Games.xml' cloneof='srally2' romof='srally2'>
+    <description>Sega Rally 2 (Prototype Version A)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='prog0.20' crc='a904227d'/>
+    <rom name='prog1.19' crc='b486bb74'/>
+    <rom name='prog2.18' crc='ac1053f8'/>
+    <rom name='prog3.17' crc='e71d3f2d'/>
+    <rom name='mpr-20605.4' crc='00513401' merge='mpr-20605.4'/>
+    <rom name='mpr-20604.3' crc='99c5f396' merge='mpr-20604.3'/>
+    <rom name='mpr-20603.2' crc='ad0d8eb8' merge='mpr-20603.2'/>
+    <rom name='mpr-20602.1' crc='60cfa72a' merge='mpr-20602.1'/>
+    <rom name='mpr-20609.8' crc='c03cc0e5' merge='mpr-20609.8'/>
+    <rom name='mpr-20608.7' crc='0c9b0571' merge='mpr-20608.7'/>
+    <rom name='mpr-20607.6' crc='6da85aa3' merge='mpr-20607.6'/>
+    <rom name='mpr-20606.5' crc='072498fd' merge='mpr-20606.5'/>
+    <rom name='mpr-20613.12' crc='2938c0d9' merge='mpr-20613.12'/>
+    <rom name='mpr-20612.11' crc='721a44b6' merge='mpr-20612.11'/>
+    <rom name='mpr-20611.10' crc='5d9f8ba2' merge='mpr-20611.10'/>
+    <rom name='mpr-20610.9' crc='b6e0ff4e' merge='mpr-20610.9'/>
+    <rom name='mpr-20616.26' crc='e11dcf8b' merge='mpr-20616.26'/>
+    <rom name='mpr-20617.27' crc='96acef3f' merge='mpr-20617.27'/>
+    <rom name='mpr-20618.28' crc='6c281281' merge='mpr-20618.28'/>
+    <rom name='mpr-20619.29' crc='0fa65819' merge='mpr-20619.29'/>
+    <rom name='mpr-20620.30' crc='ee79585f' merge='mpr-20620.30'/>
+    <rom name='mpr-20621.31' crc='3a99148f' merge='mpr-20621.31'/>
+    <rom name='mpr-20622.32' crc='0618f056' merge='mpr-20622.32'/>
+    <rom name='mpr-20623.33' crc='ccf31b85' merge='mpr-20623.33'/>
+    <rom name='mpr-20624.34' crc='90f30936' merge='mpr-20624.34'/>
+    <rom name='mpr-20625.35' crc='04f804fa' merge='mpr-20625.35'/>
+    <rom name='mpr-20626.36' crc='2d6c97d6' merge='mpr-20626.36'/>
+    <rom name='mpr-20627.37' crc='a14ee871' merge='mpr-20627.37'/>
+    <rom name='mpr-20628.38' crc='bba829a3' merge='mpr-20628.38'/>
+    <rom name='mpr-20629.39' crc='ead2eb31' merge='mpr-20629.39'/>
+    <rom name='mpr-20630.40' crc='cc5881b8' merge='mpr-20630.40'/>
+    <rom name='mpr-20631.41' crc='5cb69ffd' merge='mpr-20631.41'/>
+    <rom name='ic21.21' crc='82a4eb2e'/>
+    <rom name='mpr-20614.22' crc='a3930e4a' merge='mpr-20614.22'/>
+    <rom name='mpr-20615.24' crc='62e8a94a' merge='mpr-20615.24'/>
+    <rom name='ic2.2' crc='61c3f8bc'/>
+    <rom name='mpr-20637.57' crc='d66e8a02' merge='mpr-20637.57'/>
+    <rom name='mpr-20638.58' crc='d1513382' merge='mpr-20638.58'/>
+    <rom name='mpr-20639.59' crc='f6603b7b' merge='mpr-20639.59'/>
+    <rom name='mpr-20640.60' crc='9eea07b7' merge='mpr-20640.60'/>
+    <rom name='epr-20512.bin' crc='cf64350d' merge='epr-20512.bin'/>
+  </game>
+  <game name='srally2dx' sourcefile='Games.xml' cloneof='srally2' romof='srally2'>
+    <description>Sega Rally 2 (Export, Deluxe)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20505.20' crc='c24a5097'/>
+    <rom name='epr-20504.19' crc='30bbc46d'/>
+    <rom name='epr-20503.18' crc='6e238b3d'/>
+    <rom name='epr-20502.17' crc='af16846d'/>
+    <rom name='mpr-20475.4' crc='d0f059ee'/>
+    <rom name='mpr-20474.3' crc='66cb4c8e'/>
+    <rom name='mpr-20473.2' crc='dd8e3131'/>
+    <rom name='mpr-20472.1' crc='db8d6a00'/>
+    <rom name='mpr-20479.8' crc='82ec5488'/>
+    <rom name='mpr-20478.7' crc='5dfd59f7'/>
+    <rom name='mpr-20477.6' crc='0b5ac3ad'/>
+    <rom name='mpr-20476.5' crc='cc97d758'/>
+    <rom name='mpr-20483.12' crc='7d487f3a'/>
+    <rom name='mpr-20482.11' crc='d21668d1'/>
+    <rom name='mpr-20481.10' crc='42acc4f9'/>
+    <rom name='mpr-20480.9' crc='1e486a2e'/>
+    <rom name='mpr-20486.26' crc='dab1f70f'/>
+    <rom name='mpr-20487.27' crc='ffb38774'/>
+    <rom name='mpr-20488.28' crc='0c25a1fb'/>
+    <rom name='mpr-20489.29' crc='6e8a911a'/>
+    <rom name='mpr-20490.30' crc='93da0363'/>
+    <rom name='mpr-20491.31' crc='c4808e7a'/>
+    <rom name='mpr-20492.32' crc='d1b27b2b'/>
+    <rom name='mpr-20493.33' crc='e43cc6af'/>
+    <rom name='mpr-20494.34' crc='b997b531'/>
+    <rom name='mpr-20495.35' crc='72480f09'/>
+    <rom name='mpr-20496.36' crc='96f6d3a8'/>
+    <rom name='mpr-20497.37' crc='7dc700a3'/>
+    <rom name='mpr-20498.38' crc='4e844081'/>
+    <rom name='mpr-20499.39' crc='09d9c7d1'/>
+    <rom name='mpr-20500.40' crc='3766fd87'/>
+    <rom name='mpr-20501.41' crc='741da4ac'/>
+    <rom name='epr-20506.21' crc='855af67b'/>
+    <rom name='mpr-20484.22' crc='8ac3fbc4'/>
+    <rom name='mpr-20485.24' crc='cfd8c19b'/>
+    <rom name='epr-20641.2' crc='c9b82035' merge='epr-20641.2'/>
+    <rom name='mpr-20637.57' crc='d66e8a02' merge='mpr-20637.57'/>
+    <rom name='mpr-20638.58' crc='d1513382' merge='mpr-20638.58'/>
+    <rom name='mpr-20639.59' crc='f6603b7b' merge='mpr-20639.59'/>
+    <rom name='mpr-20640.60' crc='9eea07b7' merge='mpr-20640.60'/>
+    <rom name='epr-20512.bin' crc='cf64350d' merge='epr-20512.bin'/>
+  </game>
+  <game name='swtrilgy' sourcefile='Games.xml'>
+    <description>Star Wars Trilogy Arcade (Export, Revision A)</description>
+    <year>1998</year>
+    <manufacturer>Sega, LucasArts</manufacturer>
+    <rom name='epr-21382a.20' crc='69baf117'/>
+    <rom name='epr-21381a.19' crc='2dd34e28'/>
+    <rom name='epr-21380a.18' crc='780fb4e7'/>
+    <rom name='epr-21379a.17' crc='24dc1555'/>
+    <rom name='mpr-21342.04' crc='339525ce'/>
+    <rom name='mpr-21341.03' crc='b2a269e4'/>
+    <rom name='mpr-21340.02' crc='ad36040e'/>
+    <rom name='mpr-21339.01' crc='c0ce5037'/>
+    <rom name='mpr-21346.08' crc='c8733594'/>
+    <rom name='mpr-21345.07' crc='6c183a21'/>
+    <rom name='mpr-21344.06' crc='87453d76'/>
+    <rom name='mpr-21343.05' crc='12552d07'/>
+    <rom name='mpr-21350.12' crc='486195e7'/>
+    <rom name='mpr-21349.11' crc='3d39454b'/>
+    <rom name='mpr-21348.10' crc='1f7cc5f5'/>
+    <rom name='mpr-21347.09' crc='ecb6b934'/>
+    <rom name='mpr-21359.26' crc='34ef4122'/>
+    <rom name='mpr-21360.27' crc='2882b95e'/>
+    <rom name='mpr-21361.28' crc='9b61c3c1'/>
+    <rom name='mpr-21362.29' crc='01a92169'/>
+    <rom name='mpr-21363.30' crc='e7d18fed'/>
+    <rom name='mpr-21364.31' crc='cb6a5468'/>
+    <rom name='mpr-21365.32' crc='ad5449d8'/>
+    <rom name='mpr-21366.33' crc='defb6b95'/>
+    <rom name='mpr-21367.34' crc='dfd51029'/>
+    <rom name='mpr-21368.35' crc='ae90fd21'/>
+    <rom name='mpr-21369.36' crc='bf17eeb4'/>
+    <rom name='mpr-21370.37' crc='2321592a'/>
+    <rom name='mpr-21371.38' crc='a68782fd'/>
+    <rom name='mpr-21372.39' crc='fc3f4e8b'/>
+    <rom name='mpr-21373.40' crc='b76ad261'/>
+    <rom name='mpr-21374.41' crc='ae6c4d28'/>
+    <rom name='epr-21383.21' crc='544d1e28'/>
+    <rom name='mpr-21355.22' crc='c1b2d326'/>
+    <rom name='mpr-21357.24' crc='02703fab'/>
+    <rom name='epr-21384.2' crc='12fa4780'/>
+    <rom name='mpr-21375.18' crc='735157a9'/>
+    <rom name='mpr-21376.20' crc='e635f81e'/>
+    <rom name='mpr-21377.22' crc='720621f8'/>
+    <rom name='mpr-21378.24' crc='1fcf715e'/>
+    <rom name='epr-21119.ic8' crc='65082b14'/>
+  </game>
+  <game name='swtrilgya' sourcefile='Games.xml' cloneof='swtrilgy' romof='swtrilgy'>
+    <description>Star Wars Trilogy Arcade (Export)</description>
+    <year>1998</year>
+    <manufacturer>Sega, LucasArts</manufacturer>
+    <rom name='epr-21382.20' crc='0b9c44a0'/>
+    <rom name='epr-21381.19' crc='bb5757bf'/>
+    <rom name='epr-21380.18' crc='49b182f2'/>
+    <rom name='epr-21379.17' crc='61ad51d9'/>
+    <rom name='mpr-21342.04' crc='339525ce' merge='mpr-21342.04'/>
+    <rom name='mpr-21341.03' crc='b2a269e4' merge='mpr-21341.03'/>
+    <rom name='mpr-21340.02' crc='ad36040e' merge='mpr-21340.02'/>
+    <rom name='mpr-21339.01' crc='c0ce5037' merge='mpr-21339.01'/>
+    <rom name='mpr-21346.08' crc='c8733594' merge='mpr-21346.08'/>
+    <rom name='mpr-21345.07' crc='6c183a21' merge='mpr-21345.07'/>
+    <rom name='mpr-21344.06' crc='87453d76' merge='mpr-21344.06'/>
+    <rom name='mpr-21343.05' crc='12552d07' merge='mpr-21343.05'/>
+    <rom name='mpr-21350.12' crc='486195e7' merge='mpr-21350.12'/>
+    <rom name='mpr-21349.11' crc='3d39454b' merge='mpr-21349.11'/>
+    <rom name='mpr-21348.10' crc='1f7cc5f5' merge='mpr-21348.10'/>
+    <rom name='mpr-21347.09' crc='ecb6b934' merge='mpr-21347.09'/>
+    <rom name='mpr-21359.26' crc='34ef4122' merge='mpr-21359.26'/>
+    <rom name='mpr-21360.27' crc='2882b95e' merge='mpr-21360.27'/>
+    <rom name='mpr-21361.28' crc='9b61c3c1' merge='mpr-21361.28'/>
+    <rom name='mpr-21362.29' crc='01a92169' merge='mpr-21362.29'/>
+    <rom name='mpr-21363.30' crc='e7d18fed' merge='mpr-21363.30'/>
+    <rom name='mpr-21364.31' crc='cb6a5468' merge='mpr-21364.31'/>
+    <rom name='mpr-21365.32' crc='ad5449d8' merge='mpr-21365.32'/>
+    <rom name='mpr-21366.33' crc='defb6b95' merge='mpr-21366.33'/>
+    <rom name='mpr-21367.34' crc='dfd51029' merge='mpr-21367.34'/>
+    <rom name='mpr-21368.35' crc='ae90fd21' merge='mpr-21368.35'/>
+    <rom name='mpr-21369.36' crc='bf17eeb4' merge='mpr-21369.36'/>
+    <rom name='mpr-21370.37' crc='2321592a' merge='mpr-21370.37'/>
+    <rom name='mpr-21371.38' crc='a68782fd' merge='mpr-21371.38'/>
+    <rom name='mpr-21372.39' crc='fc3f4e8b' merge='mpr-21372.39'/>
+    <rom name='mpr-21373.40' crc='b76ad261' merge='mpr-21373.40'/>
+    <rom name='mpr-21374.41' crc='ae6c4d28' merge='mpr-21374.41'/>
+    <rom name='epr-21383.21' crc='544d1e28' merge='epr-21383.21'/>
+    <rom name='mpr-21355.22' crc='c1b2d326' merge='mpr-21355.22'/>
+    <rom name='mpr-21357.24' crc='02703fab' merge='mpr-21357.24'/>
+    <rom name='epr-21384.2' crc='12fa4780' merge='epr-21384.2'/>
+    <rom name='mpr-21375.18' crc='735157a9' merge='mpr-21375.18'/>
+    <rom name='mpr-21376.20' crc='e635f81e' merge='mpr-21376.20'/>
+    <rom name='mpr-21377.22' crc='720621f8' merge='mpr-21377.22'/>
+    <rom name='mpr-21378.24' crc='1fcf715e' merge='mpr-21378.24'/>
+    <rom name='epr-21119.ic8' crc='65082b14' merge='epr-21119.ic8'/>
+  </game>
+  <game name='swtrilgyp' sourcefile='Games.xml' cloneof='swtrilgy' romof='swtrilgy'>
+    <description>Star Wars Trilogy Arcade (Location Test, 16.09.98)</description>
+    <year>1998</year>
+    <manufacturer>Sega, LucasArts</manufacturer>
+    <rom name='epr-crom0.20' crc='da7d49fa'/>
+    <rom name='epr-crom1.19' crc='322b67a5'/>
+    <rom name='epr-crom2.18' crc='e4147534'/>
+    <rom name='epr-crom3.17' crc='84734e94'/>
+    <rom name='epr-crom00.04' crc='dc0d974d'/>
+    <rom name='epr-crom01.03' crc='4d13685d'/>
+    <rom name='epr-crom02.02' crc='1d69c716'/>
+    <rom name='epr-crom03.01' crc='0ddf1f80'/>
+    <rom name='epr-crom10.08' crc='7ac2dfe6'/>
+    <rom name='epr-crom11.07' crc='a04f3b5e'/>
+    <rom name='epr-crom12.06' crc='fe2f392e'/>
+    <rom name='epr-crom13.05' crc='ead1d983'/>
+    <rom name='mpr-21350.12' crc='486195e7' merge='mpr-21350.12'/>
+    <rom name='mpr-21349.11' crc='3d39454b' merge='mpr-21349.11'/>
+    <rom name='mpr-21348.10' crc='1f7cc5f5' merge='mpr-21348.10'/>
+    <rom name='mpr-21347.09' crc='ecb6b934' merge='mpr-21347.09'/>
+    <rom name='epr-vrom01.26' crc='750287bb'/>
+    <rom name='epr-vrom00.27' crc='ac5d8de5'/>
+    <rom name='epr-vrom03.28' crc='9fc09636'/>
+    <rom name='epr-vrom02.29' crc='34190386'/>
+    <rom name='epr-vrom05.30' crc='2c941427'/>
+    <rom name='epr-vrom04.31' crc='ee0733e2'/>
+    <rom name='epr-vrom07.32' crc='50b9f673'/>
+    <rom name='epr-vrom06.33' crc='d1c345c6'/>
+    <rom name='epr-vrom11.34' crc='39fe8657'/>
+    <rom name='epr-vrom10.35' crc='fd18cb56'/>
+    <rom name='epr-vrom13.36' crc='f6efe50d'/>
+    <rom name='epr-vrom12.37' crc='6e4ac064'/>
+    <rom name='epr-vrom15.38' crc='ced63c05'/>
+    <rom name='epr-vrom14.39' crc='2bd25533'/>
+    <rom name='epr-vrom17.40' crc='4f23de3e'/>
+    <rom name='epr-vrom16.41' crc='14f9785e'/>
+    <rom name='epr-srom0.21' crc='2bb06489'/>
+    <rom name='epr-srom1.22' crc='0e52e2ec'/>
+    <rom name='epr-srom3.24' crc='841ed823'/>
+    <rom name='epr-21384.2' crc='12fa4780' merge='epr-21384.2'/>
+    <rom name='mpr-21375.18' crc='735157a9' merge='mpr-21375.18'/>
+    <rom name='mpr-21376.20' crc='e635f81e' merge='mpr-21376.20'/>
+    <rom name='mpr-21377.22' crc='720621f8' merge='mpr-21377.22'/>
+    <rom name='mpr-21378.24' crc='1fcf715e' merge='mpr-21378.24'/>
+    <rom name='epr-21119.ic8' crc='65082b14' merge='epr-21119.ic8'/>
+  </game>
+  <game name='vf3' sourcefile='Games.xml'>
+    <description>Virtua Fighter 3 (Japan, Revision D)</description>
+    <year>1996</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19230d.20' crc='43c08240'/>
+    <rom name='epr-19229d.19' crc='6773f715'/>
+    <rom name='epr-19228d.18' crc='a2470c78'/>
+    <rom name='epr-19227d.17' crc='8b650966'/>
+    <rom name='mpr-19196.4' crc='f386b850'/>
+    <rom name='mpr-19195.3' crc='bd5e27a3'/>
+    <rom name='mpr-19194.2' crc='66254702'/>
+    <rom name='mpr-19193.1' crc='7bab33d2'/>
+    <rom name='mpr-19200.8' crc='74941091'/>
+    <rom name='mpr-19199.7' crc='9f80d6fe'/>
+    <rom name='mpr-19198.6' crc='d8ee5032'/>
+    <rom name='mpr-19197.5' crc='a22d76c9'/>
+    <rom name='mpr-19204.12' crc='2f93310a'/>
+    <rom name='mpr-19203.11' crc='0afa6334'/>
+    <rom name='mpr-19202.10' crc='aaa086c6'/>
+    <rom name='mpr-19201.9' crc='7c4a8c31'/>
+    <rom name='mpr-19208.16' crc='08f30f71'/>
+    <rom name='mpr-19207.15' crc='2ce1612d'/>
+    <rom name='mpr-19206.14' crc='71a98d73'/>
+    <rom name='mpr-19205.13' crc='199c328e'/>
+    <rom name='mpr-19211.26' crc='9c8f5df1'/>
+    <rom name='mpr-19212.27' crc='75036234'/>
+    <rom name='mpr-19213.28' crc='67b123cf'/>
+    <rom name='mpr-19214.29' crc='a6f5576b'/>
+    <rom name='mpr-19215.30' crc='c6fd9f0d'/>
+    <rom name='mpr-19216.31' crc='201bb1ed'/>
+    <rom name='mpr-19217.32' crc='4dadd41a'/>
+    <rom name='mpr-19218.33' crc='cff91953'/>
+    <rom name='mpr-19219.34' crc='c610d521'/>
+    <rom name='mpr-19220.35' crc='e62924d0'/>
+    <rom name='mpr-19221.36' crc='24f83e3c'/>
+    <rom name='mpr-19222.37' crc='61a6aa7d'/>
+    <rom name='mpr-19223.38' crc='1a8c1980'/>
+    <rom name='mpr-19224.39' crc='0a79a1bd'/>
+    <rom name='mpr-19225.40' crc='91a985eb'/>
+    <rom name='mpr-19226.41' crc='00091722'/>
+    <rom name='epr-19231.21' crc='b416fe96'/>
+    <rom name='mpr-19209.22' crc='3715e38c'/>
+    <rom name='mpr-19210.24' crc='c03d6502'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80'/>
+  </game>
+  <game name='vf3a' sourcefile='Games.xml' cloneof='vf3' romof='vf3'>
+    <description>Virtua Fighter 3 (Japan, Revision A)</description>
+    <year>1996</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19230a.20' crc='4dff78ed'/>
+    <rom name='epr-19229a.19' crc='5f1404b8'/>
+    <rom name='epr-19228a.18' crc='82f17ab5'/>
+    <rom name='epr-19227a.17' crc='7139931a'/>
+    <rom name='mpr-19196.4' crc='f386b850' merge='mpr-19196.4'/>
+    <rom name='mpr-19195.3' crc='bd5e27a3' merge='mpr-19195.3'/>
+    <rom name='mpr-19194.2' crc='66254702' merge='mpr-19194.2'/>
+    <rom name='mpr-19193.1' crc='7bab33d2' merge='mpr-19193.1'/>
+    <rom name='mpr-19200.8' crc='74941091' merge='mpr-19200.8'/>
+    <rom name='mpr-19199.7' crc='9f80d6fe' merge='mpr-19199.7'/>
+    <rom name='mpr-19198.6' crc='d8ee5032' merge='mpr-19198.6'/>
+    <rom name='mpr-19197.5' crc='a22d76c9' merge='mpr-19197.5'/>
+    <rom name='mpr-19204.12' crc='2f93310a' merge='mpr-19204.12'/>
+    <rom name='mpr-19203.11' crc='0afa6334' merge='mpr-19203.11'/>
+    <rom name='mpr-19202.10' crc='aaa086c6' merge='mpr-19202.10'/>
+    <rom name='mpr-19201.9' crc='7c4a8c31' merge='mpr-19201.9'/>
+    <rom name='mpr-19208.16' crc='08f30f71' merge='mpr-19208.16'/>
+    <rom name='mpr-19207.15' crc='2ce1612d' merge='mpr-19207.15'/>
+    <rom name='mpr-19206.14' crc='71a98d73' merge='mpr-19206.14'/>
+    <rom name='mpr-19205.13' crc='199c328e' merge='mpr-19205.13'/>
+    <rom name='mpr-19211.26' crc='9c8f5df1' merge='mpr-19211.26'/>
+    <rom name='mpr-19212.27' crc='75036234' merge='mpr-19212.27'/>
+    <rom name='mpr-19213.28' crc='67b123cf' merge='mpr-19213.28'/>
+    <rom name='mpr-19214.29' crc='a6f5576b' merge='mpr-19214.29'/>
+    <rom name='mpr-19215.30' crc='c6fd9f0d' merge='mpr-19215.30'/>
+    <rom name='mpr-19216.31' crc='201bb1ed' merge='mpr-19216.31'/>
+    <rom name='mpr-19217.32' crc='4dadd41a' merge='mpr-19217.32'/>
+    <rom name='mpr-19218.33' crc='cff91953' merge='mpr-19218.33'/>
+    <rom name='mpr-19219.34' crc='c610d521' merge='mpr-19219.34'/>
+    <rom name='mpr-19220.35' crc='e62924d0' merge='mpr-19220.35'/>
+    <rom name='mpr-19221.36' crc='24f83e3c' merge='mpr-19221.36'/>
+    <rom name='mpr-19222.37' crc='61a6aa7d' merge='mpr-19222.37'/>
+    <rom name='mpr-19223.38' crc='1a8c1980' merge='mpr-19223.38'/>
+    <rom name='mpr-19224.39' crc='0a79a1bd' merge='mpr-19224.39'/>
+    <rom name='mpr-19225.40' crc='91a985eb' merge='mpr-19225.40'/>
+    <rom name='mpr-19226.41' crc='00091722' merge='mpr-19226.41'/>
+    <rom name='epr-19231.21' crc='b416fe96' merge='epr-19231.21'/>
+    <rom name='mpr-19209.22' crc='3715e38c' merge='mpr-19209.22'/>
+    <rom name='mpr-19210.24' crc='c03d6502' merge='mpr-19210.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vf3c' sourcefile='Games.xml' cloneof='vf3' romof='vf3'>
+    <description>Virtua Fighter 3 (Japan, Revision C)</description>
+    <year>1996</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19230c.20' crc='736a9431'/>
+    <rom name='epr-19229c.19' crc='731b6b78'/>
+    <rom name='epr-19228c.18' crc='9c5727e2'/>
+    <rom name='epr-19227c.17' crc='a7df4d75'/>
+    <rom name='mpr-19196.4' crc='f386b850' merge='mpr-19196.4'/>
+    <rom name='mpr-19195.3' crc='bd5e27a3' merge='mpr-19195.3'/>
+    <rom name='mpr-19194.2' crc='66254702' merge='mpr-19194.2'/>
+    <rom name='mpr-19193.1' crc='7bab33d2' merge='mpr-19193.1'/>
+    <rom name='mpr-19200.8' crc='74941091' merge='mpr-19200.8'/>
+    <rom name='mpr-19199.7' crc='9f80d6fe' merge='mpr-19199.7'/>
+    <rom name='mpr-19198.6' crc='d8ee5032' merge='mpr-19198.6'/>
+    <rom name='mpr-19197.5' crc='a22d76c9' merge='mpr-19197.5'/>
+    <rom name='mpr-19204.12' crc='2f93310a' merge='mpr-19204.12'/>
+    <rom name='mpr-19203.11' crc='0afa6334' merge='mpr-19203.11'/>
+    <rom name='mpr-19202.10' crc='aaa086c6' merge='mpr-19202.10'/>
+    <rom name='mpr-19201.9' crc='7c4a8c31' merge='mpr-19201.9'/>
+    <rom name='mpr-19208.16' crc='08f30f71' merge='mpr-19208.16'/>
+    <rom name='mpr-19207.15' crc='2ce1612d' merge='mpr-19207.15'/>
+    <rom name='mpr-19206.14' crc='71a98d73' merge='mpr-19206.14'/>
+    <rom name='mpr-19205.13' crc='199c328e' merge='mpr-19205.13'/>
+    <rom name='mpr-19211.26' crc='9c8f5df1' merge='mpr-19211.26'/>
+    <rom name='mpr-19212.27' crc='75036234' merge='mpr-19212.27'/>
+    <rom name='mpr-19213.28' crc='67b123cf' merge='mpr-19213.28'/>
+    <rom name='mpr-19214.29' crc='a6f5576b' merge='mpr-19214.29'/>
+    <rom name='mpr-19215.30' crc='c6fd9f0d' merge='mpr-19215.30'/>
+    <rom name='mpr-19216.31' crc='201bb1ed' merge='mpr-19216.31'/>
+    <rom name='mpr-19217.32' crc='4dadd41a' merge='mpr-19217.32'/>
+    <rom name='mpr-19218.33' crc='cff91953' merge='mpr-19218.33'/>
+    <rom name='mpr-19219.34' crc='c610d521' merge='mpr-19219.34'/>
+    <rom name='mpr-19220.35' crc='e62924d0' merge='mpr-19220.35'/>
+    <rom name='mpr-19221.36' crc='24f83e3c' merge='mpr-19221.36'/>
+    <rom name='mpr-19222.37' crc='61a6aa7d' merge='mpr-19222.37'/>
+    <rom name='mpr-19223.38' crc='1a8c1980' merge='mpr-19223.38'/>
+    <rom name='mpr-19224.39' crc='0a79a1bd' merge='mpr-19224.39'/>
+    <rom name='mpr-19225.40' crc='91a985eb' merge='mpr-19225.40'/>
+    <rom name='mpr-19226.41' crc='00091722' merge='mpr-19226.41'/>
+    <rom name='epr-19231.21' crc='b416fe96' merge='epr-19231.21'/>
+    <rom name='mpr-19209.22' crc='3715e38c' merge='mpr-19209.22'/>
+    <rom name='mpr-19210.24' crc='c03d6502' merge='mpr-19210.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vf3tb' sourcefile='Games.xml' cloneof='vf3' romof='vf3'>
+    <description>Virtua Fighter 3 Team Battle (Japan)</description>
+    <year>1996</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20129.20' crc='0db897ce'/>
+    <rom name='epr-20128.19' crc='ffbdbdc5'/>
+    <rom name='epr-20127.18' crc='5c0f694b'/>
+    <rom name='epr-20126.17' crc='27ecd3b0'/>
+    <rom name='mpr-20133.4' crc='3d9b5171'/>
+    <rom name='mpr-20132.3' crc='f7557474'/>
+    <rom name='mpr-20131.2' crc='51fa69f1'/>
+    <rom name='mpr-20130.1' crc='40640446'/>
+    <rom name='mpr-19200.8' crc='74941091' merge='mpr-19200.8'/>
+    <rom name='mpr-19199.7' crc='9f80d6fe' merge='mpr-19199.7'/>
+    <rom name='mpr-19198.6' crc='d8ee5032' merge='mpr-19198.6'/>
+    <rom name='mpr-19197.5' crc='a22d76c9' merge='mpr-19197.5'/>
+    <rom name='mpr-19204.12' crc='2f93310a' merge='mpr-19204.12'/>
+    <rom name='mpr-19203.11' crc='0afa6334' merge='mpr-19203.11'/>
+    <rom name='mpr-19202.10' crc='aaa086c6' merge='mpr-19202.10'/>
+    <rom name='mpr-19201.9' crc='7c4a8c31' merge='mpr-19201.9'/>
+    <rom name='mpr-19208.16' crc='08f30f71' merge='mpr-19208.16'/>
+    <rom name='mpr-19207.15' crc='2ce1612d' merge='mpr-19207.15'/>
+    <rom name='mpr-19206.14' crc='71a98d73' merge='mpr-19206.14'/>
+    <rom name='mpr-19205.13' crc='199c328e' merge='mpr-19205.13'/>
+    <rom name='mpr-19211.26' crc='9c8f5df1' merge='mpr-19211.26'/>
+    <rom name='mpr-19212.27' crc='75036234' merge='mpr-19212.27'/>
+    <rom name='mpr-19213.28' crc='67b123cf' merge='mpr-19213.28'/>
+    <rom name='mpr-19214.29' crc='a6f5576b' merge='mpr-19214.29'/>
+    <rom name='mpr-19215.30' crc='c6fd9f0d' merge='mpr-19215.30'/>
+    <rom name='mpr-19216.31' crc='201bb1ed' merge='mpr-19216.31'/>
+    <rom name='mpr-19217.32' crc='4dadd41a' merge='mpr-19217.32'/>
+    <rom name='mpr-19218.33' crc='cff91953' merge='mpr-19218.33'/>
+    <rom name='mpr-19219.34' crc='c610d521' merge='mpr-19219.34'/>
+    <rom name='mpr-19220.35' crc='e62924d0' merge='mpr-19220.35'/>
+    <rom name='mpr-19221.36' crc='24f83e3c' merge='mpr-19221.36'/>
+    <rom name='mpr-19222.37' crc='61a6aa7d' merge='mpr-19222.37'/>
+    <rom name='mpr-19223.38' crc='1a8c1980' merge='mpr-19223.38'/>
+    <rom name='mpr-19224.39' crc='0a79a1bd' merge='mpr-19224.39'/>
+    <rom name='mpr-19225.40' crc='91a985eb' merge='mpr-19225.40'/>
+    <rom name='mpr-19226.41' crc='00091722' merge='mpr-19226.41'/>
+    <rom name='epr-19231.21' crc='b416fe96' merge='epr-19231.21'/>
+    <rom name='mpr-19209.22' crc='3715e38c' merge='mpr-19209.22'/>
+    <rom name='mpr-19210.24' crc='c03d6502' merge='mpr-19210.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='von2' sourcefile='Games.xml'>
+    <description>Cyber Troopers Virtual-On Oratorio Tangram (Japan, Revision B)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20686b.20' crc='3ea4de9f'/>
+    <rom name='epr-20685b.19' crc='ae82cb35'/>
+    <rom name='epr-20684b.18' crc='1fc15431'/>
+    <rom name='epr-20683b.17' crc='59d9c974'/>
+    <rom name='mpr-20650.4' crc='81f96649'/>
+    <rom name='mpr-20649.3' crc='b8fd56ba'/>
+    <rom name='mpr-20648.2' crc='107309e0'/>
+    <rom name='mpr-20647.1' crc='e8586380'/>
+    <rom name='mpr-20654.8' crc='763ef905'/>
+    <rom name='mpr-20653.7' crc='858e6bba'/>
+    <rom name='mpr-20652.6' crc='64c6fbb6'/>
+    <rom name='mpr-20651.5' crc='8373cab3'/>
+    <rom name='mpr-20658.12' crc='b80175b9'/>
+    <rom name='mpr-20657.11' crc='14bf8964'/>
+    <rom name='mpr-20656.10' crc='466bee13'/>
+    <rom name='mpr-20655.9' crc='f0a471e9'/>
+    <rom name='mpr-20662.16' crc='7130cb61'/>
+    <rom name='mpr-20661.15' crc='50e6189e'/>
+    <rom name='mpr-20660.14' crc='d961d385'/>
+    <rom name='mpr-20659.13' crc='edb63e7b'/>
+    <rom name='mpr-20667.26' crc='321e006f'/>
+    <rom name='mpr-20668.27' crc='c2dd8053'/>
+    <rom name='mpr-20669.28' crc='63432497'/>
+    <rom name='mpr-20670.29' crc='f7b554fd'/>
+    <rom name='mpr-20671.30' crc='fee1a49b'/>
+    <rom name='mpr-20672.31' crc='e4b8c6e6'/>
+    <rom name='mpr-20673.32' crc='e7b6403b'/>
+    <rom name='mpr-20674.33' crc='9be22e13'/>
+    <rom name='mpr-20675.34' crc='6a7c3862'/>
+    <rom name='mpr-20676.35' crc='dd299648'/>
+    <rom name='mpr-20677.36' crc='3fc5f330'/>
+    <rom name='mpr-20678.37' crc='62f794a1'/>
+    <rom name='mpr-20679.38' crc='35a37c53'/>
+    <rom name='mpr-20680.39' crc='81fec46e'/>
+    <rom name='mpr-20681.40' crc='d517873b'/>
+    <rom name='mpr-20682.41' crc='5b43250c'/>
+    <rom name='epr-20687.21' crc='fa084de5'/>
+    <rom name='mpr-20663.22' crc='977eb6a4'/>
+    <rom name='mpr-20665.24' crc='0efc0ca8'/>
+    <rom name='mpr-20664.23' crc='89220782'/>
+    <rom name='mpr-20666.25' crc='3ecb2606'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80'/>
+  </game>
+  <game name='von254g' sourcefile='Games.xml' cloneof='von2' romof='von2'>
+    <description>Cyber Troopers Virtual-On Oratorio Tangram (Japan, Ver 5.4g)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21791.20' crc='d0bb3ca3'/>
+    <rom name='epr-21790.19' crc='2ae1efd3'/>
+    <rom name='epr-21789.18' crc='3069108f'/>
+    <rom name='epr-21788.17' crc='97066bcf'/>
+    <rom name='mpr-20650.4' crc='81f96649' merge='mpr-20650.4'/>
+    <rom name='mpr-20649.3' crc='b8fd56ba' merge='mpr-20649.3'/>
+    <rom name='mpr-20648.2' crc='107309e0' merge='mpr-20648.2'/>
+    <rom name='mpr-20647.1' crc='e8586380' merge='mpr-20647.1'/>
+    <rom name='mpr-20654.8' crc='763ef905' merge='mpr-20654.8'/>
+    <rom name='mpr-20653.7' crc='858e6bba' merge='mpr-20653.7'/>
+    <rom name='mpr-20652.6' crc='64c6fbb6' merge='mpr-20652.6'/>
+    <rom name='mpr-20651.5' crc='8373cab3' merge='mpr-20651.5'/>
+    <rom name='mpr-20658.12' crc='b80175b9' merge='mpr-20658.12'/>
+    <rom name='mpr-20657.11' crc='14bf8964' merge='mpr-20657.11'/>
+    <rom name='mpr-20656.10' crc='466bee13' merge='mpr-20656.10'/>
+    <rom name='mpr-20655.9' crc='f0a471e9' merge='mpr-20655.9'/>
+    <rom name='mpr-20662.16' crc='7130cb61' merge='mpr-20662.16'/>
+    <rom name='mpr-20661.15' crc='50e6189e' merge='mpr-20661.15'/>
+    <rom name='mpr-20660.14' crc='d961d385' merge='mpr-20660.14'/>
+    <rom name='mpr-20659.13' crc='edb63e7b' merge='mpr-20659.13'/>
+    <rom name='mpr-20667.26' crc='321e006f' merge='mpr-20667.26'/>
+    <rom name='mpr-20668.27' crc='c2dd8053' merge='mpr-20668.27'/>
+    <rom name='mpr-20669.28' crc='63432497' merge='mpr-20669.28'/>
+    <rom name='mpr-20670.29' crc='f7b554fd' merge='mpr-20670.29'/>
+    <rom name='mpr-20671.30' crc='fee1a49b' merge='mpr-20671.30'/>
+    <rom name='mpr-20672.31' crc='e4b8c6e6' merge='mpr-20672.31'/>
+    <rom name='mpr-20673.32' crc='e7b6403b' merge='mpr-20673.32'/>
+    <rom name='mpr-20674.33' crc='9be22e13' merge='mpr-20674.33'/>
+    <rom name='mpr-20675.34' crc='6a7c3862' merge='mpr-20675.34'/>
+    <rom name='mpr-20676.35' crc='dd299648' merge='mpr-20676.35'/>
+    <rom name='mpr-20677.36' crc='3fc5f330' merge='mpr-20677.36'/>
+    <rom name='mpr-20678.37' crc='62f794a1' merge='mpr-20678.37'/>
+    <rom name='mpr-20679.38' crc='35a37c53' merge='mpr-20679.38'/>
+    <rom name='mpr-20680.39' crc='81fec46e' merge='mpr-20680.39'/>
+    <rom name='mpr-20681.40' crc='d517873b' merge='mpr-20681.40'/>
+    <rom name='mpr-20682.41' crc='5b43250c' merge='mpr-20682.41'/>
+    <rom name='epr-20687.21' crc='fa084de5' merge='epr-20687.21'/>
+    <rom name='mpr-20663.22' crc='977eb6a4' merge='mpr-20663.22'/>
+    <rom name='mpr-20665.24' crc='0efc0ca8' merge='mpr-20665.24'/>
+    <rom name='mpr-20664.23' crc='89220782' merge='mpr-20664.23'/>
+    <rom name='mpr-20666.25' crc='3ecb2606' merge='mpr-20666.25'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='von2a' sourcefile='Games.xml' cloneof='von2' romof='von2'>
+    <description>Cyber Troopers Virtual-On Oratorio Tangram (Japan, Revision A)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20686a.20' crc='63e17bf5'/>
+    <rom name='epr-20685a.19' crc='dc07c404'/>
+    <rom name='epr-20684a.18' crc='c84f7f23'/>
+    <rom name='epr-20683a.17' crc='16b202e9'/>
+    <rom name='mpr-20650.4' crc='81f96649' merge='mpr-20650.4'/>
+    <rom name='mpr-20649.3' crc='b8fd56ba' merge='mpr-20649.3'/>
+    <rom name='mpr-20648.2' crc='107309e0' merge='mpr-20648.2'/>
+    <rom name='mpr-20647.1' crc='e8586380' merge='mpr-20647.1'/>
+    <rom name='mpr-20654.8' crc='763ef905' merge='mpr-20654.8'/>
+    <rom name='mpr-20653.7' crc='858e6bba' merge='mpr-20653.7'/>
+    <rom name='mpr-20652.6' crc='64c6fbb6' merge='mpr-20652.6'/>
+    <rom name='mpr-20651.5' crc='8373cab3' merge='mpr-20651.5'/>
+    <rom name='mpr-20658.12' crc='b80175b9' merge='mpr-20658.12'/>
+    <rom name='mpr-20657.11' crc='14bf8964' merge='mpr-20657.11'/>
+    <rom name='mpr-20656.10' crc='466bee13' merge='mpr-20656.10'/>
+    <rom name='mpr-20655.9' crc='f0a471e9' merge='mpr-20655.9'/>
+    <rom name='mpr-20662.16' crc='7130cb61' merge='mpr-20662.16'/>
+    <rom name='mpr-20661.15' crc='50e6189e' merge='mpr-20661.15'/>
+    <rom name='mpr-20660.14' crc='d961d385' merge='mpr-20660.14'/>
+    <rom name='mpr-20659.13' crc='edb63e7b' merge='mpr-20659.13'/>
+    <rom name='mpr-20667.26' crc='321e006f' merge='mpr-20667.26'/>
+    <rom name='mpr-20668.27' crc='c2dd8053' merge='mpr-20668.27'/>
+    <rom name='mpr-20669.28' crc='63432497' merge='mpr-20669.28'/>
+    <rom name='mpr-20670.29' crc='f7b554fd' merge='mpr-20670.29'/>
+    <rom name='mpr-20671.30' crc='fee1a49b' merge='mpr-20671.30'/>
+    <rom name='mpr-20672.31' crc='e4b8c6e6' merge='mpr-20672.31'/>
+    <rom name='mpr-20673.32' crc='e7b6403b' merge='mpr-20673.32'/>
+    <rom name='mpr-20674.33' crc='9be22e13' merge='mpr-20674.33'/>
+    <rom name='mpr-20675.34' crc='6a7c3862' merge='mpr-20675.34'/>
+    <rom name='mpr-20676.35' crc='dd299648' merge='mpr-20676.35'/>
+    <rom name='mpr-20677.36' crc='3fc5f330' merge='mpr-20677.36'/>
+    <rom name='mpr-20678.37' crc='62f794a1' merge='mpr-20678.37'/>
+    <rom name='mpr-20679.38' crc='35a37c53' merge='mpr-20679.38'/>
+    <rom name='mpr-20680.39' crc='81fec46e' merge='mpr-20680.39'/>
+    <rom name='mpr-20681.40' crc='d517873b' merge='mpr-20681.40'/>
+    <rom name='mpr-20682.41' crc='5b43250c' merge='mpr-20682.41'/>
+    <rom name='epr-20687.21' crc='fa084de5' merge='epr-20687.21'/>
+    <rom name='mpr-20663.22' crc='977eb6a4' merge='mpr-20663.22'/>
+    <rom name='mpr-20665.24' crc='0efc0ca8' merge='mpr-20665.24'/>
+    <rom name='mpr-20664.23' crc='89220782' merge='mpr-20664.23'/>
+    <rom name='mpr-20666.25' crc='3ecb2606' merge='mpr-20666.25'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='von2o' sourcefile='Games.xml' cloneof='von2' romof='von2'>
+    <description>Cyber Troopers Virtual-On Oratorio Tangram (Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20686.20' crc='e1b0ff65'/>
+    <rom name='epr-20685.19' crc='0664c568'/>
+    <rom name='epr-20684.18' crc='5d40fedb'/>
+    <rom name='epr-20683.17' crc='bb21aea7'/>
+    <rom name='mpr-20650.4' crc='81f96649' merge='mpr-20650.4'/>
+    <rom name='mpr-20649.3' crc='b8fd56ba' merge='mpr-20649.3'/>
+    <rom name='mpr-20648.2' crc='107309e0' merge='mpr-20648.2'/>
+    <rom name='mpr-20647.1' crc='e8586380' merge='mpr-20647.1'/>
+    <rom name='mpr-20654.8' crc='763ef905' merge='mpr-20654.8'/>
+    <rom name='mpr-20653.7' crc='858e6bba' merge='mpr-20653.7'/>
+    <rom name='mpr-20652.6' crc='64c6fbb6' merge='mpr-20652.6'/>
+    <rom name='mpr-20651.5' crc='8373cab3' merge='mpr-20651.5'/>
+    <rom name='mpr-20658.12' crc='b80175b9' merge='mpr-20658.12'/>
+    <rom name='mpr-20657.11' crc='14bf8964' merge='mpr-20657.11'/>
+    <rom name='mpr-20656.10' crc='466bee13' merge='mpr-20656.10'/>
+    <rom name='mpr-20655.9' crc='f0a471e9' merge='mpr-20655.9'/>
+    <rom name='mpr-20662.16' crc='7130cb61' merge='mpr-20662.16'/>
+    <rom name='mpr-20661.15' crc='50e6189e' merge='mpr-20661.15'/>
+    <rom name='mpr-20660.14' crc='d961d385' merge='mpr-20660.14'/>
+    <rom name='mpr-20659.13' crc='edb63e7b' merge='mpr-20659.13'/>
+    <rom name='mpr-20667.26' crc='321e006f' merge='mpr-20667.26'/>
+    <rom name='mpr-20668.27' crc='c2dd8053' merge='mpr-20668.27'/>
+    <rom name='mpr-20669.28' crc='63432497' merge='mpr-20669.28'/>
+    <rom name='mpr-20670.29' crc='f7b554fd' merge='mpr-20670.29'/>
+    <rom name='mpr-20671.30' crc='fee1a49b' merge='mpr-20671.30'/>
+    <rom name='mpr-20672.31' crc='e4b8c6e6' merge='mpr-20672.31'/>
+    <rom name='mpr-20673.32' crc='e7b6403b' merge='mpr-20673.32'/>
+    <rom name='mpr-20674.33' crc='9be22e13' merge='mpr-20674.33'/>
+    <rom name='mpr-20675.34' crc='6a7c3862' merge='mpr-20675.34'/>
+    <rom name='mpr-20676.35' crc='dd299648' merge='mpr-20676.35'/>
+    <rom name='mpr-20677.36' crc='3fc5f330' merge='mpr-20677.36'/>
+    <rom name='mpr-20678.37' crc='62f794a1' merge='mpr-20678.37'/>
+    <rom name='mpr-20679.38' crc='35a37c53' merge='mpr-20679.38'/>
+    <rom name='mpr-20680.39' crc='81fec46e' merge='mpr-20680.39'/>
+    <rom name='mpr-20681.40' crc='d517873b' merge='mpr-20681.40'/>
+    <rom name='mpr-20682.41' crc='5b43250c' merge='mpr-20682.41'/>
+    <rom name='epr-20687.21' crc='fa084de5' merge='epr-20687.21'/>
+    <rom name='mpr-20663.22' crc='977eb6a4' merge='mpr-20663.22'/>
+    <rom name='mpr-20665.24' crc='0efc0ca8' merge='mpr-20665.24'/>
+    <rom name='mpr-20664.23' crc='89220782' merge='mpr-20664.23'/>
+    <rom name='mpr-20666.25' crc='3ecb2606' merge='mpr-20666.25'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vs2' sourcefile='Games.xml'>
+    <description>Virtua Striker 2 (Step 2.0, Export, USA)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20470.20' crc='2f62b292'/>
+    <rom name='epr-20469.19' crc='9d7521f6'/>
+    <rom name='epr-20468.18' crc='f0f0b6ea'/>
+    <rom name='epr-20467.17' crc='25d7ae73'/>
+    <rom name='mpr-19772.4' crc='6db7b9d0'/>
+    <rom name='mpr-19771.3' crc='189c510f'/>
+    <rom name='mpr-19770.2' crc='91f690b0'/>
+    <rom name='mpr-19769.1' crc='dc020031'/>
+    <rom name='mpr-19776.8' crc='5b31c7c1'/>
+    <rom name='mpr-19775.7' crc='a6b32bd9'/>
+    <rom name='mpr-19774.6' crc='1d61d287'/>
+    <rom name='mpr-19773.5' crc='4e381ae7'/>
+    <rom name='mpr-19780.12' crc='38508791'/>
+    <rom name='mpr-19779.11' crc='2242b21b'/>
+    <rom name='mpr-19778.10' crc='2192b189'/>
+    <rom name='mpr-19777.9' crc='c8f216a6'/>
+    <rom name='mpr-19784.16' crc='a1cc70be'/>
+    <rom name='mpr-19783.15' crc='47c3d726'/>
+    <rom name='mpr-19782.14' crc='43b43eef'/>
+    <rom name='mpr-19781.13' crc='783213f4'/>
+    <rom name='mpr-19787.26' crc='856cc4ad'/>
+    <rom name='mpr-19788.27' crc='72ef970a'/>
+    <rom name='mpr-19789.28' crc='076add9a'/>
+    <rom name='mpr-19790.29' crc='74ce238c'/>
+    <rom name='mpr-19791.30' crc='75a98f96'/>
+    <rom name='mpr-19792.31' crc='85c81633'/>
+    <rom name='mpr-19793.32' crc='7f288cc4'/>
+    <rom name='mpr-19794.33' crc='e0c1c370'/>
+    <rom name='mpr-19795.34' crc='90989b20'/>
+    <rom name='mpr-19796.35' crc='5d1aab8d'/>
+    <rom name='mpr-19797.36' crc='f5edc891'/>
+    <rom name='mpr-19798.37' crc='ae2da90f'/>
+    <rom name='mpr-19799.38' crc='92b18ad7'/>
+    <rom name='mpr-19800.39' crc='4a57b16c'/>
+    <rom name='mpr-19801.40' crc='beb79a00'/>
+    <rom name='mpr-19802.41' crc='f2c3a7b7'/>
+    <rom name='epr-19807.21' crc='9641cbaf'/>
+    <rom name='mpr-19785.22' crc='e7d190e3'/>
+    <rom name='mpr-19786.24' crc='b08d889b'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80'/>
+  </game>
+  <game name='vs215' sourcefile='Games.xml' cloneof='vs2' romof='vs2'>
+    <description>Virtua Striker 2 (Step 1.5, Export, USA)</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19897.20' crc='25a722a9'/>
+    <rom name='epr-19898.19' crc='4389d9ce'/>
+    <rom name='epr-19899.18' crc='8cc2be9f'/>
+    <rom name='epr-19900.17' crc='8fb6045d'/>
+    <rom name='mpr-19772.4' crc='6db7b9d0' merge='mpr-19772.4'/>
+    <rom name='mpr-19771.3' crc='189c510f' merge='mpr-19771.3'/>
+    <rom name='mpr-19770.2' crc='91f690b0' merge='mpr-19770.2'/>
+    <rom name='mpr-19769.1' crc='dc020031' merge='mpr-19769.1'/>
+    <rom name='mpr-19776.8' crc='5b31c7c1' merge='mpr-19776.8'/>
+    <rom name='mpr-19775.7' crc='a6b32bd9' merge='mpr-19775.7'/>
+    <rom name='mpr-19774.6' crc='1d61d287' merge='mpr-19774.6'/>
+    <rom name='mpr-19773.5' crc='4e381ae7' merge='mpr-19773.5'/>
+    <rom name='mpr-19780.12' crc='38508791' merge='mpr-19780.12'/>
+    <rom name='mpr-19779.11' crc='2242b21b' merge='mpr-19779.11'/>
+    <rom name='mpr-19778.10' crc='2192b189' merge='mpr-19778.10'/>
+    <rom name='mpr-19777.9' crc='c8f216a6' merge='mpr-19777.9'/>
+    <rom name='mpr-19784.16' crc='a1cc70be' merge='mpr-19784.16'/>
+    <rom name='mpr-19783.15' crc='47c3d726' merge='mpr-19783.15'/>
+    <rom name='mpr-19782.14' crc='43b43eef' merge='mpr-19782.14'/>
+    <rom name='mpr-19781.13' crc='783213f4' merge='mpr-19781.13'/>
+    <rom name='mpr-19787.26' crc='856cc4ad' merge='mpr-19787.26'/>
+    <rom name='mpr-19788.27' crc='72ef970a' merge='mpr-19788.27'/>
+    <rom name='mpr-19789.28' crc='076add9a' merge='mpr-19789.28'/>
+    <rom name='mpr-19790.29' crc='74ce238c' merge='mpr-19790.29'/>
+    <rom name='mpr-19791.30' crc='75a98f96' merge='mpr-19791.30'/>
+    <rom name='mpr-19792.31' crc='85c81633' merge='mpr-19792.31'/>
+    <rom name='mpr-19793.32' crc='7f288cc4' merge='mpr-19793.32'/>
+    <rom name='mpr-19794.33' crc='e0c1c370' merge='mpr-19794.33'/>
+    <rom name='mpr-19795.34' crc='90989b20' merge='mpr-19795.34'/>
+    <rom name='mpr-19796.35' crc='5d1aab8d' merge='mpr-19796.35'/>
+    <rom name='mpr-19797.36' crc='f5edc891' merge='mpr-19797.36'/>
+    <rom name='mpr-19798.37' crc='ae2da90f' merge='mpr-19798.37'/>
+    <rom name='mpr-19799.38' crc='92b18ad7' merge='mpr-19799.38'/>
+    <rom name='mpr-19800.39' crc='4a57b16c' merge='mpr-19800.39'/>
+    <rom name='mpr-19801.40' crc='beb79a00' merge='mpr-19801.40'/>
+    <rom name='mpr-19802.41' crc='f2c3a7b7' merge='mpr-19802.41'/>
+    <rom name='epr-19807.21' crc='9641cbaf' merge='epr-19807.21'/>
+    <rom name='mpr-19785.22' crc='e7d190e3' merge='mpr-19785.22'/>
+    <rom name='mpr-19786.24' crc='b08d889b' merge='mpr-19786.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vs215o' sourcefile='Games.xml' cloneof='vs2' romof='vs2'>
+    <description>Virtua Striker 2 (Step 1.5, Japan (test?))</description>
+    <year>1997</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-19803.20' crc='1e55a5b8'/>
+    <rom name='epr-19804.19' crc='bbaca578'/>
+    <rom name='epr-19805.18' crc='d9e40606'/>
+    <rom name='epr-19806.17' crc='95e1b970'/>
+    <rom name='mpr-19772.4' crc='6db7b9d0' merge='mpr-19772.4'/>
+    <rom name='mpr-19771.3' crc='189c510f' merge='mpr-19771.3'/>
+    <rom name='mpr-19770.2' crc='91f690b0' merge='mpr-19770.2'/>
+    <rom name='mpr-19769.1' crc='dc020031' merge='mpr-19769.1'/>
+    <rom name='mpr-19776.8' crc='5b31c7c1' merge='mpr-19776.8'/>
+    <rom name='mpr-19775.7' crc='a6b32bd9' merge='mpr-19775.7'/>
+    <rom name='mpr-19774.6' crc='1d61d287' merge='mpr-19774.6'/>
+    <rom name='mpr-19773.5' crc='4e381ae7' merge='mpr-19773.5'/>
+    <rom name='mpr-19780.12' crc='38508791' merge='mpr-19780.12'/>
+    <rom name='mpr-19779.11' crc='2242b21b' merge='mpr-19779.11'/>
+    <rom name='mpr-19778.10' crc='2192b189' merge='mpr-19778.10'/>
+    <rom name='mpr-19777.9' crc='c8f216a6' merge='mpr-19777.9'/>
+    <rom name='mpr-19784.16' crc='a1cc70be' merge='mpr-19784.16'/>
+    <rom name='mpr-19783.15' crc='47c3d726' merge='mpr-19783.15'/>
+    <rom name='mpr-19782.14' crc='43b43eef' merge='mpr-19782.14'/>
+    <rom name='mpr-19781.13' crc='783213f4' merge='mpr-19781.13'/>
+    <rom name='mpr-19787.26' crc='856cc4ad' merge='mpr-19787.26'/>
+    <rom name='mpr-19788.27' crc='72ef970a' merge='mpr-19788.27'/>
+    <rom name='mpr-19789.28' crc='076add9a' merge='mpr-19789.28'/>
+    <rom name='mpr-19790.29' crc='74ce238c' merge='mpr-19790.29'/>
+    <rom name='mpr-19791.30' crc='75a98f96' merge='mpr-19791.30'/>
+    <rom name='mpr-19792.31' crc='85c81633' merge='mpr-19792.31'/>
+    <rom name='mpr-19793.32' crc='7f288cc4' merge='mpr-19793.32'/>
+    <rom name='mpr-19794.33' crc='e0c1c370' merge='mpr-19794.33'/>
+    <rom name='mpr-19795.34' crc='90989b20' merge='mpr-19795.34'/>
+    <rom name='mpr-19796.35' crc='5d1aab8d' merge='mpr-19796.35'/>
+    <rom name='mpr-19797.36' crc='f5edc891' merge='mpr-19797.36'/>
+    <rom name='mpr-19798.37' crc='ae2da90f' merge='mpr-19798.37'/>
+    <rom name='mpr-19799.38' crc='92b18ad7' merge='mpr-19799.38'/>
+    <rom name='mpr-19800.39' crc='4a57b16c' merge='mpr-19800.39'/>
+    <rom name='mpr-19801.40' crc='beb79a00' merge='mpr-19801.40'/>
+    <rom name='mpr-19802.41' crc='f2c3a7b7' merge='mpr-19802.41'/>
+    <rom name='epr-19807.21' crc='9641cbaf' merge='epr-19807.21'/>
+    <rom name='mpr-19785.22' crc='e7d190e3' merge='mpr-19785.22'/>
+    <rom name='mpr-19786.24' crc='b08d889b' merge='mpr-19786.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vs298' sourcefile='Games.xml'>
+    <description>Virtua Striker 2 &apos;98 (Step 2.0, Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20920.20' crc='428d05fc'/>
+    <rom name='epr-20919.19' crc='7a0713d2'/>
+    <rom name='epr-20918.18' crc='0e9cdc5b'/>
+    <rom name='epr-20917.17' crc='c3bbb270'/>
+    <rom name='mpr-20894.4' crc='09c065cc'/>
+    <rom name='mpr-20893.3' crc='5c83dcaa'/>
+    <rom name='mpr-20892.2' crc='8e5d3fe7'/>
+    <rom name='mpr-20891.1' crc='9ecb0b39'/>
+    <rom name='mpr-19776.8' crc='5b31c7c1'/>
+    <rom name='mpr-19775.7' crc='a6b32bd9'/>
+    <rom name='mpr-19774.6' crc='1d61d287'/>
+    <rom name='mpr-19773.5' crc='4e381ae7'/>
+    <rom name='mpr-20898.12' crc='94040d37'/>
+    <rom name='mpr-20897.11' crc='c5cf067a'/>
+    <rom name='mpr-20896.10' crc='bf1cbd5e'/>
+    <rom name='mpr-20895.9' crc='9b51cbf5'/>
+    <rom name='mpr-20902.16' crc='f4d3ff3a'/>
+    <rom name='mpr-20901.15' crc='3492ddc8'/>
+    <rom name='mpr-20900.14' crc='7a38b571'/>
+    <rom name='mpr-20899.13' crc='65422425'/>
+    <rom name='mpr-19787.26' crc='856cc4ad'/>
+    <rom name='mpr-19788.27' crc='72ef970a'/>
+    <rom name='mpr-19789.28' crc='076add9a'/>
+    <rom name='mpr-19790.29' crc='74ce238c'/>
+    <rom name='mpr-19791.30' crc='75a98f96'/>
+    <rom name='mpr-19792.31' crc='85c81633'/>
+    <rom name='mpr-19793.32' crc='7f288cc4'/>
+    <rom name='mpr-19794.33' crc='e0c1c370'/>
+    <rom name='mpr-19795.34' crc='90989b20'/>
+    <rom name='mpr-19796.35' crc='5d1aab8d'/>
+    <rom name='mpr-19797.36' crc='f5edc891'/>
+    <rom name='mpr-19798.37' crc='ae2da90f'/>
+    <rom name='mpr-19799.38' crc='92b18ad7'/>
+    <rom name='mpr-19800.39' crc='4a57b16c'/>
+    <rom name='mpr-19801.40' crc='beb79a00'/>
+    <rom name='mpr-19802.41' crc='f2c3a7b7'/>
+    <rom name='epr-20921.21' crc='30f032a7'/>
+    <rom name='mpr-20903.22' crc='e343e131'/>
+    <rom name='mpr-20904.24' crc='21a91b84'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80'/>
+  </game>
+  <game name='vs29815' sourcefile='Games.xml' cloneof='vs298' romof='vs298'>
+    <description>Virtua Striker 2 &apos;98 (Step 1.5, Japan)</description>
+    <year>1998</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-20912.20' crc='cd2c0538'/>
+    <rom name='epr-20911.19' crc='acb8fd97'/>
+    <rom name='epr-20910.18' crc='dc75a2e3'/>
+    <rom name='epr-20909.17' crc='3dff0d7e'/>
+    <rom name='mpr-20894.4' crc='09c065cc' merge='mpr-20894.4'/>
+    <rom name='mpr-20893.3' crc='5c83dcaa' merge='mpr-20893.3'/>
+    <rom name='mpr-20892.2' crc='8e5d3fe7' merge='mpr-20892.2'/>
+    <rom name='mpr-20891.1' crc='9ecb0b39' merge='mpr-20891.1'/>
+    <rom name='mpr-19776.8' crc='5b31c7c1' merge='mpr-19776.8'/>
+    <rom name='mpr-19775.7' crc='a6b32bd9' merge='mpr-19775.7'/>
+    <rom name='mpr-19774.6' crc='1d61d287' merge='mpr-19774.6'/>
+    <rom name='mpr-19773.5' crc='4e381ae7' merge='mpr-19773.5'/>
+    <rom name='mpr-20898.12' crc='94040d37' merge='mpr-20898.12'/>
+    <rom name='mpr-20897.11' crc='c5cf067a' merge='mpr-20897.11'/>
+    <rom name='mpr-20896.10' crc='bf1cbd5e' merge='mpr-20896.10'/>
+    <rom name='mpr-20895.9' crc='9b51cbf5' merge='mpr-20895.9'/>
+    <rom name='mpr-20902.16' crc='f4d3ff3a' merge='mpr-20902.16'/>
+    <rom name='mpr-20901.15' crc='3492ddc8' merge='mpr-20901.15'/>
+    <rom name='mpr-20900.14' crc='7a38b571' merge='mpr-20900.14'/>
+    <rom name='mpr-20899.13' crc='65422425' merge='mpr-20899.13'/>
+    <rom name='mpr-19787.26' crc='856cc4ad' merge='mpr-19787.26'/>
+    <rom name='mpr-19788.27' crc='72ef970a' merge='mpr-19788.27'/>
+    <rom name='mpr-19789.28' crc='076add9a' merge='mpr-19789.28'/>
+    <rom name='mpr-19790.29' crc='74ce238c' merge='mpr-19790.29'/>
+    <rom name='mpr-19791.30' crc='75a98f96' merge='mpr-19791.30'/>
+    <rom name='mpr-19792.31' crc='85c81633' merge='mpr-19792.31'/>
+    <rom name='mpr-19793.32' crc='7f288cc4' merge='mpr-19793.32'/>
+    <rom name='mpr-19794.33' crc='e0c1c370' merge='mpr-19794.33'/>
+    <rom name='mpr-19795.34' crc='90989b20' merge='mpr-19795.34'/>
+    <rom name='mpr-19796.35' crc='5d1aab8d' merge='mpr-19796.35'/>
+    <rom name='mpr-19797.36' crc='f5edc891' merge='mpr-19797.36'/>
+    <rom name='mpr-19798.37' crc='ae2da90f' merge='mpr-19798.37'/>
+    <rom name='mpr-19799.38' crc='92b18ad7' merge='mpr-19799.38'/>
+    <rom name='mpr-19800.39' crc='4a57b16c' merge='mpr-19800.39'/>
+    <rom name='mpr-19801.40' crc='beb79a00' merge='mpr-19801.40'/>
+    <rom name='mpr-19802.41' crc='f2c3a7b7' merge='mpr-19802.41'/>
+    <rom name='epr-20921.21' crc='30f032a7' merge='epr-20921.21'/>
+    <rom name='mpr-20903.22' crc='e343e131' merge='mpr-20903.22'/>
+    <rom name='mpr-20904.24' crc='21a91b84' merge='mpr-20904.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vs2v991' sourcefile='Games.xml'>
+    <description>Virtua Striker 2 &apos;99.1 (Export, USA, Revision B)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21538b.20' crc='b3f0ce2a'/>
+    <rom name='epr-21537b.19' crc='a8b3fa5c'/>
+    <rom name='epr-21536b.18' crc='1f2bd190'/>
+    <rom name='epr-21535b.17' crc='76c5fa8e'/>
+    <rom name='mpr-21500.4' crc='8c43964b'/>
+    <rom name='mpr-21499.3' crc='2cc4c1f1'/>
+    <rom name='mpr-21498.2' crc='4f53d6e0'/>
+    <rom name='mpr-21497.1' crc='8ea759a1'/>
+    <rom name='mpr-21504.8' crc='7aae557e'/>
+    <rom name='mpr-21503.7' crc='c9e1de6b'/>
+    <rom name='mpr-21502.6' crc='921486be'/>
+    <rom name='mpr-21501.5' crc='08bc2185'/>
+    <rom name='mpr-21508.12' crc='2e8f798e'/>
+    <rom name='mpr-21507.11' crc='1d8eb68b'/>
+    <rom name='mpr-21506.10' crc='2c1477c7'/>
+    <rom name='mpr-21505.9' crc='e169ff72'/>
+    <rom name='mpr-21512.16' crc='7cb2b05c'/>
+    <rom name='mpr-21511.15' crc='5ad9660c'/>
+    <rom name='mpr-21510.14' crc='f47489a4'/>
+    <rom name='mpr-21509.13' crc='9a65e6b4'/>
+    <rom name='mpr-21515.26' crc='8ce9910b'/>
+    <rom name='mpr-21516.27' crc='8971a753'/>
+    <rom name='mpr-21517.28' crc='55a4533b'/>
+    <rom name='mpr-21518.29' crc='4134026c'/>
+    <rom name='mpr-21519.30' crc='ef6757de'/>
+    <rom name='mpr-21520.31' crc='c53be8cc'/>
+    <rom name='mpr-21521.32' crc='abb501dc'/>
+    <rom name='mpr-21522.33' crc='e3b79973'/>
+    <rom name='mpr-21523.34' crc='fe4d1eac'/>
+    <rom name='mpr-21524.35' crc='8633b6e9'/>
+    <rom name='mpr-21525.36' crc='3c490167'/>
+    <rom name='mpr-21526.37' crc='5fe5f9b0'/>
+    <rom name='mpr-21527.38' crc='10d0fe7e'/>
+    <rom name='mpr-21528.39' crc='4e346a6c'/>
+    <rom name='mpr-21529.40' crc='9a731a00'/>
+    <rom name='mpr-21530.41' crc='78400d5e'/>
+    <rom name='epr-21539a.21' crc='a1d3e00e'/>
+    <rom name='mpr-21513.22' crc='cca1cc00'/>
+    <rom name='mpr-21514.24' crc='6cedd292'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80'/>
+  </game>
+  <game name='vs299a' sourcefile='Games.xml' cloneof='vs2v991' romof='vs2v991'>
+    <description>Virtua Striker 2 &apos;99 (Export, USA, Revision A)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21538a.20' crc='42beba70'/>
+    <rom name='epr-21537a.19' crc='f72a8f2f'/>
+    <rom name='epr-21536a.18' crc='95d49d6e'/>
+    <rom name='epr-21535a.17' crc='8e4ec341'/>
+    <rom name='mpr-21500.4' crc='8c43964b' merge='mpr-21500.4'/>
+    <rom name='mpr-21499.3' crc='2cc4c1f1' merge='mpr-21499.3'/>
+    <rom name='mpr-21498.2' crc='4f53d6e0' merge='mpr-21498.2'/>
+    <rom name='mpr-21497.1' crc='8ea759a1' merge='mpr-21497.1'/>
+    <rom name='mpr-21504.8' crc='7aae557e' merge='mpr-21504.8'/>
+    <rom name='mpr-21503.7' crc='c9e1de6b' merge='mpr-21503.7'/>
+    <rom name='mpr-21502.6' crc='921486be' merge='mpr-21502.6'/>
+    <rom name='mpr-21501.5' crc='08bc2185' merge='mpr-21501.5'/>
+    <rom name='mpr-21508.12' crc='2e8f798e' merge='mpr-21508.12'/>
+    <rom name='mpr-21507.11' crc='1d8eb68b' merge='mpr-21507.11'/>
+    <rom name='mpr-21506.10' crc='2c1477c7' merge='mpr-21506.10'/>
+    <rom name='mpr-21505.9' crc='e169ff72' merge='mpr-21505.9'/>
+    <rom name='mpr-21512.16' crc='7cb2b05c' merge='mpr-21512.16'/>
+    <rom name='mpr-21511.15' crc='5ad9660c' merge='mpr-21511.15'/>
+    <rom name='mpr-21510.14' crc='f47489a4' merge='mpr-21510.14'/>
+    <rom name='mpr-21509.13' crc='9a65e6b4' merge='mpr-21509.13'/>
+    <rom name='mpr-21515.26' crc='8ce9910b' merge='mpr-21515.26'/>
+    <rom name='mpr-21516.27' crc='8971a753' merge='mpr-21516.27'/>
+    <rom name='mpr-21517.28' crc='55a4533b' merge='mpr-21517.28'/>
+    <rom name='mpr-21518.29' crc='4134026c' merge='mpr-21518.29'/>
+    <rom name='mpr-21519.30' crc='ef6757de' merge='mpr-21519.30'/>
+    <rom name='mpr-21520.31' crc='c53be8cc' merge='mpr-21520.31'/>
+    <rom name='mpr-21521.32' crc='abb501dc' merge='mpr-21521.32'/>
+    <rom name='mpr-21522.33' crc='e3b79973' merge='mpr-21522.33'/>
+    <rom name='mpr-21523.34' crc='fe4d1eac' merge='mpr-21523.34'/>
+    <rom name='mpr-21524.35' crc='8633b6e9' merge='mpr-21524.35'/>
+    <rom name='mpr-21525.36' crc='3c490167' merge='mpr-21525.36'/>
+    <rom name='mpr-21526.37' crc='5fe5f9b0' merge='mpr-21526.37'/>
+    <rom name='mpr-21527.38' crc='10d0fe7e' merge='mpr-21527.38'/>
+    <rom name='mpr-21528.39' crc='4e346a6c' merge='mpr-21528.39'/>
+    <rom name='mpr-21529.40' crc='9a731a00' merge='mpr-21529.40'/>
+    <rom name='mpr-21530.41' crc='78400d5e' merge='mpr-21530.41'/>
+    <rom name='epr-21539a.21' crc='a1d3e00e' merge='epr-21539a.21'/>
+    <rom name='mpr-21513.22' crc='cca1cc00' merge='mpr-21513.22'/>
+    <rom name='mpr-21514.24' crc='6cedd292' merge='mpr-21514.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vs299' sourcefile='Games.xml' cloneof='vs2v991' romof='vs2v991'>
+    <description>Virtua Striker 2 &apos;99 (Export, USA)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21538.20' crc='02df6ac8'/>
+    <rom name='epr-21537.19' crc='fb37dc16'/>
+    <rom name='epr-21536.18' crc='9af2b0d5'/>
+    <rom name='epr-21535.17' crc='976a00bf'/>
+    <rom name='mpr-21500.4' crc='8c43964b' merge='mpr-21500.4'/>
+    <rom name='mpr-21499.3' crc='2cc4c1f1' merge='mpr-21499.3'/>
+    <rom name='mpr-21498.2' crc='4f53d6e0' merge='mpr-21498.2'/>
+    <rom name='mpr-21497.1' crc='8ea759a1' merge='mpr-21497.1'/>
+    <rom name='mpr-21504.8' crc='7aae557e' merge='mpr-21504.8'/>
+    <rom name='mpr-21503.7' crc='c9e1de6b' merge='mpr-21503.7'/>
+    <rom name='mpr-21502.6' crc='921486be' merge='mpr-21502.6'/>
+    <rom name='mpr-21501.5' crc='08bc2185' merge='mpr-21501.5'/>
+    <rom name='mpr-21508.12' crc='2e8f798e' merge='mpr-21508.12'/>
+    <rom name='mpr-21507.11' crc='1d8eb68b' merge='mpr-21507.11'/>
+    <rom name='mpr-21506.10' crc='2c1477c7' merge='mpr-21506.10'/>
+    <rom name='mpr-21505.9' crc='e169ff72' merge='mpr-21505.9'/>
+    <rom name='mpr-21512.16' crc='7cb2b05c' merge='mpr-21512.16'/>
+    <rom name='mpr-21511.15' crc='5ad9660c' merge='mpr-21511.15'/>
+    <rom name='mpr-21510.14' crc='f47489a4' merge='mpr-21510.14'/>
+    <rom name='mpr-21509.13' crc='9a65e6b4' merge='mpr-21509.13'/>
+    <rom name='mpr-21515.26' crc='8ce9910b' merge='mpr-21515.26'/>
+    <rom name='mpr-21516.27' crc='8971a753' merge='mpr-21516.27'/>
+    <rom name='mpr-21517.28' crc='55a4533b' merge='mpr-21517.28'/>
+    <rom name='mpr-21518.29' crc='4134026c' merge='mpr-21518.29'/>
+    <rom name='mpr-21519.30' crc='ef6757de' merge='mpr-21519.30'/>
+    <rom name='mpr-21520.31' crc='c53be8cc' merge='mpr-21520.31'/>
+    <rom name='mpr-21521.32' crc='abb501dc' merge='mpr-21521.32'/>
+    <rom name='mpr-21522.33' crc='e3b79973' merge='mpr-21522.33'/>
+    <rom name='mpr-21523.34' crc='fe4d1eac' merge='mpr-21523.34'/>
+    <rom name='mpr-21524.35' crc='8633b6e9' merge='mpr-21524.35'/>
+    <rom name='mpr-21525.36' crc='3c490167' merge='mpr-21525.36'/>
+    <rom name='mpr-21526.37' crc='5fe5f9b0' merge='mpr-21526.37'/>
+    <rom name='mpr-21527.38' crc='10d0fe7e' merge='mpr-21527.38'/>
+    <rom name='mpr-21528.39' crc='4e346a6c' merge='mpr-21528.39'/>
+    <rom name='mpr-21529.40' crc='9a731a00' merge='mpr-21529.40'/>
+    <rom name='mpr-21530.41' crc='78400d5e' merge='mpr-21530.41'/>
+    <rom name='epr-21539a.21' crc='a1d3e00e' merge='epr-21539a.21'/>
+    <rom name='mpr-21513.22' crc='cca1cc00' merge='mpr-21513.22'/>
+    <rom name='mpr-21514.24' crc='6cedd292' merge='mpr-21514.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vs299j' sourcefile='Games.xml' cloneof='vs2v991' romof='vs2v991'>
+    <description>Virtua Striker 2 &apos;99.1 (Japan, Revision B)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21553b.20' crc='4f280a56'/>
+    <rom name='epr-21552b.19' crc='db31eaf6'/>
+    <rom name='epr-21551b.18' crc='0bbc40f7'/>
+    <rom name='epr-21550b.17' crc='c508e488'/>
+    <rom name='mpr-21500.4' crc='8c43964b' merge='mpr-21500.4'/>
+    <rom name='mpr-21499.3' crc='2cc4c1f1' merge='mpr-21499.3'/>
+    <rom name='mpr-21498.2' crc='4f53d6e0' merge='mpr-21498.2'/>
+    <rom name='mpr-21497.1' crc='8ea759a1' merge='mpr-21497.1'/>
+    <rom name='mpr-21504.8' crc='7aae557e' merge='mpr-21504.8'/>
+    <rom name='mpr-21503.7' crc='c9e1de6b' merge='mpr-21503.7'/>
+    <rom name='mpr-21502.6' crc='921486be' merge='mpr-21502.6'/>
+    <rom name='mpr-21501.5' crc='08bc2185' merge='mpr-21501.5'/>
+    <rom name='mpr-21508.12' crc='2e8f798e' merge='mpr-21508.12'/>
+    <rom name='mpr-21507.11' crc='1d8eb68b' merge='mpr-21507.11'/>
+    <rom name='mpr-21506.10' crc='2c1477c7' merge='mpr-21506.10'/>
+    <rom name='mpr-21505.9' crc='e169ff72' merge='mpr-21505.9'/>
+    <rom name='mpr-21512.16' crc='7cb2b05c' merge='mpr-21512.16'/>
+    <rom name='mpr-21511.15' crc='5ad9660c' merge='mpr-21511.15'/>
+    <rom name='mpr-21510.14' crc='f47489a4' merge='mpr-21510.14'/>
+    <rom name='mpr-21509.13' crc='9a65e6b4' merge='mpr-21509.13'/>
+    <rom name='mpr-21515.26' crc='8ce9910b' merge='mpr-21515.26'/>
+    <rom name='mpr-21516.27' crc='8971a753' merge='mpr-21516.27'/>
+    <rom name='mpr-21517.28' crc='55a4533b' merge='mpr-21517.28'/>
+    <rom name='mpr-21518.29' crc='4134026c' merge='mpr-21518.29'/>
+    <rom name='mpr-21519.30' crc='ef6757de' merge='mpr-21519.30'/>
+    <rom name='mpr-21520.31' crc='c53be8cc' merge='mpr-21520.31'/>
+    <rom name='mpr-21521.32' crc='abb501dc' merge='mpr-21521.32'/>
+    <rom name='mpr-21522.33' crc='e3b79973' merge='mpr-21522.33'/>
+    <rom name='mpr-21523.34' crc='fe4d1eac' merge='mpr-21523.34'/>
+    <rom name='mpr-21524.35' crc='8633b6e9' merge='mpr-21524.35'/>
+    <rom name='mpr-21525.36' crc='3c490167' merge='mpr-21525.36'/>
+    <rom name='mpr-21526.37' crc='5fe5f9b0' merge='mpr-21526.37'/>
+    <rom name='mpr-21527.38' crc='10d0fe7e' merge='mpr-21527.38'/>
+    <rom name='mpr-21528.39' crc='4e346a6c' merge='mpr-21528.39'/>
+    <rom name='mpr-21529.40' crc='9a731a00' merge='mpr-21529.40'/>
+    <rom name='mpr-21530.41' crc='78400d5e' merge='mpr-21530.41'/>
+    <rom name='epr-21539a.21' crc='a1d3e00e' merge='epr-21539a.21'/>
+    <rom name='mpr-21513.22' crc='cca1cc00' merge='mpr-21513.22'/>
+    <rom name='mpr-21514.24' crc='6cedd292' merge='mpr-21514.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vs29915' sourcefile='Games.xml' cloneof='vs2v991' romof='vs2v991'>
+    <description>Virtua Striker 2 &apos;99.1 (Step 1.5 Export, USA, Revision B)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21534b.20' crc='f38c3e61'/>
+    <rom name='epr-21533b.19' crc='7b1c05a1'/>
+    <rom name='epr-21532b.18' crc='bbeaa8c2'/>
+    <rom name='epr-21531b.17' crc='62de9df5'/>
+    <rom name='mpr-21500.4' crc='8c43964b' merge='mpr-21500.4'/>
+    <rom name='mpr-21499.3' crc='2cc4c1f1' merge='mpr-21499.3'/>
+    <rom name='mpr-21498.2' crc='4f53d6e0' merge='mpr-21498.2'/>
+    <rom name='mpr-21497.1' crc='8ea759a1' merge='mpr-21497.1'/>
+    <rom name='mpr-21504.8' crc='7aae557e' merge='mpr-21504.8'/>
+    <rom name='mpr-21503.7' crc='c9e1de6b' merge='mpr-21503.7'/>
+    <rom name='mpr-21502.6' crc='921486be' merge='mpr-21502.6'/>
+    <rom name='mpr-21501.5' crc='08bc2185' merge='mpr-21501.5'/>
+    <rom name='mpr-21508.12' crc='2e8f798e' merge='mpr-21508.12'/>
+    <rom name='mpr-21507.11' crc='1d8eb68b' merge='mpr-21507.11'/>
+    <rom name='mpr-21506.10' crc='2c1477c7' merge='mpr-21506.10'/>
+    <rom name='mpr-21505.9' crc='e169ff72' merge='mpr-21505.9'/>
+    <rom name='mpr-21512.16' crc='7cb2b05c' merge='mpr-21512.16'/>
+    <rom name='mpr-21511.15' crc='5ad9660c' merge='mpr-21511.15'/>
+    <rom name='mpr-21510.14' crc='f47489a4' merge='mpr-21510.14'/>
+    <rom name='mpr-21509.13' crc='9a65e6b4' merge='mpr-21509.13'/>
+    <rom name='mpr-21515.26' crc='8ce9910b' merge='mpr-21515.26'/>
+    <rom name='mpr-21516.27' crc='8971a753' merge='mpr-21516.27'/>
+    <rom name='mpr-21517.28' crc='55a4533b' merge='mpr-21517.28'/>
+    <rom name='mpr-21518.29' crc='4134026c' merge='mpr-21518.29'/>
+    <rom name='mpr-21519.30' crc='ef6757de' merge='mpr-21519.30'/>
+    <rom name='mpr-21520.31' crc='c53be8cc' merge='mpr-21520.31'/>
+    <rom name='mpr-21521.32' crc='abb501dc' merge='mpr-21521.32'/>
+    <rom name='mpr-21522.33' crc='e3b79973' merge='mpr-21522.33'/>
+    <rom name='mpr-21523.34' crc='fe4d1eac' merge='mpr-21523.34'/>
+    <rom name='mpr-21524.35' crc='8633b6e9' merge='mpr-21524.35'/>
+    <rom name='mpr-21525.36' crc='3c490167' merge='mpr-21525.36'/>
+    <rom name='mpr-21526.37' crc='5fe5f9b0' merge='mpr-21526.37'/>
+    <rom name='mpr-21527.38' crc='10d0fe7e' merge='mpr-21527.38'/>
+    <rom name='mpr-21528.39' crc='4e346a6c' merge='mpr-21528.39'/>
+    <rom name='mpr-21529.40' crc='9a731a00' merge='mpr-21529.40'/>
+    <rom name='mpr-21530.41' crc='78400d5e' merge='mpr-21530.41'/>
+    <rom name='epr-21539a.21' crc='a1d3e00e' merge='epr-21539a.21'/>
+    <rom name='mpr-21513.22' crc='cca1cc00' merge='mpr-21513.22'/>
+    <rom name='mpr-21514.24' crc='6cedd292' merge='mpr-21514.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vs29915a' sourcefile='Games.xml' cloneof='vs2v991' romof='vs2v991'>
+    <description>Virtua Striker 2 &apos;99 (Step 1.5 Export, USA)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21534.20' crc='d49ae219'/>
+    <rom name='epr-21533.19' crc='ea728471'/>
+    <rom name='epr-21532.18' crc='314447f8'/>
+    <rom name='epr-21531.17' crc='ec45015c'/>
+    <rom name='mpr-21500.4' crc='8c43964b' merge='mpr-21500.4'/>
+    <rom name='mpr-21499.3' crc='2cc4c1f1' merge='mpr-21499.3'/>
+    <rom name='mpr-21498.2' crc='4f53d6e0' merge='mpr-21498.2'/>
+    <rom name='mpr-21497.1' crc='8ea759a1' merge='mpr-21497.1'/>
+    <rom name='mpr-21504.8' crc='7aae557e' merge='mpr-21504.8'/>
+    <rom name='mpr-21503.7' crc='c9e1de6b' merge='mpr-21503.7'/>
+    <rom name='mpr-21502.6' crc='921486be' merge='mpr-21502.6'/>
+    <rom name='mpr-21501.5' crc='08bc2185' merge='mpr-21501.5'/>
+    <rom name='mpr-21508.12' crc='2e8f798e' merge='mpr-21508.12'/>
+    <rom name='mpr-21507.11' crc='1d8eb68b' merge='mpr-21507.11'/>
+    <rom name='mpr-21506.10' crc='2c1477c7' merge='mpr-21506.10'/>
+    <rom name='mpr-21505.9' crc='e169ff72' merge='mpr-21505.9'/>
+    <rom name='mpr-21512.16' crc='7cb2b05c' merge='mpr-21512.16'/>
+    <rom name='mpr-21511.15' crc='5ad9660c' merge='mpr-21511.15'/>
+    <rom name='mpr-21510.14' crc='f47489a4' merge='mpr-21510.14'/>
+    <rom name='mpr-21509.13' crc='9a65e6b4' merge='mpr-21509.13'/>
+    <rom name='mpr-21515.26' crc='8ce9910b' merge='mpr-21515.26'/>
+    <rom name='mpr-21516.27' crc='8971a753' merge='mpr-21516.27'/>
+    <rom name='mpr-21517.28' crc='55a4533b' merge='mpr-21517.28'/>
+    <rom name='mpr-21518.29' crc='4134026c' merge='mpr-21518.29'/>
+    <rom name='mpr-21519.30' crc='ef6757de' merge='mpr-21519.30'/>
+    <rom name='mpr-21520.31' crc='c53be8cc' merge='mpr-21520.31'/>
+    <rom name='mpr-21521.32' crc='abb501dc' merge='mpr-21521.32'/>
+    <rom name='mpr-21522.33' crc='e3b79973' merge='mpr-21522.33'/>
+    <rom name='mpr-21523.34' crc='fe4d1eac' merge='mpr-21523.34'/>
+    <rom name='mpr-21524.35' crc='8633b6e9' merge='mpr-21524.35'/>
+    <rom name='mpr-21525.36' crc='3c490167' merge='mpr-21525.36'/>
+    <rom name='mpr-21526.37' crc='5fe5f9b0' merge='mpr-21526.37'/>
+    <rom name='mpr-21527.38' crc='10d0fe7e' merge='mpr-21527.38'/>
+    <rom name='mpr-21528.39' crc='4e346a6c' merge='mpr-21528.39'/>
+    <rom name='mpr-21529.40' crc='9a731a00' merge='mpr-21529.40'/>
+    <rom name='mpr-21530.41' crc='78400d5e' merge='mpr-21530.41'/>
+    <rom name='epr-21539a.21' crc='a1d3e00e' merge='epr-21539a.21'/>
+    <rom name='mpr-21513.22' crc='cca1cc00' merge='mpr-21513.22'/>
+    <rom name='mpr-21514.24' crc='6cedd292' merge='mpr-21514.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+  <game name='vs29915j' sourcefile='Games.xml' cloneof='vs2v991' romof='vs2v991'>
+    <description>Virtua Striker 2 &apos;99.1 (Step 1.5 Japan, Revision B)</description>
+    <year>1999</year>
+    <manufacturer>Sega</manufacturer>
+    <rom name='epr-21549b.20' crc='3a65615d'/>
+    <rom name='epr-21548b.19' crc='6252b9b8'/>
+    <rom name='epr-21547b.18' crc='9b904c47'/>
+    <rom name='epr-21546b.17' crc='712f2017'/>
+    <rom name='mpr-21500.4' crc='8c43964b' merge='mpr-21500.4'/>
+    <rom name='mpr-21499.3' crc='2cc4c1f1' merge='mpr-21499.3'/>
+    <rom name='mpr-21498.2' crc='4f53d6e0' merge='mpr-21498.2'/>
+    <rom name='mpr-21497.1' crc='8ea759a1' merge='mpr-21497.1'/>
+    <rom name='mpr-21504.8' crc='7aae557e' merge='mpr-21504.8'/>
+    <rom name='mpr-21503.7' crc='c9e1de6b' merge='mpr-21503.7'/>
+    <rom name='mpr-21502.6' crc='921486be' merge='mpr-21502.6'/>
+    <rom name='mpr-21501.5' crc='08bc2185' merge='mpr-21501.5'/>
+    <rom name='mpr-21508.12' crc='2e8f798e' merge='mpr-21508.12'/>
+    <rom name='mpr-21507.11' crc='1d8eb68b' merge='mpr-21507.11'/>
+    <rom name='mpr-21506.10' crc='2c1477c7' merge='mpr-21506.10'/>
+    <rom name='mpr-21505.9' crc='e169ff72' merge='mpr-21505.9'/>
+    <rom name='mpr-21512.16' crc='7cb2b05c' merge='mpr-21512.16'/>
+    <rom name='mpr-21511.15' crc='5ad9660c' merge='mpr-21511.15'/>
+    <rom name='mpr-21510.14' crc='f47489a4' merge='mpr-21510.14'/>
+    <rom name='mpr-21509.13' crc='9a65e6b4' merge='mpr-21509.13'/>
+    <rom name='mpr-21515.26' crc='8ce9910b' merge='mpr-21515.26'/>
+    <rom name='mpr-21516.27' crc='8971a753' merge='mpr-21516.27'/>
+    <rom name='mpr-21517.28' crc='55a4533b' merge='mpr-21517.28'/>
+    <rom name='mpr-21518.29' crc='4134026c' merge='mpr-21518.29'/>
+    <rom name='mpr-21519.30' crc='ef6757de' merge='mpr-21519.30'/>
+    <rom name='mpr-21520.31' crc='c53be8cc' merge='mpr-21520.31'/>
+    <rom name='mpr-21521.32' crc='abb501dc' merge='mpr-21521.32'/>
+    <rom name='mpr-21522.33' crc='e3b79973' merge='mpr-21522.33'/>
+    <rom name='mpr-21523.34' crc='fe4d1eac' merge='mpr-21523.34'/>
+    <rom name='mpr-21524.35' crc='8633b6e9' merge='mpr-21524.35'/>
+    <rom name='mpr-21525.36' crc='3c490167' merge='mpr-21525.36'/>
+    <rom name='mpr-21526.37' crc='5fe5f9b0' merge='mpr-21526.37'/>
+    <rom name='mpr-21527.38' crc='10d0fe7e' merge='mpr-21527.38'/>
+    <rom name='mpr-21528.39' crc='4e346a6c' merge='mpr-21528.39'/>
+    <rom name='mpr-21529.40' crc='9a731a00' merge='mpr-21529.40'/>
+    <rom name='mpr-21530.41' crc='78400d5e' merge='mpr-21530.41'/>
+    <rom name='epr-21539a.21' crc='a1d3e00e' merge='epr-21539a.21'/>
+    <rom name='mpr-21513.22' crc='cca1cc00' merge='mpr-21513.22'/>
+    <rom name='mpr-21514.24' crc='6cedd292' merge='mpr-21514.24'/>
+    <rom name='epr-18022.ic2' crc='0ca70f80' merge='epr-18022.ic2'/>
+  </game>
+</datafile>

@@ -1,7 +1,7 @@
 /**
  ** Supermodel
  ** A Sega Model 3 Arcade Emulator.
- ** Copyright 2011 Bart Trzynadlowski, Nik Henson
+ ** Copyright 2003-2026 The Supermodel Team
  **
  ** This file is part of Supermodel.
  **
@@ -33,13 +33,16 @@
 #include "Inputs/InputSource.h"
 #include "Inputs/InputSystem.h"
 
+#include <SDL.h>
+
 #define WIN32_LEAN_AND_MEAN
+#define DIRECTINPUT_VERSION 0x0800
+
 #include <windows.h>
 #include <dinput.h>
 #include <XInput.h>
-
+#include <functional>
 #include <vector>
-using namespace std;
 
 #define NUM_DI_KEYS (sizeof(s_keyMap) / sizeof(DIKeyMapStruct))
 
@@ -92,10 +95,10 @@ struct DIJoyInfo
 };
 
 // RawInput API
-typedef /*WINUSERAPI*/ INT (WINAPI *GetRawInputDeviceListPtr)(OUT PRAWINPUTDEVICELIST pRawInputDeviceList, IN OUT PUINT puiNumDevices, IN UINT cbSize);
-typedef /*WINUSERAPI*/ INT (WINAPI *GetRawInputDeviceInfoPtr)(IN HANDLE hDevice, IN UINT uiCommand, OUT LPVOID pData, IN OUT PUINT pcbSize);
+typedef /*WINUSERAPI*/ UINT (WINAPI *GetRawInputDeviceListPtr)(OUT PRAWINPUTDEVICELIST pRawInputDeviceList, IN OUT PUINT puiNumDevices, IN UINT cbSize);
+typedef /*WINUSERAPI*/ UINT (WINAPI *GetRawInputDeviceInfoPtr)(IN HANDLE hDevice, IN UINT uiCommand, OUT LPVOID pData, IN OUT PUINT pcbSize);
 typedef /*WINUSERAPI*/ bool (WINAPI *RegisterRawInputDevicesPtr)(IN PCRAWINPUTDEVICE pRawInputDevices, IN UINT uiNumDevices, IN UINT cbSize);
-typedef /*WINUSERAPI*/ INT (WINAPI *GetRawInputDataPtr)(IN HRAWINPUT hRawInput, IN UINT uiCommand, OUT LPVOID pData, IN OUT PUINT pcbSize, IN UINT cbSizeHeader);
+typedef /*WINUSERAPI*/ UINT (WINAPI *GetRawInputDataPtr)(IN HRAWINPUT hRawInput, IN UINT uiCommand, OUT LPVOID pData, IN OUT PUINT pcbSize, IN UINT cbSizeHeader);
 
 // XInput API
 typedef /*WINUSERAPI*/ DWORD (WINAPI *XInputGetCapabilitiesPtr)(IN DWORD dwUserIndex, IN DWORD dwFlags, OUT PXINPUT_CAPABILITIES pCapabilities);
@@ -125,6 +128,7 @@ private:
 
 	bool m_initializedCOM;
 	bool m_activated;
+	SDL_Window *m_window = nullptr;
 	
 	// Function pointers for RawInput API
 	GetRawInputDeviceListPtr m_getRIDevListPtr;
@@ -133,16 +137,16 @@ private:
 	GetRawInputDataPtr m_getRIDataPtr;
 	
 	// Keyboard, mouse and joystick details
-	vector<KeyDetails> m_keyDetails;
-	vector<MouseDetails> m_mseDetails;
-	vector<JoyDetails> m_joyDetails;
+	std::vector<KeyDetails> m_keyDetails;
+	std::vector<MouseDetails> m_mseDetails;
+	std::vector<JoyDetails> m_joyDetails;
 	
 	// RawInput keyboard and mice handles and states
-	vector<HANDLE> m_rawKeyboards;
-	vector<bool*> m_rawKeyStates;
-	vector<HANDLE> m_rawMice;
+	std::vector<HANDLE> m_rawKeyboards;
+	std::vector<bool*> m_rawKeyStates;
+	std::vector<HANDLE> m_rawMice;
 	RawMseState m_combRawMseState;
-	vector<RawMseState> m_rawMseStates;
+	std::vector<RawMseState> m_rawMseStates;
 
 	// Function pointers for XInput API
 	XInputGetCapabilitiesPtr m_xiGetCapabilitiesPtr;
@@ -153,17 +157,17 @@ private:
 	LPDIRECTINPUT8 m_di8;
 	LPDIRECTINPUTDEVICE8 m_di8Keyboard;
 	LPDIRECTINPUTDEVICE8 m_di8Mouse;	
-	vector<LPDIRECTINPUTDEVICE8> m_di8Joysticks;
+	std::vector<LPDIRECTINPUTDEVICE8> m_di8Joysticks;
 	
 	// DirectInput keyboard and mouse states
 	BYTE m_diKeyState[256];
 	DIMseState m_diMseState;
 	
 	// DirectInput joystick infos and states
-	vector<DIJoyInfo> m_diJoyInfos;
-	vector<DIJOYSTATE2> m_diJoyStates;
+	std::vector<DIJoyInfo> m_diJoyInfos;
+	std::vector<DIJOYSTATE2> m_diJoyStates;
 
-	bool GetRegString(HKEY regKey, const char *regPath, string &str);
+	bool GetRegString(HKEY regKey, const char *regPath, std::string &str);
 
 	bool GetRegDeviceName(const char *rawDevName, char *name);
 
@@ -201,20 +205,20 @@ protected:
 
 	const char *GetKeyName(int keyIndex);
 
-	bool IsKeyPressed(int joyNum, int keyIndex);
+	bool IsKeyPressed(int joyNum, int keyIndex) const;
 
-	int GetMouseAxisValue(int mseNum, int axisNum);
+	int GetMouseAxisValue(int mseNum, int axisNum) const;
 
-	int GetMouseWheelDir(int mseNum);
+	int GetMouseWheelDir(int mseNum) const;
 
-	bool IsMouseButPressed(int mseNum, int butNum);
+	bool IsMouseButPressed(int mseNum, int butNum) const;
 
-	int GetJoyAxisValue(int joyNum, int axisNum);
+	int GetJoyAxisValue(int joyNum, int axisNum) const;
 
-	bool IsJoyPOVInDir(int joyNum, int povNum, int povDir);
+	bool IsJoyPOVInDir(int joyNum, int povNum, int povDir) const;
 
-	bool IsJoyButPressed(int joyNum, int butNum);
-	
+	bool IsJoyButPressed(int joyNum, int butNum) const;
+
 	bool ProcessForceFeedbackCmd(int joyNum, int axisNum, ForceFeedbackCmd ffCmd);
 
 	bool ConfigMouseCentered();
@@ -234,15 +238,15 @@ public:
 	 * to the same shared axis and so cannot be distinguished when pressed together.
 	 * If enableFFeedback is true then force feedback is enabled (for those joysticks which are force feedback capable).
 	 */
-	CDirectInputSystem(const Util::Config::Node &config, bool useRawInput, bool useXInput);
+	CDirectInputSystem(const Util::Config::Node &config, SDL_Window *window, bool useRawInput, bool useXInput);
 
 	~CDirectInputSystem();
 
-	int GetNumKeyboards();	
+	int GetNumKeyboards() const;	
 
-	int GetNumMice();
-	
-	int GetNumJoysticks();
+	int GetNumMice() const;
+
+	int GetNumJoysticks() const;
 
 	const KeyDetails *GetKeyDetails(int kbdNum);
 

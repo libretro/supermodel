@@ -1,0 +1,112 @@
+---
+name: Libretro Core CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: libretro-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux x86_64
+            runner: ubuntu-24.04
+            shell: bash
+            platform: unix
+            target: supermodel_libretro.so
+            artifact: supermodel-linux-x86_64
+            format: 'ELF 64-bit.*x86-64'
+          - name: macOS ARM64
+            runner: macos-15
+            shell: bash
+            platform: osx
+            target: supermodel_libretro.dylib
+            artifact: supermodel-macos-arm64
+            format: 'Mach-O 64-bit.*arm64'
+          - name: macOS x86_64
+            runner: macos-15-intel
+            shell: bash
+            platform: osx
+            target: supermodel_libretro.dylib
+            artifact: supermodel-macos-x86_64
+            format: 'Mach-O 64-bit.*x86_64'
+          - name: Windows x86_64
+            runner: windows-2022
+            shell: msys2 {0}
+            platform: win
+            target: supermodel_libretro.dll
+            artifact: supermodel-windows-x86_64
+            format: 'PE32\+.*x86-64'
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential file libgl-dev libglu1-mesa-dev zlib1g-dev
+
+      - name: Install Windows toolchain
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            file
+            make
+            mingw-w64-x86_64-binutils
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-zlib
+
+      - name: Build Libretro core
+        env:
+          BUILD_PLATFORM: ${{ matrix.platform }}
+        run: |
+          make platform="$BUILD_PLATFORM" clean
+          make platform="$BUILD_PLATFORM" -j2
+
+      - name: Validate core format, API, and dependencies
+        env:
+          CORE_TARGET: ${{ matrix.target }}
+          EXPECTED_FORMAT: ${{ matrix.format }}
+        run: bash .github/scripts/validate-libretro-core.sh "$CORE_TARGET" "$EXPECTED_FORMAT"
+
+      - name: Assemble artifact
+        env:
+          CORE_TARGET: ${{ matrix.target }}
+        run: |
+          mkdir -p artifact/system/supermodel
+          cp "$CORE_TARGET" artifact/
+          cp supermodel_libretro.info artifact/
+          cp Config/Games.xml Config/Music.xml artifact/system/supermodel/
+
+      - name: Upload core artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact }}
+          path: artifact/
+          if-no-files-found: error
+          retention-days: 14
